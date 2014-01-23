@@ -6,18 +6,18 @@
 
 DLLNAME=ns
 
-ARCH=i386
+ARCH=i686
 
 #make sure this is the correct compiler for your system
 CC=gcc
 LD=gcc
 
-LIBBASE=../../../libraries/current
+LIBBASE=..
 
 DLL_SRCDIR=../dlls
 GAME_SHARED_SRCDIR = ../game_shared
 MOD_SRCDIR = ../mod
-PARTICLES_SRCDIR = ../particles
+PARTICLES_SRCDIR = ../Particle
 PM_SHARED_SRCDIR=../pm_shared
 TEXT_SRCDIR = ../textrep
 UTIL_SRCDIR = ../util
@@ -36,15 +36,15 @@ BASE_CFLAGS=-Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp 
 # -DAVH_SECURE_PRERELEASE_BUILD for CM testing
 
 #full optimization
-CFLAGS=$(BASE_CFLAGS) -w -Wall -nostdinc++ -ffor-scope -fPIC -mcpu=i486 -O3 -pipe  -funroll-loops -fdelayed-branch -malign-loops=4 -malign-jumps=4 -malign-functions=4  
+CFLAGS=$(BASE_CFLAGS) -w -Wall -nostdinc++ -fpermissive -ffor-scope -fPIC -mtune=$(ARCH) -O3 -pipe  -funroll-loops -fdelayed-branch -falign-loops=4 -falign-jumps=4 -falign-functions=4  
 
 #use these when debugging 
 #CFLAGS=$(BASE_CFLAGS) -fPIC -fno-for-scope   
 
 # add base directory (CGC)
 
-INCLUDEDIRS=-I$(LIBBASE) -I. -I$(LIBBASE)/include -I$(LIBBASE)/include/stlport -I$(LIBBASE)/include/particle -I$(LIBBASE)/include/lua -I../dlls -I../engine -I../common -I../mod -I../game_shared -I../pm_shared -I.. -I/usr/include/c++/3.3/i486-linux -I/usr/include/c++/3.3 -I/usr/include/c++ 
-LINKDIRS=  -L$(LIBBASE)/release
+INCLUDEDIRS=-I$(LIBBASE) -I. -I$(LIBBASE)/include -I$(LIBBASE)/include/stlport -I$(LIBBASE)/particle -I$(LIBBASE)/include/lua -I../dlls -I../engine -I../common -I../mod -I../game_shared -I../pm_shared -I.. -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8 -I/usr/include/c++ 
+LINKDIRS=  -L$(LIBBASE)/particle
 
 SHLIBEXT=so
 
@@ -52,7 +52,7 @@ LDPRELIBS= $(CFLAGS) -shared \
            -Wl,-Map,ns_map.txt \
            $(LINKDIRS)
 
-LDPOSTLIBS= -Wl,-Bstatic -lstlport_gcc -lstdc++ -lsupc++ -llua -llualib -lparticleMP -lcurl \
+LDPOSTLIBS= -Wl,-Bstatic -lstdc++ -lsupc++ -lparticleMP -lcurl \
 	-Wl,-Bdynamic -lm -lgcc -lgcc_eh
 # -lgcc -lgcc_eh -lelf
 DO_CC=$(CC) $(CFLAGS) $(INCLUDEDIRS) -o $@ -c $<
@@ -257,18 +257,18 @@ release: $(DLLNAME)_$(ARCH).$(SHLIBEXT)
 curl:
 	./build-curl.sh
 neat:
-	-mkdir $(CURL_OBJDIR)
-	-mkdir $(DLL_OBJDIR)
-	-mkdir $(GAME_SHARED_OBJDIR)
-	-mkdir $(MOD_OBJDIR)
-	-mkdir $(PARTICLES_OBJDIR)
-	-mkdir $(PM_SHARED_OBJDIR)
-	-mkdir $(TEXT_OBJDIR)
-	-mkdir $(UTIL_OBJDIR)
-	-mkdir $(OUTPUT_DIR)
+	@-mkdir -p $(CURL_OBJDIR)
+	@-mkdir -p $(DLL_OBJDIR)
+	@-mkdir -p $(GAME_SHARED_OBJDIR)
+	@-mkdir -p $(MOD_OBJDIR)
+	@-mkdir -p $(PARTICLES_OBJDIR)
+	@-mkdir -p $(PM_SHARED_OBJDIR)
+	@-mkdir -p $(TEXT_OBJDIR)
+	@-mkdir -p $(UTIL_OBJDIR)
+	@-mkdir -p $(OUTPUT_DIR)
 clean:
-	-rm -f $(OBJ)
-	-rm -f $(DLLNAME)_$(ARCH).$(SHLIBEXT)
+	-rm $(OBJ)
+	-rm $(DLLNAME)_$(ARCH).$(SHLIBEXT)
 spotless: clean
 	-rm -r $(CURL_OBJDIR)
 	-rm -r $(DLL_OBJDIR)

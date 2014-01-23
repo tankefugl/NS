@@ -23,7 +23,9 @@
 #include "util/Checksum.h"
 #include "util/STLUtil.h"
 
+#ifdef USE_LUA
 extern "C" struct lua_State;
+#endif
 
 class AvHScriptInstance
 {
@@ -38,7 +40,9 @@ public:
 
 	void		Cleanup();
 
+#ifdef USE_LUA
 	lua_State*	GetState();
+#endif
 
 	void		Reset();
 	
@@ -58,7 +62,9 @@ private:
 	#endif
 
 	// This gets copied around, so make sure elements can be shallow-copied or write a copy constructor
+#ifdef USE_LUA
 	lua_State*	mState;
+#endif
 	string		mScriptName;
 
 	typedef pair<string, float>			CallbackType;

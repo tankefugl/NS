@@ -688,9 +688,9 @@ AvHParticleSystem::GenerateParticles(int inNumberParticles)
 				else if(theDomain == PS_Sphere)
 				{
 					float theRadius1 = fabs(this->mGenerationEntityAbsMax[0] - this->mGenerationEntityAbsMin[0])/2.0f;
-					theRadius1 = max(theRadius1 - theEdgeInset, 0);
+					theRadius1 = max(theRadius1 - theEdgeInset, 0.0f);
 					float theRadius2 = this->mGenerationEntityParam;
-					theRadius2 = max(theRadius2 - theEdgeInset, 0);
+					theRadius2 = max(theRadius2 - theEdgeInset, 0.0f);
 					theParams[3] = theRadius1;
 					theParams[4] = theRadius2;
 				}

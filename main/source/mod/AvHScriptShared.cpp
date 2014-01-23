@@ -37,6 +37,7 @@
 
 #include "mod/AvHSharedUtil.h"
 
+#ifdef USE_LUA
 extern "C" {
 	#include <lua.h>
 }
@@ -93,3 +94,4 @@ void AvHScriptInstance::InitShared()
 	lua_register(this->mState, "getTime", getTime);
 }
 
+#endif

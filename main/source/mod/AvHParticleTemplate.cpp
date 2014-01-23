@@ -1,3 +1,4 @@
+#include <string.h>
 #include "util/nowarnings.h"
 #include "mod/AvHParticleTemplate.h"
 #include "common/renderingconst.h"

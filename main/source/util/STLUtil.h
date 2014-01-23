@@ -29,6 +29,7 @@
 #ifndef STL_UTIL_H
 #define STL_UTIL_H
 
+#include <string.h>
 #include "util/nowarnings.h"
 #include "util/CString.h"
 #include "types.h"

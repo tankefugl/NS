@@ -6878,7 +6878,7 @@ void AvHPlayer::InternalMovementThink()
 						float factor = pushbackfactor / (radius / distance);
 
 						float weigthFactor=1.0f;
-						int veriticalLimit=110;
+						float veriticalLimit=110.0f;
 						switch(theEntity->pev->iuser3) {
 							case AVH_USER3_ALIEN_PLAYER4:
 								weigthFactor=0.70f;
@@ -9227,7 +9227,7 @@ bool AvHPlayer::RunClientScript(const string& inScriptName)
 
 void AvHPlayer::PrintWeaponListToClient(CBaseEntity *theAvHPlayer) {
 		char msg[1024];
-		sprintf(msg, "Weapons for %s:\n", this->GetPlayerName());	
+		sprintf(msg, "Weapons for %s:\n", this->GetPlayerName().c_str());	
 		ClientPrint(theAvHPlayer->pev, HUD_PRINTNOTIFY, msg);
 
         for(int i = 0; i < MAX_ITEM_TYPES; i++)

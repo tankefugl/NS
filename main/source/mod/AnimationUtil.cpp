@@ -1,4 +1,5 @@
 #include <math.h>
+#include <string.h>
 #include "types.h"
 
 #ifdef AVH_CLIENT

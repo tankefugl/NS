@@ -2,6 +2,7 @@
 #define C_STRING_H
 
 #include <stdio.h>
+#include <string.h>
 #include <string>
 #include <vector>
 using std::string;
