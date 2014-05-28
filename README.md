@@ -1,3 +1,21 @@
+Natural Selection Visual Studio 2010 Rebuild
+============================================
+
+What does work:
+1.) Both DLLs can be compiled
+2.) client.dll is working but needs libpng12.dll in hl folder
+
+What does not work:
+1.) Sadly the server --> "Host_Error: Couldn't get DLL API from ...ns.dll"
+
+Additional Includes:
+1.) libpng
+2.) zlib
+3.) libcurl
+
+
+
+
 Half Life 1 SDK LICENSE
 =======================
 
