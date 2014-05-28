@@ -2483,9 +2483,10 @@ void AvHTeam::UpdateResources()
 
 AvHServerPlayerData* AvHTeam::GetServerPlayerData(edict_t* inEdict)
 {
-	string theNetworkID = AvHNexus::getNetworkID(inEdict);
+	string theNetworkID = AvHSUGetPlayerAuthIDString(inEdict);
 	return &this->mServerPlayerData[theNetworkID];
 }
+
 // :
 void AvHTeam::UpdateServerPlayerData()
 {

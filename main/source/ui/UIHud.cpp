@@ -11,6 +11,7 @@
 #include <windows.h>
 #pragma warning(push)
 #pragma warning(disable: 311)
+//#include <fmoddyn.h>
 #include <fmoddyn.h>
 #include <fmod_errors.h>
 #pragma warning(pop)
@@ -22,7 +23,7 @@ extern BitmapTGA* LoadTGA( const char* pImageName );
 // Initialize hud from specified input file
 UIHud::UIHud(const string& inFilename, UIFactory* inFactory) : CHud(), mFilename(inFilename), mManager(inFactory)
 {
-
+	
     this->mFMOD = NULL;
 
 	// Set flag false so we load the first time
@@ -109,6 +110,7 @@ void UIHud::InitializeSound(void)
 
         mFMOD = FMOD_CreateInstance(theFileName[i]);
     
+		
         // Check sound version
     
         if (mFMOD != NULL && mFMOD->FSOUND_GetVersion() == FMOD_VERSION)
@@ -117,12 +119,13 @@ void UIHud::InitializeSound(void)
 		    if (mFMOD->FSOUND_Init(44100, 32, 0))
 		    {
 			    this->mSoundInitialized = true;
+				//this->PlayRandomSong();
 		    }
 		    else
 		    {
 			    char theErrorMessage[512];
 			    sprintf(theErrorMessage, "say %s", FMOD_ErrorString(mFMOD->FSOUND_GetError()));
-			    //ClientCmd(theErrorMessage);
+			    ClientCmd(theErrorMessage); // to fix
 		    }
 	    }
         else

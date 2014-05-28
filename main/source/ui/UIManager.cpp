@@ -314,7 +314,7 @@ void UIManager::SetMouseVisibility(bool inState)
         App::getInstance()->setCursorPos(ScreenWidth()/2, ScreenHeight()/2);
 
         // Hide cursor again
-        App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor(Scheme::SchemeCursor::scu_none) );
+        App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor(Scheme::scu_none) );
     }
 
     //App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor(Scheme::SchemeCursor::scu_none) );

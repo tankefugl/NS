@@ -1872,15 +1872,15 @@ void EV_EndJetpack(struct event_args_s* args)
 
 void DrawCircleOnGroundAtPoint(vec3_t inOrigin, int inNumSides, int inStartAngle, int inRadius, float inR, float inG, float inB, float inA, bool inUseRedInstead, float inInnerRadius)
 {
-	static HSPRITE theGreenSprite = 0;
+	static SpriteHandle_t theGreenSprite = 0;
 	if(!theGreenSprite)
 		theGreenSprite = Safe_SPR_Load("sprites/green.spr");
 	
-	static HSPRITE theRedSprite = 0;
+	static SpriteHandle_t theRedSprite = 0;
 	if(!theRedSprite)
 		theRedSprite = Safe_SPR_Load("sprites/red.spr");
 	
-	HSPRITE theSprite = theGreenSprite;
+	SpriteHandle_t theSprite = theGreenSprite;
 	if(inUseRedInstead)
 		theSprite = theRedSprite;
 	
@@ -1936,7 +1936,7 @@ void DrawCircleOnGroundAtPoint(vec3_t inOrigin, int inNumSides, int inStartAngle
 
 //void DrawOrderDirectionIndicator(const AvHOrder& inOrder)
 //{
-//	static HSPRITE theSprite = 0;
+//	static SpriteHandle_t theSprite = 0;
 //	if(!theSprite)
 //		theSprite = Safe_SPR_Load("sprites/320questionmark.spr");
 //	
@@ -2039,7 +2039,7 @@ void DrawDebugEffects()
 		int theRadius = theIter->mSize;
 		DrawCircleOnGroundAtPoint(thePosition, 3, 0, theRadius, 1, 1, 0, .5f, false, 0.0f);
 	}
-	for(theIter = gSquareDebugLocations.begin(); theIter != gSquareDebugLocations.end(); theIter++)
+	for(DebugPointListType::iterator theIter = gSquareDebugLocations.begin(); theIter != gSquareDebugLocations.end(); theIter++)
 	{
 		vec3_t thePosition;
 		thePosition.x = theIter->x;

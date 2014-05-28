@@ -611,7 +611,7 @@ void DrawVariableScaledHUDSprite(float inFactor, int inSpriteHandle, int inMode,
 	DrawScaledHUDSprite(inSpriteHandle, inMode, 1, theX, theY, theWidth, theHeight, 0, theStartU, theStartV, theEndU, theEndV);
 }
 
-void DrawSpriteOnGroundAtPoint(vec3_t inOrigin, int inRadius, HSPRITE inSprite, int inRenderMode = kRenderNormal, int inFrame = 0, float inAlpha = 1.0f)
+void DrawSpriteOnGroundAtPoint(vec3_t inOrigin, int inRadius, SpriteHandle_t inSprite, int inRenderMode = kRenderNormal, int inFrame = 0, float inAlpha = 1.0f)
 {
 	if(gEngfuncs.pTriAPI->SpriteTexture((struct model_s *)gEngfuncs.GetSpritePointer(inSprite), inFrame))
 	{
@@ -1263,7 +1263,8 @@ void AvHHud::GetOrderDirection(vec3_t inTarget, int inOrderType)
 
 void AvHHud::DrawTeammateOrders()
 {
-	TeammateOrderListType::iterator toErase = NULL;
+	
+	TeammateOrderListType::iterator toErase =  this->mTeammateOrder.end();// to fix 2014 not sure wether it works correctly or not was NULL BEFORE
 	cl_entity_s* theLocalPlayer = gEngfuncs.GetLocalPlayer();
 
 	const float flashLength = 1.0f;
@@ -1311,7 +1312,7 @@ void AvHHud::DrawTeammateOrders()
 		}
 	}
 
-	if (toErase != NULL)
+	if (toErase != this->mTeammateOrder.end()) // to fix 2014 not sure wether it works correctly or not was NULL BEFORE
 		this->mTeammateOrder.erase(toErase);
 
 	// flash target player
@@ -1329,7 +1330,7 @@ void AvHHud::DrawTeammateOrders()
 		}
 	}
 
-
+	
 }
 // :
 
@@ -1414,7 +1415,7 @@ int AvHHud::GetHelpIconFrameFromUser3(AvHUser3 inUser3)
 	return theFrame;
 }
 
-HSPRITE	AvHHud::GetHelpSprite() const
+SpriteHandle_t	AvHHud::GetHelpSprite() const
 {
 	return this->mHelpSprite;
 }
@@ -1650,7 +1651,7 @@ void AvHHud::DrawMouseCursor(int inBaseX, int inBaseY)
 	if ( g_iVisibleMouse && !(this->GetInTopDownMode() && gEngfuncs.pDemoAPI->IsPlayingback()) )
 	{
 
-        HSPRITE theCursorSprite;
+        SpriteHandle_t theCursorSprite;
         int theCursorFrame;
 
         GetCursor(theCursorSprite, theCursorFrame);
@@ -2477,7 +2478,7 @@ void AvHHud::DrawBuildHealthEffectsForEntity(int inEntityIndex, float inAlpha)
 	{
 		if(theContinue && theLocalPlayer)
 		{
-			const kDrawEnemyBuildingDistance = 200;
+			const int kDrawEnemyBuildingDistance = 200;
 
 			// Draw effects if we are in top-down mode OR
 			if(	this->GetInTopDownMode() ||
@@ -3102,7 +3103,7 @@ void AvHHud::RenderProgressBar(char *spriteName)
 	const float progressBarStayTime = 0.2f;
 	if (this->mProgressBarLastDrawn + progressBarStayTime > this->GetTimeOfLastUpdate())
 	{
-		HSPRITE currentSprite=0;
+		SpriteHandle_t currentSprite=0;
 		if ( spriteName && ( strcmp(spriteName, kExperienceBarSprite) == 0 ) ) {
 			currentSprite=this->mExperienceBarSprite;
 		}
@@ -3689,7 +3690,7 @@ void AvHHud::RenderStructureRanges()
 	}
 }
 
-void AvHHud::RenderStructureRange(vec3_t inOrigin, int inRadius, HSPRITE inSprite, int inRenderMode, int inFrame, float inR, float inG, float inB, float inAlpha)
+void AvHHud::RenderStructureRange(vec3_t inOrigin, int inRadius, SpriteHandle_t inSprite, int inRenderMode, int inFrame, float inR, float inG, float inB, float inAlpha)
 {
 
     vec3_t w1;
@@ -4043,6 +4044,7 @@ void AvHHud::RenderAlienUI()
 		
 		// Find the blip nearest our view reticle
 		int theNearestBlip = -1;
+		int theBlip = 0;
 		float theDotProductOfClosestBlip = -1;
 		
 		// Get view vector
@@ -4051,7 +4053,7 @@ void AvHHud::RenderAlienUI()
 		AngleVectors(v_angles, theForward, theRight, theUp);
 		VectorNormalize(theForward);
 
-		for(int theBlip = 0; theBlip < this->mFriendlyBlips.mNumBlips; theBlip++)
+		for( theBlip = 0; theBlip < this->mFriendlyBlips.mNumBlips; theBlip++)
 		{
 			// Get vector to current blip
 			Vector theVectorToBlip;

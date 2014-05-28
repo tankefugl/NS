@@ -72,6 +72,8 @@ private:
 
 	CallbackListType					mCallbackList;
 	CallbackListType					mCallbacksQueuedForAdd;
+								
+	bool mState; // fix for debugging
 	
 };
 

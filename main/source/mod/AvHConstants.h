@@ -175,6 +175,8 @@ typedef vector<int>							IntList;
 #define kMaxAlienEnergy					100
 #define kMaxAlienResources				100
 
+
+
 typedef enum
 {
 	AVH_CLASS_TYPE_UNDEFINED = 0,

@@ -53,7 +53,7 @@ public:
 	int		CountAmmo( int iId );
 	int		GetAmmo( int iId );
 	void	SetAmmo( int iId, int iCount );
-	HSPRITE* GetAmmoPicFromWeapon( int iAmmoId, wrect_t& rect );	//TODO: fix bass-ackwards arrangement and store sprites with ammo types
+	SpriteHandle_t* GetAmmoPicFromWeapon( int iAmmoId, wrect_t& rect );	//TODO: fix bass-ackwards arrangement and store sprites with ammo types
 
 	void	AddWeapon( WEAPON* wp );
 	void	PickupWeapon( WEAPON* wp );

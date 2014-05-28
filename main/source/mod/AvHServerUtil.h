@@ -131,8 +131,10 @@ Vector AvHSUGetRandomBuildingAngles();
 char* AvHSUGetGameVersionString();
 bool AvHSUGetIsRelevantForTopDownPlayer(const vec3_t& inTopDownPosition, const vec3_t& inEntityPosition, float inScalar = 1.0f);
 const char* AvHSUGetTeamName(int inTeamNumber);
+
+
 #ifdef USE_OLDAUTH
-bool AvHSUGetIsValidAuthID(const string& inAuthID);
+bool AvHSUGetIsValidAuthID(const string &inAuthID);
 string AvHSUGetPlayerAuthIDString(edict_t* inPlayer);
 #endif
 

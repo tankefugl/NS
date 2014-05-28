@@ -10271,7 +10271,7 @@ bool AvHPlayer::GetIsAuthorized(AvHAuthAction inAction, int inParameter) const
 		}
 		case AUTH_ACTION_ADJUST_BALANCE:
 		{
-#ifndef BALANCE_ENABLED
+#ifndef BALANCE_ENABLED 
 			return false;
 #else
 			return this->GetIsMember(PLAYERAUTH_DEVELOPER);

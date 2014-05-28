@@ -180,7 +180,7 @@ public:
 	int MsgFunc_Train(const char *pszName, int iSize, void *pbuf);
 
 private:
-	HSPRITE m_hSprite;
+	SpriteHandle_t m_hSprite;
 	int m_iPos;
 
 };
@@ -336,8 +336,8 @@ public:
 	int MsgFunc_Battery(const char *pszName,  int iSize, void *pbuf );
 	
 private:
-	HSPRITE m_hSprite1;
-	HSPRITE m_hSprite2;
+	SpriteHandle_t m_hSprite1;
+	SpriteHandle_t m_hSprite2;
 	wrect_t *m_prc1;
 	wrect_t *m_prc2;
 	int	  m_iBat;	
@@ -361,9 +361,9 @@ public:
 	int MsgFunc_FlashBat(const char *pszName,  int iSize, void *pbuf );
 
 private:
-	HSPRITE m_hSprite1;
-	HSPRITE m_hSprite2;
-	HSPRITE m_hBeam;
+	SpriteHandle_t m_hSprite1;
+	SpriteHandle_t m_hSprite2;
+	SpriteHandle_t m_hBeam;
 	wrect_t *m_prc1;
 	wrect_t *m_prc2;
 	wrect_t *m_prcBeam;
@@ -485,7 +485,7 @@ private:
 	typedef struct
 	{
 		char szSpriteName[MAX_ICONSPRITENAME_LENGTH];
-		HSPRITE spr;
+		SpriteHandle_t spr;
 		wrect_t rc;
 		unsigned char r, g, b;
 	} icon_sprite_t;

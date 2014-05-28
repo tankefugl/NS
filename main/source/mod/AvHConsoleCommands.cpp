@@ -1434,14 +1434,14 @@ BOOL AvHGamerules::ClientCommand( CBasePlayer *pPlayer, const char *pcmd )
 	else if ( FStrEq( pcmd, kcSpectate ) )
 	{
 		if(theAvHPlayer)
-		{
+		{	/*
 			if( !theAvHPlayer->GetIsAuthorized(AUTH_ACTION_JOIN_TEAM, TEAM_SPECT) )
 			{
 				AvHNexus::handleUnauthorizedJoinTeamAttempt(theAvHPlayer->edict(),TEAM_SPECT);
-			}
+			}*/
 // : 0001073
 #ifdef USE_OLDAUTH			 
-			else if(allow_spectators.value && GetGameRules()->PerformHardAuthorization(theAvHPlayer))
+			if(allow_spectators.value && GetGameRules()->PerformHardAuthorization(theAvHPlayer))
 #else
 			else if(allow_spectators.value)
 #endif

@@ -178,7 +178,7 @@ void CL_DLLEXPORT HUD_DrawNormalTriangles( void )
 	//
 	//		//AvHParticleSystemManager::Instance()->Draw(theView);
 	//		static int theAngle = 0;
-	//		//static HSPRITE theSprite = 0;
+	//		//static SpriteHandle_t theSprite = 0;
 	//		DrawCircleOnGroundAtPoint(thePlayer->origin, 6, theAngle++, 100, .5f, .5f, 1.0f, .5f);
 	//	}
 	
@@ -195,7 +195,7 @@ void CL_DLLEXPORT HUD_DrawNormalTriangles( void )
 void DrawHitBox(const OBBox& inBox)
 {
 
-    HSPRITE sprite = Safe_SPR_Load("sprites/white.spr");
+    SpriteHandle_t sprite = Safe_SPR_Load("sprites/white.spr");
 
     vec3_t theBoxPoint[8];
 

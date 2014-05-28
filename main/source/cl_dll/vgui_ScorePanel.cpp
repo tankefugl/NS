@@ -261,8 +261,8 @@ ScorePanel::ScorePanel(int x,int y,int wide,int tall) : Panel(x,y,wide,tall)
 	// Setup the header (labels like "name", "class", etc..).
 	m_HeaderGrid.SetDimensions(NUM_COLUMNS, 1);
 	m_HeaderGrid.SetSpacing(0, 0);
-	
-	for(int i=0; i < NUM_COLUMNS; i++)
+	int i=0;
+	for( i=0; i < NUM_COLUMNS; i++)
 	{
 		if (g_ColumnInfo[i].m_pTitle && g_ColumnInfo[i].m_pTitle[0] == '#')
 			m_HeaderLabels[i].setText(CHudTextMessage::BufferedLocaliseTextString(g_ColumnInfo[i].m_pTitle));
@@ -403,6 +403,7 @@ bool HACK_GetPlayerUniqueID( int iPlayer, char playerID[16] )
 //-----------------------------------------------------------------------------
 void ScorePanel::Update()
 {
+	
 	// Set the title
 	char title[128];
 
@@ -435,6 +436,7 @@ void ScorePanel::Update()
     int theColorIndex = 0;
     
     // Set gamma-correct title color
+	
     Color gammaAdjustedTeamColor = BuildColor(kTeamColors[theColorIndex][0], kTeamColors[theColorIndex][1], kTeamColors[theColorIndex][2], gHUD.GetGammaSlope());
     
     int theR, theG, theB, theA;
@@ -454,6 +456,7 @@ void ScorePanel::Update()
 	}
 
 	// Fix for memory overrun bug
+	
 	for (i = 0; i < MAX_PLAYERS; i++)
 	{
 		m_bHasBeenSorted[i] = false;
@@ -473,7 +476,8 @@ void ScorePanel::Update()
 	{
 		 m_pCloseButton->setVisible ( false );
 	}
-}
+
+} 
 
 //-----------------------------------------------------------------------------
 // Purpose: Sort all the teams
@@ -482,11 +486,14 @@ void ScorePanel::SortTeams()
 {
 	// clear out team scores
 	float theCurrentTime = gHUD.GetTimeOfLastUpdate();
-
-	for ( int i = 1; i <= m_iNumTeams; i++ )
+	int i=0;
+	int j=0;
+	for ( i = 1; i <= m_iNumTeams; i++ )
 	{
-		if ( !g_TeamInfo[i].scores_overriden )
+		if ( !g_TeamInfo[i].scores_overriden ) 
+		{
 			g_TeamInfo[i].score =0;
+		}
 		g_TeamInfo[i].frags = g_TeamInfo[i].deaths = g_TeamInfo[i].ping = g_TeamInfo[i].packetloss = 0;
 	}
 
@@ -500,7 +507,7 @@ void ScorePanel::SortTeams()
 			continue; // skip over players who are not in a team
 
 		// find what team this player is in
-		for ( int j = 1; j <= m_iNumTeams; j++ )
+		for ( j = 1; j <= m_iNumTeams; j++ )
 		{
 			if ( !stricmp( g_PlayerExtraInfo[i].teamname, g_TeamInfo[j].name ) )
 				break;
@@ -655,7 +662,9 @@ void ScorePanel::SortPlayers( int iTeam, char *team, bool inSortByEntityIndex)
 void ScorePanel::RebuildTeams()
 {
 	// clear out player counts from teams
-	for ( int i = 1; i <= m_iNumTeams; i++ )
+	int i=0;
+	int j=0;
+	for ( i = 1; i <= m_iNumTeams; i++ )
 	{
 		g_TeamInfo[i].players = 0;
 	}
@@ -672,7 +681,7 @@ void ScorePanel::RebuildTeams()
 			continue; // skip over players who are not in a team
 
 		// is this player in an existing team?
-		for ( int j = 1; j <= m_iNumTeams; j++ )
+		for ( j = 1; j <= m_iNumTeams; j++ )
 		{
 			if ( g_TeamInfo[j].name[0] == '\0' )
 				break;
@@ -684,13 +693,12 @@ void ScorePanel::RebuildTeams()
 		if ( j > m_iNumTeams )
 		{ // they aren't in a listed team, so make a new one
 			// search through for an empty team slot
-			for ( int j = 1; j <= m_iNumTeams; j++ )
+			for ( j = 1; j <= m_iNumTeams; j++ )
 			{
 				if ( g_TeamInfo[j].name[0] == '\0' )
 					break;
 			}
 			m_iNumTeams = max( j, m_iNumTeams );
-
 			strncpy( g_TeamInfo[j].name, g_PlayerExtraInfo[i].teamname, MAX_TEAM_NAME );
 			g_TeamInfo[j].players = 0;
 		}
@@ -1343,7 +1351,7 @@ void ScorePanel::FillGrid()
 		}
 	}
 
-	for(row=0; row < NUM_ROWS; row++)
+	for(int row=0; row < NUM_ROWS; row++)
 	{
 		CGrid *pGridRow = &m_PlayerGrids[row];
 

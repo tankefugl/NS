@@ -763,7 +763,7 @@ void TeamFortressViewport::Initialize( void )
 		strcpy(m_sTeamNames[i], "");
 	}
 
-	App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor(Scheme::SchemeCursor::scu_none) );
+	App::getInstance()->setCursorOveride( App::getInstance()->getScheme()->getCursor(Scheme::scu_none) );
 }
 
 class CException;
@@ -2590,7 +2590,8 @@ int TeamFortressViewport::MsgFunc_TeamScore( const char *pszName, int iSize, voi
 	NetMsg_TeamScore( pbuf, iSize, team_name, score, reset);
 
 	// find the team matching the name
-	for ( int i = 1; i <= m_pScoreBoard->m_iNumTeams; i++ )
+	int i;
+	for ( i = 1; i <= m_pScoreBoard->m_iNumTeams; i++ )
 	{
 		if ( !stricmp( team_name.c_str(), g_TeamInfo[i].name ) )
 			break;

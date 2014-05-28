@@ -226,7 +226,7 @@ public:
     int             GetCommanderIndex() const;
 	bool			GetHasJetpack() const;
 	int				GetHelpIconFrameFromUser3(AvHUser3 inUser3);
-	HSPRITE			GetHelpSprite() const;
+	SpriteHandle_t			GetHelpSprite() const;
 	bool			GetHasAlienUpgradesAvailable() const;
 	bool			GetIsAlien() const;
 	bool			GetIsBeingDigested() const;
@@ -370,7 +370,7 @@ public:
     void            RenderMiniMap(int inX, int inY, int inWidth, int inHeight);
 
     void            RenderStructureRanges();
-    void            RenderStructureRange(vec3_t inOrigin, int inRadius, HSPRITE inSprite, int inRenderMode = kRenderNormal, int inFrame = 0, float inR = 0, float inG = 0.5, float inB = 0, float inAlpha = 1.0f);
+    void            RenderStructureRange(vec3_t inOrigin, int inRadius, SpriteHandle_t inSprite, int inRenderMode = kRenderNormal, int inFrame = 0, float inR = 0, float inG = 0.5, float inB = 0, float inAlpha = 1.0f);
 
     void            DrawWarpedOverlaySprite(int spriteHandle, int numXFrames, int numYFrames,
                         float inWarpXAmount = 0.0f, float inWarpYAmount = 0.0f,
@@ -426,7 +426,7 @@ public:
     void            HideCrosshair();
 
     // This function should be used instead of the global SetCrosshair.
-    void            SetCurrentCrosshair(HSPRITE hspr, wrect_t rc, int r, int g, int b);
+    void            SetCurrentCrosshair(SpriteHandle_t hspr, wrect_t rc, int r, int g, int b);
 
 	static void		ResetGammaAtExit();
 	static int		ResetGammaAtExitForOnExit();
@@ -505,7 +505,7 @@ private:
 	virtual void	ResetGame(bool inMapChanged = false);
 	
     bool			SetCursor(AvHOrderType inOrderType);
-    void            GetCursor(HSPRITE& outSprite, int& outFrame);
+    void            GetCursor(SpriteHandle_t& outSprite, int& outFrame);
 
 	void			SetSelectionEffects(EntityListType& inUnitList);
 	//void			UpdateSelectionEffects(float inTimePassed);
@@ -707,27 +707,27 @@ private:
 	AvHVisibleBlipList		mFriendlyBlips;
 	
 	bool					mMarineUIDrawUI;
-	HSPRITE					mMarineUIJetpackSprite;
+	SpriteHandle_t					mMarineUIJetpackSprite;
 
-	HSPRITE					mAlienUIEnergySprite;
-	HSPRITE					mAlienUICloakSprite;
+	SpriteHandle_t					mAlienUIEnergySprite;
+	SpriteHandle_t					mAlienUICloakSprite;
 
-	HSPRITE					mMembraneSprite;
-	HSPRITE					mDigestingSprite;
-	HSPRITE					mBackgroundSprite;
-	HSPRITE					mTopDownTopSprite;
-	HSPRITE					mTopDownBottomSprite;
-	HSPRITE					mMarineTopSprite;
-	HSPRITE					mLogoutSprite;
-	HSPRITE					mCommandButtonSprite;
-	HSPRITE					mCommandStatusSprite;
-	HSPRITE					mSelectAllSprite;
+	SpriteHandle_t					mMembraneSprite;
+	SpriteHandle_t					mDigestingSprite;
+	SpriteHandle_t					mBackgroundSprite;
+	SpriteHandle_t					mTopDownTopSprite;
+	SpriteHandle_t					mTopDownBottomSprite;
+	SpriteHandle_t					mMarineTopSprite;
+	SpriteHandle_t					mLogoutSprite;
+	SpriteHandle_t					mCommandButtonSprite;
+	SpriteHandle_t					mCommandStatusSprite;
+	SpriteHandle_t					mSelectAllSprite;
 
-	HSPRITE					mMarineOrderIndicator;
-	HSPRITE					mMarineUpgradesSprite;
+	SpriteHandle_t					mMarineOrderIndicator;
+	SpriteHandle_t					mMarineUpgradesSprite;
 
 	// : 0000971
-	HSPRITE					mTeammateOrderSprite;
+	SpriteHandle_t					mTeammateOrderSprite;
 	// :
 	typedef map<int, int>			SpriteListType;
 	SpriteListType					mActionButtonSprites;
@@ -741,30 +741,30 @@ private:
 	EntityListType							mBuildingEffectsEntityList;
 	float									mTimeOfLastEntityUpdate;
 
-	HSPRITE					mAlienUIUpgrades;
-	HSPRITE					mAlienUIUpgradeCategories;
+	SpriteHandle_t					mAlienUIUpgrades;
+	SpriteHandle_t					mAlienUIUpgradeCategories;
 
-	HSPRITE					mAlienBuildSprite;
-	HSPRITE					mMarineBuildSprite;
+	SpriteHandle_t					mAlienBuildSprite;
+	SpriteHandle_t					mMarineBuildSprite;
 
-	HSPRITE					mAlienHealthSprite;
-	HSPRITE					mMarineHealthSprite;
+	SpriteHandle_t					mAlienHealthSprite;
+	SpriteHandle_t					mMarineHealthSprite;
 
-	HSPRITE					mHealthEffectsSprite;
-	HSPRITE					mBuildCircleSprite;
-	//HSPRITE					mSiegeTurretSprite;
+	SpriteHandle_t					mHealthEffectsSprite;
+	SpriteHandle_t					mBuildCircleSprite;
+	//SpriteHandle_t					mSiegeTurretSprite;
 	SelectionListType		mSelectionEffects;
 
 
-	//HSPRITE					mMappingTechSprite;
+	//SpriteHandle_t					mMappingTechSprite;
 
-	HSPRITE					mHiveInfoSprite;
-	HSPRITE					mHiveHealthSprite;
-	HSPRITE					mOrderSprite;
-	HSPRITE					mCursorSprite;
-	HSPRITE					mMarineCursor;
-	HSPRITE					mAlienCursor;
-	HSPRITE					mAlienLifeformsCursor;
+	SpriteHandle_t					mHiveInfoSprite;
+	SpriteHandle_t					mHiveHealthSprite;
+	SpriteHandle_t					mOrderSprite;
+	SpriteHandle_t					mCursorSprite;
+	SpriteHandle_t					mMarineCursor;
+	SpriteHandle_t					mAlienCursor;
+	SpriteHandle_t					mAlienLifeformsCursor;
 	int						mCurrentCursorFrame;
 
 	int						mProgressBarEntityIndex;
@@ -779,8 +779,8 @@ private:
 	float					mFogStart;
 	float					mFogEnd;
 
-	HSPRITE					mExperienceBarSprite;
-	HSPRITE					mProgressBarSprite;
+	SpriteHandle_t					mExperienceBarSprite;
+	SpriteHandle_t					mProgressBarSprite;
 
 	AvHBaseInfoLocationListType		mInfoLocationList;
 	string							mLocationText;
@@ -848,7 +848,7 @@ private:
 	StructureHUDNotificationListType		mStructureNotificationList;
 
     int                     mCrosshairShowCount;
-    HSPRITE                 mCrosshairSprite;
+    SpriteHandle_t                 mCrosshairSprite;
     wrect_t                 mCrosshairRect;
     int                     mCrosshairR;
     int                     mCrosshairG;

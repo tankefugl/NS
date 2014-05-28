@@ -1143,8 +1143,8 @@ bool AvHHud::GetAndClearTopDownScrollAmount(int& outX, int& outY, int& outZ)
 	{
 		const int kScreenWidth = ScreenWidth();
 		const int kScreenHeight = ScreenHeight();
-		const kScrollHorizontal = .0152f*kScreenWidth;
-		const kScrollVertical = .015f*kScreenHeight;
+		const float kScrollHorizontal = .0152f*kScreenWidth;
+		const float kScrollVertical = .015f*kScreenHeight;
 
 		// Left side
 		if(this->GetIsMouseInRegion(0, 0, kScrollHorizontal, kScreenHeight) || (gScrollHandler.GetXScroll() < 0))
@@ -3684,7 +3684,7 @@ void AvHHud::Init(void)
 	signal(SIGBREAK, AvHHud::ResetGammaAtExit);
 	signal(SIGABRT, AvHHud::ResetGammaAtExit);
 
-	//memset(this->mAlienUILifeforms, 0, sizeof(HSPRITE)*kNumAlienLifeforms);
+	//memset(this->mAlienUILifeforms, 0, sizeof(SpriteHandle_t)*kNumAlienLifeforms);
 	this->mAlienUIUpgrades = 0;
 	this->mAlienUIUpgradeCategories = 0;
 	this->mOrderSprite = 0;
@@ -3863,7 +3863,7 @@ bool AvHHud::SetCursor(AvHOrderType inOrderType)
 	return theSuccess;
 }
 
-void AvHHud::GetCursor(HSPRITE& outSprite, int& outFrame)
+void AvHHud::GetCursor(SpriteHandle_t& outSprite, int& outFrame)
 {
 
     if (g_iUser1 == 0)
@@ -4059,8 +4059,8 @@ int AvHHud::InitializeDemoPlayback(int inSize, unsigned char* inBuffer)
 	int theNumUpgrades = 0;
 	//this->mUpgradeCosts.clear();
 	LoadData(&theNumUpgrades, inBuffer, sizeof(int), theBytesRead);
-
-	for(int i = 0; i < theNumUpgrades; i++)
+	int i;
+	for( i = 0; i < theNumUpgrades; i++)
 	{
 		// Read in upgrades (for backwards-compatibility)
 		int theFirst = 0;
@@ -4287,8 +4287,8 @@ void AvHHud::InitializeDemoRecording()
 	// Save sound names
 	int theSoundNameListSize = (int)this->mSoundNameList.size();
 	theTotalSize += sizeof(theSoundNameListSize);
-
-	for(int i = 0; i < theSoundNameListSize; i++)
+	int i;
+	for( i = 0; i < theSoundNameListSize; i++)
 	{
 		string theCurrentSoundName = this->mSoundNameList[i];
 		theTotalSize += GetDataSize(theCurrentSoundName);
@@ -4321,7 +4321,8 @@ void AvHHud::InitializeDemoRecording()
 		SAVE_DATA(theDrawMapBG);
 
 		SAVE_DATA(theSoundNameListSize);
-		for(int i = 0; i < theSoundNameListSize; i++)
+
+		for( i = 0; i < theSoundNameListSize; i++)
 		{
 			string theCurrentSoundName = this->mSoundNameList[i];
 			SaveStringData(theCharArray, theCurrentSoundName, theCounter);
@@ -4903,7 +4904,7 @@ bool AvHHud::GetCommanderLabelText(std::string& outCommanderName) const
 
         theStream << theCommanderText;
         theStream << ": ";
-        
+        // DEBUG SAYS PROBLEM HERE @TO FIX
 		hud_player_info_t *thePlayerInfo=(hud_player_info_t *)&buff[0];
 		memset(thePlayerInfo, 0, 512+sizeof(hud_player_info_t));
 		memset(thePlayerInfo->padding, 0xe, sizeof(thePlayerInfo->padding));
@@ -7051,7 +7052,7 @@ void AvHHud::HideCrosshair()
 
 }
 
-void AvHHud::SetCurrentCrosshair(HSPRITE hspr, wrect_t rc, int r, int g, int b)
+void AvHHud::SetCurrentCrosshair(SpriteHandle_t hspr, wrect_t rc, int r, int g, int b)
 {
     mCrosshairSprite = hspr;
     mCrosshairRect   = rc;

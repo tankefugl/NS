@@ -104,7 +104,8 @@ char *stackTrace( int skipAssert ) {
 	MAKEPTR( IMAGE_NT_HEADERS, ntHeader, dosHeader->e_lfanew );
 
 	// Go through each section looking for the .rdata section
-	for( int i=0; i<ntHeader->FileHeader.NumberOfSections; i++ ) {
+	int i;
+	for( i=0; i<ntHeader->FileHeader.NumberOfSections; i++ ) {
 		IMAGE_SECTION_HEADER *secHead = &(IMAGE_FIRST_SECTION( ntHeader ))[i];
 		if( ! stricmp( (char *)&secHead->Name[0], ".rdata" ) ) {
 			numDebugFormats = 
@@ -285,7 +286,7 @@ char *stackTrace( int skipAssert ) {
 				}
 			}
 			OUTS " )\n" );
-
+			int l;
 			if( success ) {
 				// Name mangler succeeded, go back and
 				// print out a hex dump for each pointer.
@@ -297,7 +298,7 @@ char *stackTrace( int skipAssert ) {
 							if( ptr >= (unsigned char *)baseAddress ) {
 								for( int k=0; k<3; k++, ptr+=16 ) {
 									OUTS "  %X: ", ptr );
-									for( int l=0; l<16; l++ ) OUTS "%02X ", ptr[l] );
+									for( l=0; l<16; l++ ) OUTS "%02X ", ptr[l] );
 									OUTS "  " );
 									for( l=0; l<16; l++ ) OUTS "%c", ptr[l]>=31&&ptr[l]<127?ptr[l]:'.' );
 									OUTS "\n" );

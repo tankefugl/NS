@@ -50,7 +50,7 @@ public:
 
 private:
 
-    HSPRITE mSprite;
+    SpriteHandle_t mSprite;
 
     int mSpriteWidth;
     int mSpriteHeight;

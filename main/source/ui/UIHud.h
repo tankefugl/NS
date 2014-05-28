@@ -13,10 +13,14 @@
 #include "vgui_Scheme.h"
 #include "vgui_BitmapTGA.h"
 #include "cl_dll/vgui_SchemeManager.h"
+#include "fmoddyn.h"
 
 class UIFactory;
-struct fmod_instance_struct;
-typedef fmod_instance_struct FMOD_INSTANCE;
+
+//struct fmod_instance_struct;
+//typedef fmod_instance_struct FMOD_INSTANCE;
+
+
 typedef struct FSOUND_STREAM FSOUND_STREAM;
 
 // Initializes self from text file
@@ -83,7 +87,7 @@ public:
     
     virtual bool    UpdateInternetStream(float inCurrentTime, string& outError);
 
-    FMOD_INSTANCE*  GetFMOD();
+	FMOD_INSTANCE* GetFMOD();
 
 protected:
     virtual bool    Update(float inCurrentTime, string& outError);
@@ -123,7 +127,7 @@ private:
 protected:
 	CSchemeManager*		mSchemeManager;
 
-    FMOD_INSTANCE*      mFMOD;
+   FMOD_INSTANCE*      mFMOD;
 
 };
 

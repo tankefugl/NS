@@ -1148,7 +1148,7 @@ char* UTIL_VarArgs( char *format, ... )
 	va_start (argptr, format);
 #ifdef WIN32
    //overflow protection in MS version of function...
-   _vsnprintf( string, 1023, format, argptr );
+   _vsnprintf_s( string, 1023, format, argptr );
 #else
 	vsprintf (string, format,argptr);
 #endif
@@ -1438,7 +1438,7 @@ BOOL UTIL_TeamsMatch( const char *pTeamName1, const char *pTeamName2 )
 	// Both on a team?
 	if ( *pTeamName1 != 0 && *pTeamName2 != 0 )
 	{
-		if ( !stricmp( pTeamName1, pTeamName2 ) )	// Same Team?
+		if ( !_stricmp( pTeamName1, pTeamName2 ) )	// Same Team?
 			return TRUE;
 	}
 

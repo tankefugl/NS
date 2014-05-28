@@ -1,4 +1,4 @@
-#define AVH_NO_NEXUS
+//#define USE_OLDAUTH
 #ifdef AVH_NO_NEXUS
 	#include <string>
 	using std::string;
@@ -21,7 +21,7 @@ namespace AvHNexus {
 	void shutdown(void) {}
 }
 #else
-	#include <NexusServerInterface.h>
+	//#include <NexusServerInterface.h>
 	#include "AvHNexusServer.h"
 	#include "AvHNexusTunnelToClient.h"
 

@@ -142,9 +142,9 @@ int ScreenWidth()
 }
 
 
-HSPRITE Safe_SPR_Load(const char* inSpriteName)
+SpriteHandle_t Safe_SPR_Load(const char* inSpriteName)
 {
-	HSPRITE theSpriteHandle = gEngfuncs.pfnSPR_Load(inSpriteName);
+	SpriteHandle_t theSpriteHandle = gEngfuncs.pfnSPR_Load(inSpriteName);
 	
 	// Check for "Can't allocate 128 HUD sprites" crash
 	ASSERT(theSpriteHandle < 128);
@@ -254,7 +254,7 @@ void FillRGBAClipped(vgui::Panel* inPanel, int inStartX, int inStartY, int inWid
 }
 
 
-HSPRITE LoadSprite(const char *pszName)
+SpriteHandle_t LoadSprite(const char *pszName)
 {
 	int i;
 	char sz[256]; 

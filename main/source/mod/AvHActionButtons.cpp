@@ -587,7 +587,7 @@ void AvHActionButtons::SetButtonsToGrid()
 		{
 			int i = theCol + theRow*kNumActionButtonCols;
 			this->mButtonArray[i]->SetStaticSize(theButtonWidth, theButtonHeight);
-			//this->mButtonArray[i]->setSize(theButtonWidth, theButtonHeight);
+		//	this->mButtonArray[i]->setSize(theButtonWidth, theButtonHeight); // to fix was commented
 			this->mButtonArray[i]->setPos(theCol*theButtonWidth, theRow*theButtonHeight);
 		}
 	}
@@ -596,7 +596,6 @@ void AvHActionButtons::SetButtonsToGrid()
 void AvHActionButtons::setSize(int inWidth,int inHeight)
 {
 	Panel::setSize(inWidth, inHeight);
-
 	this->SetButtonsToGrid();	
 }
 

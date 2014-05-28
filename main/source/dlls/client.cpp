@@ -182,6 +182,7 @@ LogStringForPlayer
 generates string for player event logging - KGP
 ============
 */
+
 std::string GetLogStringForPlayer( edict_t *pEntity )
 {
 	// outputs "netname<userid><networkid><team>" if g_teamplay
@@ -191,7 +192,7 @@ std::string GetLogStringForPlayer( edict_t *pEntity )
 	result += "<";
 	result += MakeStringFromInt( GETPLAYERUSERID( pEntity ) );
 	result += "><";
-	result += AvHNexus::getNetworkID( pEntity ).c_str();
+	result += AvHSUGetPlayerAuthIDString( pEntity ).c_str();
 	result += "><";
 	result += AvHSUGetTeamName( pEntity->v.team );
 	result += ">\"";
@@ -535,7 +536,7 @@ void Host_Say( edict_t *pEntity, int teamonly )
 	else
 		temp = "say";
 	
-	UTIL_LogPrintf( "%s %s \"%s\"\n", GetLogStringForPlayer( pEntity ).c_str(), temp, p );
+//	UTIL_LogPrintf( "%s %s \"%s\"\n", GetLogStringForPlayer( pEntity ).c_str(), temp, p );
 }
 
 
@@ -739,7 +740,7 @@ void ClientUserInfoChanged( edict_t *pEntity, char *infobuffer )
 
 			UTIL_SayTextAll(text, CBaseEntity::Instance(ENT(pEntity)));
 			
-			UTIL_LogPrintf( "%s changed name to \"%s\"\n", GetLogStringForPlayer( pEntity ).c_str(), g_engfuncs.pfnInfoKeyValue( infobuffer, "name" ) );
+//			UTIL_LogPrintf( "%s changed name to \"%s\"\n", GetLogStringForPlayer( pEntity ).c_str(), g_engfuncs.pfnInfoKeyValue( infobuffer, "name" ) );
 		}
 	}
 

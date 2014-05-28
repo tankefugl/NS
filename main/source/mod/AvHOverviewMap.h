@@ -100,7 +100,7 @@ private:
 	string							mMapName;
 	int								mMiniMapSprite;
 
-	HSPRITE							mReticleSprite;
+	SpriteHandle_t							mReticleSprite;
 	
 	typedef vector<DrawableEntity>	DrawableEntityListType;
 	DrawableEntityListType			mDrawableEntityList;

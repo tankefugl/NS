@@ -50,7 +50,7 @@ inline char* CVAR_GET_STRING( const char *x ) {	return gEngfuncs.pfnGetCvarStrin
 inline struct cvar_s *CVAR_CREATE( const char *cv, const char *val, const int flags ) {	return gEngfuncs.pfnRegisterVariable( (char*)cv, (char*)val, flags ); }
 
 //#define SPR_Load (*gEngfuncs.pfnSPR_Load)
-HSPRITE Safe_SPR_Load(const char* inSpriteName);
+SpriteHandle_t Safe_SPR_Load(const char* inSpriteName);
 #define SPR_Set (*gEngfuncs.pfnSPR_Set)
 #define SPR_Frames (*gEngfuncs.pfnSPR_Frames)
 #define SPR_GetList (*gEngfuncs.pfnSPR_GetList)
@@ -91,8 +91,8 @@ int ScreenWidth();
 
 
 // Gets the height & width of a sprite,  at the specified frame
-inline int SPR_Height( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Height(x, f); }
-inline int SPR_Width( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Width(x, f); }
+inline int SPR_Height( SpriteHandle_t x, int f )	{ return gEngfuncs.pfnSPR_Height(x, f); }
+inline int SPR_Width( SpriteHandle_t x, int f )	{ return gEngfuncs.pfnSPR_Width(x, f); }
 
 inline 	client_textmessage_t	*TextMessageGet( const char *pName ) { return gEngfuncs.pfnTextMessageGet( pName ); }
 inline 	int						TextMessageDrawChar( int x, int y, int number, int r, int g, int b ) 
@@ -138,7 +138,7 @@ inline void UnpackRGB(int &r, int &g, int &b, unsigned long ulRGB)\
 
 void FillRGBAClipped(vgui::Panel* inPanel, int inStartX, int inStartY, int inWidth, int inHeight, int r, int g, int b, int a);
 
-HSPRITE LoadSprite(const char *pszName);
+SpriteHandle_t LoadSprite(const char *pszName);
 
 //bool LocalizeString(const char* inMessage, char* outBuffer, int inBufferSize);
 bool LocalizeString(const char* inMessage, string& outputString);

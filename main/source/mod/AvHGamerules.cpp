@@ -397,18 +397,21 @@ bool AvHGamerules::PerformHardAuthorization(AvHPlayer* inPlayer) const
 
 // Sets the player up to join the team, though they may not respawn in immediately depending
 // on the ruleset and the state of the game.  Assumes 1 or a 2 for team number
+
 bool AvHGamerules::AttemptToJoinTeam(AvHPlayer* inPlayer, AvHTeamNumber inTeamToJoin, bool inDisplayErrorMessage)
 {
 	bool theSuccess = false;
 	string theErrorString;
 
 	// Check authorization in secure build
+	/*
 	if(!inPlayer->GetIsAuthorized(AUTH_ACTION_JOIN_TEAM,inTeamToJoin))
 	{
 		AvHNexus::handleUnauthorizedJoinTeamAttempt(inPlayer->edict(),inTeamToJoin);
 	}
-	else
+	else*/
 // : 0001073
+
 #ifdef USE_OLDAUTH
 	if(this->PerformHardAuthorization(inPlayer))
 #endif
@@ -2354,11 +2357,12 @@ void AvHGamerules::RecalculateHandicap()
 }
 
 // Called when dedicated server exits
+#if 0
 void AvHGamerules::ServerExit()
 {
 	AvHNexus::shutdown();
 }
-
+#endif
 void AvHGamerules::VoteMap(int inPlayerIndex, int inMapIndex)
 {
 	// check to remove votemap spam
@@ -2386,16 +2390,19 @@ void AvHGamerules::VoteMap(int inPlayerIndex, int inMapIndex)
         // If this is a valid map
 		if((inMapIndex > 0) && (inMapIndex <= (signed)this->mMapVoteList.size()))
 		{
-
+			//	typedef map< int, int >		PlayerMapVoteListType;
 			PlayerMapVoteListType::iterator theMappedPlayer = this->mPlayersVoted.find(inPlayerIndex);
 			
+			//	typedef vector< pair <string, int> >	MapVoteListType;
             // Increment votes for map
-            MapVoteListType::iterator theIter = (MapVoteListType::iterator)&this->mMapVoteList[inMapIndex-1];
+           // MapVoteListType::iterator theIter = (MapVoteListType::iterator)&this->mMapVoteList[inMapIndex-1]; //to fix 20214
+			MapVoteListType::iterator theIter = this->mMapVoteList.begin();
             int theVotes = ++theIter->second;
-
+		
 			// If player has already voted, decrement previous map and update which map the player has voted
 			if(theMappedPlayer != this->mPlayersVoted.end()) {
-				((MapVoteListType::iterator)&this->mMapVoteList[theMappedPlayer->second - 1])->second--;
+			//	((MapVoteListType::iterator)&this->mMapVoteList[theMappedPlayer->second - 1])->second--; /to fix 20214
+				this->mMapVoteList.at(theMappedPlayer->second-1).second--;
 				theMappedPlayer->second = inMapIndex;
 			}
 			// else, remember the "new" player's vote
@@ -2431,7 +2438,8 @@ void AvHGamerules::RemovePlayerFromVotemap(int inPlayerIndex)
 
 	// If player has voted, decrement the map voted for
 	if(theMappedPlayer != this->mPlayersVoted.end()) {
-		((MapVoteListType::iterator)&this->mMapVoteList[theMappedPlayer->second - 1])->second--;
+	//	((MapVoteListType::iterator)&this->mMapVoteList[theMappedPlayer->second - 1])->second--; /to fix 20214
+		this->mMapVoteList.at(theMappedPlayer->second-1).second--;
 		this->mPlayersVoted.erase(inPlayerIndex);
 	}
 
@@ -2776,10 +2784,12 @@ void AvHGamerules::ResetEntities()
 
 void AvHGamerules::InternalResetGameRules()
 {
+	#if 0
 	if(AvHNexus::isRecordingGame())
 	{
 		AvHNexus::cancelGame();
 	}
+	#endif
 	this->mGameStarted = false;
 	this->mLastJoinMessage = 0.0f;
 	this->mTimeCountDownStarted = 0;
@@ -3255,7 +3265,7 @@ void AvHGamerules::SetGameStarted(bool inGameStarted)
 	if(!this->mGameStarted && inGameStarted)
 	{
 		FireTargets(ktGameStartedStatus, NULL, NULL, USE_TOGGLE, 0.0f);
-		AvHNexus::startGame();
+		//AvHNexus::startGame();
 	}
 	this->mGameStarted = inGameStarted;
 	this->mTimeGameStarted = gpGlobals->time;
@@ -3361,7 +3371,7 @@ void AvHGamerules::Think(void)
 	#endif
 
 	PROFILE_START();
-	AvHNexus::processResponses();
+//	AvHNexus::processResponses();
 	this->RecalculateHandicap();
 // : 0001073
 #ifdef USE_OLDAUTH
@@ -4185,7 +4195,7 @@ void AvHGamerules::UpdateVictoryStatus(void)
 		if(this->mVictoryTeam != TEAM_IND)
 		{
 			this->TallyVictoryStats();
-			AvHNexus::finishGame();
+		//	AvHNexus::finishGame();
 
 			FOR_ALL_ENTITIES(kAvHPlayerClassName, AvHPlayer*)
 				AvHTeam* theTeam = theEntity->GetTeamPointer();

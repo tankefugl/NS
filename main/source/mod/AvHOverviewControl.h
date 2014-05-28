@@ -25,7 +25,7 @@ protected:
 
 private:
 
-    HSPRITE m_hsprWhite;
+    SpriteHandle_t m_hsprWhite;
 
 };
 

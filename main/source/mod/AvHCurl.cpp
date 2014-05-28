@@ -27,7 +27,8 @@
 #ifndef LINUX
 #define CURL_STATICLIB
 #endif
-#include "curl/curl.h"
+
+#include "curl.h"
 
 extern cvar_t							avh_serverops;
 extern unsigned int						gTimeLastUpdatedUplink;

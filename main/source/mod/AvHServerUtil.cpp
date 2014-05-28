@@ -250,7 +250,7 @@ const char* kSteamIDBot = "BOT";
 const char* kSteamIDInvalidID = "-1";
 const char* kSteamIDDefault = "STEAM_0:0:0";
 const char* kSteamIDPrefix = "STEAM_";
-bool AvHSUGetIsValidAuthID(const string& inAuthID)
+bool AvHSUGetIsValidAuthID(const string &inAuthID)
 {
 	bool theIsValid = true;
 
@@ -262,6 +262,7 @@ bool AvHSUGetIsValidAuthID(const string& inAuthID)
 
 	return theIsValid;
 }
+
 // Function that is backwards-compatible with WON ids 
 string AvHSUGetPlayerAuthIDString(edict_t* inPlayer)
 {

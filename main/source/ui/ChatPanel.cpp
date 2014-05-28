@@ -133,7 +133,7 @@ void ChatPanel::paint()
     int y = (height - theFont.GetStringHeight()) / 2;
     
     char prompt[128];
-	strncpy(prompt, mChatMode.c_str(), 127);
+	strncpy_s(prompt, mChatMode.c_str(), 127);
 
 	prompt[0] = toupper( prompt[0] );
 
@@ -145,7 +145,7 @@ void ChatPanel::paint()
 			*pApersand = ' ';
 	}
 
-	strcat(prompt, ": ");
+	strcat_s(prompt, ": ");
 
     x = theFont.DrawString(x, y, prompt, 128, 128, 128);
     
