@@ -1,8 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cl_dll.dll", "cl_dll\cl_dll.vcxproj", "{AC16D18F-1308-80D7-EF83-F84B72CA0A1D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cl_dll.dll", "cl_dll\cl_dll.vcxproj", "{A3AC8049-E5F7-6D5F-47F9-76B45DB1D54A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ns.dll", "dlls\hl.vcxproj", "{BFD7A4D2-76E7-E0E5-5A77-32A65153CF0D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ns.dll", "dlls\hl.vcxproj", "{B793156F-E439-A5B7-AF1E-E95BAB312F44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,18 +12,18 @@ Global
 		Playtest|Win32 = Playtest|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AC16D18F-1308-80D7-EF83-F84B72CA0A1D}.Developer - debug|Win32.ActiveCfg = Developer - debug|Win32
-		{AC16D18F-1308-80D7-EF83-F84B72CA0A1D}.Developer - release|Win32.ActiveCfg = Developer - release|Win32
-		{AC16D18F-1308-80D7-EF83-F84B72CA0A1D}.Playtest - balance disabled|Win32.ActiveCfg = Playtest - balance disabled|Win32
-		{AC16D18F-1308-80D7-EF83-F84B72CA0A1D}.Playtest - balance disabled|Win32.Build.0 = Playtest - balance disabled|Win32
-		{AC16D18F-1308-80D7-EF83-F84B72CA0A1D}.Playtest|Win32.ActiveCfg = Playtest|Win32
-		{AC16D18F-1308-80D7-EF83-F84B72CA0A1D}.Playtest|Win32.Build.0 = Playtest|Win32
-		{BFD7A4D2-76E7-E0E5-5A77-32A65153CF0D}.Developer - debug|Win32.ActiveCfg = Developer - debug|Win32
-		{BFD7A4D2-76E7-E0E5-5A77-32A65153CF0D}.Developer - release|Win32.ActiveCfg = Developer - release|Win32
-		{BFD7A4D2-76E7-E0E5-5A77-32A65153CF0D}.Playtest - balance disabled|Win32.ActiveCfg = Playtest - balance disabled|Win32
-		{BFD7A4D2-76E7-E0E5-5A77-32A65153CF0D}.Playtest - balance disabled|Win32.Build.0 = Playtest - balance disabled|Win32
-		{BFD7A4D2-76E7-E0E5-5A77-32A65153CF0D}.Playtest|Win32.ActiveCfg = Playtest|Win32
-		{BFD7A4D2-76E7-E0E5-5A77-32A65153CF0D}.Playtest|Win32.Build.0 = Playtest|Win32
+		{A3AC8049-E5F7-6D5F-47F9-76B45DB1D54A}.Developer - debug|Win32.ActiveCfg = Developer - debug|Win32
+		{A3AC8049-E5F7-6D5F-47F9-76B45DB1D54A}.Developer - release|Win32.ActiveCfg = Developer - release|Win32
+		{A3AC8049-E5F7-6D5F-47F9-76B45DB1D54A}.Playtest - balance disabled|Win32.ActiveCfg = Playtest - balance disabled|Win32
+		{A3AC8049-E5F7-6D5F-47F9-76B45DB1D54A}.Playtest - balance disabled|Win32.Build.0 = Playtest - balance disabled|Win32
+		{A3AC8049-E5F7-6D5F-47F9-76B45DB1D54A}.Playtest|Win32.ActiveCfg = Playtest|Win32
+		{A3AC8049-E5F7-6D5F-47F9-76B45DB1D54A}.Playtest|Win32.Build.0 = Playtest|Win32
+		{B793156F-E439-A5B7-AF1E-E95BAB312F44}.Developer - debug|Win32.ActiveCfg = Developer - debug|Win32
+		{B793156F-E439-A5B7-AF1E-E95BAB312F44}.Developer - release|Win32.ActiveCfg = Developer - release|Win32
+		{B793156F-E439-A5B7-AF1E-E95BAB312F44}.Playtest - balance disabled|Win32.ActiveCfg = Playtest - balance disabled|Win32
+		{B793156F-E439-A5B7-AF1E-E95BAB312F44}.Playtest - balance disabled|Win32.Build.0 = Playtest - balance disabled|Win32
+		{B793156F-E439-A5B7-AF1E-E95BAB312F44}.Playtest|Win32.ActiveCfg = Playtest|Win32
+		{B793156F-E439-A5B7-AF1E-E95BAB312F44}.Playtest|Win32.Build.0 = Playtest|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

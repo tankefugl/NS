@@ -1,4 +1,3 @@
-#if 0
 #ifndef AVHNEXUSSERVER_H
 #define AVHNEXUSSERVER_H
 
@@ -30,5 +29,4 @@ namespace AvHNexus
 	void shutdown(void);
 }
 
-#endif
 #endif
