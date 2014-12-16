@@ -6,29 +6,30 @@ Just hacked up, you will notice a lot of odd behavior.
 In order to compile: cd ../linux and type make hl_cdll &> out.log
 
 Additional libraries
--1.) zlib1g-dev:i386
--2.) libpng12-dev:i386
--3.) The particle engine(David McAllister)
+- zlib1g-dev:i386
+- libpng12-dev:i386
+- The particle engine(David McAllister)
 
 If you get the this error when running the app: Fatal Error - could not load library (client.so)
 With a high chance it is because of some UNDEFINED SYMBOLS in the shared library.
 But you can check this with ldd -r -d client.so.
 
 If you want to debug:
--1.) LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" gdb ./hl_linux
--2.) r -game ns -dev -steam
+- LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" gdb ./hl_linux
+- r -game ns -dev -steam
 
 
 Due to the new engine and the nature of linux i had to make a lot of changes! You can find them with grep -Ril "@Linux".
 
 List of (new) Bugs
--1.) FMOD doesn't load
--2.) play random song needs to be reimplemented for linux
--3.) Commander Overview: Camera needs to be fixed
--4.) Hud: Odd behavior of the displayed models
--5.) Mouse rotation is locked to a specific angle
--6.) NS had some special Gamma functions(many WIN func calls), so I removed them :-) --> Always standard gamma (BUG?)
--7.) Fonts: ns/gfx/vgui/fonts High resolution fonts missing
+
+1. FMOD doesn't load
+2. play random song needs to be reimplemented for linux
+3. Commander Overview: Camera needs to be fixed
+4. Hud: Odd behavior of the displayed models
+5. Mouse rotation is locked to a specific angle
+6. NS had some special Gamma functions(many WIN func calls), so I removed them :-) --> Always standard gamma (BUG?)
+7. Fonts: ns/gfx/vgui/fonts High resolution fonts missing
 
 
 The server still needs some work(Segmentation fault)! But it can be compiled: make ns
