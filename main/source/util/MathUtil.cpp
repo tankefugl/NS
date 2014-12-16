@@ -22,23 +22,19 @@
 #include <cmath>
 #include "stdio.h"
 #include "stdlib.h"
-#include "math.h"
+#include <math.h>
 
 //#include "hud.h"
 //#include "cl_util.h"
 #include <string.h>
 #include "nowarnings.h"
-#include "util/MathUtil.h"
+#include "MathUtil.h"
 #include "common/vec_op.h"
 #include "common/mathlib.h"
 
-#ifndef max
-#define max(a,b)    (((a) > (b)) ? (a) : (b))
-#endif
 
-#ifndef min
+#define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
-#endif
 
 // Ignore "double to float possible loss of data" warning
 #pragma warning (disable: 4244)
@@ -384,6 +380,7 @@ double VectorDistance2D(const float* in1, const float* in2)
 }
 
 // Added by mmcguire.
+
 void VectorsToAngles(const float forward[3], const float right[3], const float up[3], float angles[3])
 {
    

@@ -75,7 +75,7 @@ CHalfLifeTeamplay :: CHalfLifeTeamplay()
 
 extern cvar_t timeleft, fragsleft;
 
-#include "game_shared/voice_gamemgr.h"
+#include "../game_shared/voice_gamemgr.h"
 extern CVoiceGameMgr	g_VoiceGameMgr;
 
 void CHalfLifeTeamplay :: Think ( void )

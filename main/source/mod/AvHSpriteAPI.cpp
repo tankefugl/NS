@@ -1,10 +1,10 @@
 #include "cl_dll/hud.h"
 #include "cl_dll/cl_util.h"
-#include "common/com_model.h"
+#include "../common/com_model.h"
 #include "cl_dll/demo.h"
 #include "cl_dll/r_studioint.h"
-#include "common/demo_api.h"
-#include "mod/AvHSpriteAPI.h"
+#include "../common/demo_api.h"
+#include "AvHSpriteAPI.h"
 
 extern vec3_t gPlaybackViewOrigin;
 extern engine_studio_api_t IEngineStudio;

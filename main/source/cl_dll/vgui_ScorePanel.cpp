@@ -71,20 +71,20 @@
 #include "common/cl_entity.h"
 #include "vgui_TeamFortressViewport.h"
 #include "vgui_ScorePanel.h"
-#include "..\game_shared\vgui_helpers.h"
-#include "..\game_shared\vgui_loadtga.h"
+#include "../game_shared/vgui_helpers.h"
+#include "../game_shared/vgui_loadtga.h"
 #include "mod/AvHConstants.h"
 #include "mod/AvHTitles.h"
 #include "mod/AvHBasePlayerWeaponConstants.h"
 #include "vgui_SpectatorPanel.h"
 #include "cl_dll/demo.h"
 #include "mod/AvHServerVariables.h"
-#include "util\STLUtil.h"
+#include "util/STLUtil.h"
 #include "ui/ScoreboardIcon.h"
-
-#include "common/ITrackerUser.h"
+/* @2014 
+#include "common/itrackeruser.h"
 extern ITrackerUser *g_pTrackerUser;
-
+*/
 hud_player_info_t	 g_PlayerInfoList[MAX_PLAYERS+1];	   // player info from the engine
 extra_player_info_t  g_PlayerExtraInfo[MAX_PLAYERS+1];   // additional player info sent directly to the client dll
 team_info_t			 g_TeamInfo[MAX_TEAMS+1];
@@ -1052,7 +1052,7 @@ void ScorePanel::FillGrid()
 				switch (col)
 				{
 				case COLUMN_NAME:
-					
+					/*
 					if (g_pTrackerUser)
 					{
 						int playerSlot = m_iSortedRows[row];
@@ -1064,7 +1064,7 @@ void ScorePanel::FillGrid()
 							pLabel->setText2(sz);
 						}
 					}
-					
+					*/
 					if(pl_info)
 					{
 						sprintf(sz, "%s  ", pl_info->name);
@@ -1212,23 +1212,27 @@ void ScorePanel::FillGrid()
 								if(pIcon)
 									m_CustomIconList.push_back( make_pair(pIcon, theCustomIcon) );
 							}
-							
+							/* //@2014 to do 
 							if(pIcon)
 							{
 								pLabel->setImage(pIcon);
 								pLabel->setFgColorAsImageColor(false);
-
+								
 								// Parse color (last 3 bytes are the RGB values 1-9)
 								string theColor = theCustomIcon.substr( strlen(theCustomIcon.c_str())-3, 3);
+								
+
+
 								int theRed = (MakeIntFromString(theColor.substr(0, 1))/9.0f)*255;
 								int theGreen = (MakeIntFromString(theColor.substr(1, 1))/9.0f)*255;
 								int theBlue = (MakeIntFromString(theColor.substr(2, 1))/9.0f)*255;
 
+
 								pIcon->setColor(BuildColor(theRed, theGreen, theBlue, gHUD.GetGammaSlope()));
-							}
+							}*/
 						}
 					}
-					
+					/* @2014 
 					if(g_pTrackerUser)
 					{
 						int playerSlot = theSortedRow;
@@ -1240,7 +1244,7 @@ void ScorePanel::FillGrid()
 							pLabel->setFgColorAsImageColor(false);
 							m_pTrackerIcon->setColor(Color(255, 255, 255, 0));
 						}
-					}
+					}*/
 #else
 					if( theExtraPlayerInfo->icon )
 					{
@@ -1254,6 +1258,7 @@ void ScorePanel::FillGrid()
                     {
                         const float kDeltaDisplayTime = 3.0f;
                         float theTimeSinceChange = gHUD.GetTimeOfLastUpdate() - theExtraPlayerInfo->timeOfLastScoreChange;
+
                         if((theExtraPlayerInfo->score > theExtraPlayerInfo->lastScore) && (theTimeSinceChange > 0) && (theTimeSinceChange < kDeltaDisplayTime) && (theExtraPlayerInfo->teamnumber != 0))
                         {
                             // draw score with change

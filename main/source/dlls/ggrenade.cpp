@@ -26,13 +26,14 @@
 #include "nodes.h"
 #include "soundent.h"
 #include "decals.h"
-#include "mod/AvHPlayerUpgrade.h"
-#include "mod/AvHServerVariables.h"
-#include "mod/AvHMarineWeaponConstants.h"
-#include "mod/AvHGamerules.h"
-#include "mod/AvHServerVariables.h"
-#include "util/MathUtil.h"
-#include "common/vec_op.h"
+#include "../mod/AvHPlayerUpgrade.h"
+#include "../mod/AvHServerVariables.h"
+#include "../mod/AvHMarineWeaponConstants.h"
+#include "../mod/AvHGamerules.h"
+#include "../mod/AvHServerVariables.h"
+#include "../util/MathUtil.h"
+#include "../util/MathUtil.h"
+#include "../common/vec_op.h"
 
 //===================grenade
 
@@ -45,9 +46,11 @@ LINK_ENTITY_TO_CLASS( grenade, CGrenade );
 //
 // Grenade Explode
 //
+//@2014 --> leads to undefined symbol
+/*
 void CGrenade::SetDamageType(int inDamageType) {
 	this->m_damageType=inDamageType;
-}
+}*/
 
 void CGrenade::Explode( Vector vecSrc, Vector vecAim)
 {
@@ -492,7 +495,9 @@ CGrenade *CGrenade::ShootContact( entvars_t *pevOwner, Vector vecStart, Vector v
 CGrenade* CGrenade::ShootExplosiveTimed( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time, int inDamageType)
 {
 	CGrenade *pGrenade = CGrenade::ShootTimed(pevOwner, vecStart, vecVelocity, time);
-	pGrenade->SetDamageType(inDamageType);
+//@2014	
+//pGrenade->SetDamageType(inDamageType);
+	pGrenade->m_damageType=inDamageType;
 	pGrenade->SetTouch(&CGrenade::ExplosiveBounceTouch);
 	return pGrenade;
 }

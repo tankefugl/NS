@@ -77,11 +77,12 @@ public:
 	virtual void BounceSound( void );
 	virtual int	BloodColor( void ) { return DONT_BLEED; }
 	virtual void Killed( entvars_t *pevAttacker, int iGib );
-	virtual void SetDamageType(int inDamageType);
-	
+	//virtual void SetDamageType(int inDamageType);
+	int	 m_damageType;
+
 	BOOL m_fRegisteredSound;// whether or not this grenade has issued its DANGER sound to the world sound list yet.
 private:
-	int	 m_damageType;
+	//int	 m_damageType;//@2014
 };
 
 
@@ -206,7 +207,7 @@ private:
 #define AMMO_URANIUMBOX_GIVE	20
 #define AMMO_SNARKBOX_GIVE		5
 
-#include "common/bullettypes.h"
+#include "../common/bullettypes.h"
 
 #define ITEM_FLAG_SELECTONEMPTY		1
 #define ITEM_FLAG_NOAUTORELOAD		2

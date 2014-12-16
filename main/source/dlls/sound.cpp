@@ -23,7 +23,7 @@
 #include "player.h"
 #include "talkmonster.h"
 #include "gamerules.h"
-#include "mod/AvHSpecials.h"
+#include "../mod/AvHSpecials.h"
 
 static char *memfgets( byte *pMemFile, int fileSize, int &filePos, char *pBuffer, int bufferSize );
 

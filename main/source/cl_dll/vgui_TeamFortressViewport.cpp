@@ -93,7 +93,7 @@
 #include "vgui_ServerBrowser.h"
 #include "vgui_ScorePanel.h"
 #include "vgui_SpectatorPanel.h"
-#include "game_shared\vgui_loadtga.h"
+#include "vgui_loadtga.h"
 #include "mod/AvHConstants.h"
 #include "mod/AvHTitles.h"
 #include "mod/AvHPieMenuHandler.h"
@@ -796,8 +796,10 @@ int TeamFortressViewport::CreateCommandMenu( char * menuFile, int direction, int
 		return newIndex;
 	}
 
+#ifdef _WIN32
 try
 {
+#endif
 	// First, read in the localisation strings
 
 	// Detpack strings
@@ -1001,6 +1003,7 @@ try
 
 		pfile = gEngfuncs.COM_ParseFile(pfile, token);
 	}
+#ifdef _WIN32
 }
 catch( CException *e )
 {
@@ -1010,6 +1013,7 @@ catch( CException *e )
 	m_iInitialized = false;
 	return newIndex;
 }
+#endif
 
 	SetCurrentMenu( NULL );
 	SetCurrentCommandMenu( NULL );
@@ -1427,7 +1431,7 @@ void TeamFortressViewport::ShowScoreBoard( void )
 				m_pScoreBoard->Open();
 				
 				// TODO: HLSDK 2.3 requires this?
-				//UpdateCursorState();
+				UpdateCursorState();
 
 				// If cursor is visible, set squelch mode automatically (used for commander)
 				if(gHUD.GetIsInTopDownMode())
@@ -1546,6 +1550,7 @@ void TeamFortressViewport::SetCurrentCommandMenu( CCommandMenu *pNewMenu )
 
 	if (m_pCurrentCommandMenu)
 		m_pCurrentCommandMenu->MakeVisible( NULL );
+
 }
 
 void TeamFortressViewport::UpdateCommandMenu(int menuIndex)

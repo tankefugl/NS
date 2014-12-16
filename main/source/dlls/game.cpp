@@ -68,11 +68,11 @@
 //
 //===============================================================================
 #include "extdll.h"
-#include "engine/eiface.h"
+#include "../engine/eiface.h"
 #include "util.h"
 #include "game.h"
-#include "mod/AvHServerVariables.h"
-#include "mod/AvHServerUtil.h"
+#include "../mod/AvHServerVariables.h"
+#include "../mod/AvHServerUtil.h"
 
 cvar_t	displaysoundlist = {"displaysoundlist","0"};
 

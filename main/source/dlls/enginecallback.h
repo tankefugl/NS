@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include "common/event_flags.h"
+#include "event_flags.h"
 
 // Must be provided by user of this code
 extern enginefuncs_t g_engfuncs;

@@ -675,10 +675,10 @@
 #define TE_BOUNCE_SHELL		1
 #define TE_BOUNCE_SHOTSHELL	2
 
-#include "common/renderingconst.h"
+#include "renderingconst.h"
 
-typedef int	func_t;
-typedef int	string_t;
+typedef unsigned int	func_t;
+typedef unsigned int	string_t;
 
 typedef unsigned char 		byte;
 typedef unsigned short 		word;

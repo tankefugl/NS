@@ -45,9 +45,6 @@
     <ClCompile Include="battery.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cdll_int.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="com_weapons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -118,15 +115,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="parsemsg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\pm_shared\pm_debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\pm_shared\pm_math.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\pm_shared\pm_shared.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="saytext.cpp">
@@ -588,17 +576,23 @@
     <ClCompile Include="..\util\Tokenizer.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="..\util\Zassert.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\util\ZassertTemplate.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
     <ClCompile Include="..\textrep\TRDescription.cpp">
       <Filter>textrep</Filter>
     </ClCompile>
     <ClCompile Include="..\textrep\TRFactory.cpp">
       <Filter>textrep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pm_shared\pm_shared.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pm_shared\pm_math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pm_shared\pm_debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cdll_int.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1034,9 +1028,6 @@
     <ClInclude Include="..\util\Tokenizer.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="..\util\Zassert.h">
-      <Filter>util</Filter>
-    </ClInclude>
     <ClInclude Include="..\textrep\TRDescription.h">
       <Filter>textrep</Filter>
     </ClInclude>
@@ -1049,5 +1040,8 @@
     <ClInclude Include="..\textrep\TRTagValuePair.h">
       <Filter>textrep</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\lib\public\game_controls.lib" />
   </ItemGroup>
 </Project>

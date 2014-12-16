@@ -7,11 +7,13 @@
 #pragma warning(disable: 311 312 313)
 
 #ifdef WIN32
-	#include "windows.h"
+	#include "winsani_in.h"
+	#include <windows.h>
+	#include "winsani_out.h"
 #endif
 #include "stdio.h"
 #include "string.h"
-#include "stacktrace.h"
+#include "Stacktrace.h"
 
 char *stackTrace( int skipAssert ) {
 	// Becuase this code may be running during a fatal,

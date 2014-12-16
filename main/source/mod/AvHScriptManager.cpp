@@ -22,11 +22,11 @@
 // - Post-crash checkin.  Restored @Backup from around 4/16.  Contains changes for last four weeks of development.
 //
 //===============================================================================
-#include "util/nowarnings.h"
-#include "mod/AvHScriptManager.h"
-#include "util/Checksum.h"
-#include "util/STLUtil.h"
-#include "mod/AvHConstants.h"
+#include "../util/nowarnings.h"
+#include "AvHScriptManager.h"
+#include "../util/Checksum.h"
+#include "../util/STLUtil.h"
+#include "AvHConstants.h"
 
 #ifdef USE_LUA
 extern "C" {

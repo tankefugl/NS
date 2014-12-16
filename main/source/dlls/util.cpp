@@ -25,16 +25,16 @@
 #include "cbase.h"
 #include "saverestore.h"
 #include <time.h>
-#include "engine/shake.h"
+#include "../engine/shake.h"
 #include "decals.h"
 #include "player.h"
 #include "weapons.h"
 #include "gamerules.h"
-#include "mod/AvHServerUtil.h"
-#include "mod/AvHNetworkMessages.h"
-#include "mod/AvHServerVariables.h"
-//#include "mod/AvHSharedUtil.h"
-//#include "mod/AvHGamerules.h"
+#include "../mod/AvHServerUtil.h"
+#include "../mod/AvHNetworkMessages.h"
+#include "../mod/AvHServerVariables.h"
+//#include "../mod/AvHSharedUtil.h"
+//#include "../mod/AvHGamerules.h"
 
 float UTIL_WeaponTimeBase( void )
 {

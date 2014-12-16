@@ -34,21 +34,21 @@
 // - Renamed pop-up menu command, reworked it to be a regular bind
 //
 //===============================================================================
-#include "util/nowarnings.h"
+#include "../util/nowarnings.h"
 #include "ui/PieMenu.h"
 #include "ui/PieNode.h"
-#include "mod/AvHPieMenuHandler.h"
-#include "mod/AvHTeamHierarchy.h"
-#include "mod/AvHMessage.h"
-#include "mod/AvHClientVariables.h"
-#include "mod/AvHCommandConstants.h"
-#include "engine/cdll_int.h"
-#include "types.h"
+#include "AvHPieMenuHandler.h"
+#include "AvHTeamHierarchy.h"
+#include "AvHMessage.h"
+#include "AvHClientVariables.h"
+#include "AvHCommandConstants.h"
+#include "../engine/cdll_int.h"
+#include "../types.h"
 #include <string>
 using std::string;
 
 #include "cl_dll/demo.h"
-#include "common/demo_api.h"
+#include "../common/demo_api.h"
 
 void IN_ResetMouse();
 

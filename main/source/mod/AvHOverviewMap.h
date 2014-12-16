@@ -1,9 +1,9 @@
 #ifndef AVHOVERVIEWMAP_H
 #define AVHOVERVIEWMAP_H
 
-#include "mod/AvHEntityHierarchy.h"
-#include "mod/AvHMapExtents.h"
-#include "mod/AvHOrder.h"
+#include "AvHEntityHierarchy.h"
+#include "AvHMapExtents.h"
+#include "AvHOrder.h"
 
 class DrawableEntity
 {
@@ -100,7 +100,7 @@ private:
 	string							mMapName;
 	int								mMiniMapSprite;
 
-	SpriteHandle_t							mReticleSprite;
+	HSPRITE							mReticleSprite;
 	
 	typedef vector<DrawableEntity>	DrawableEntityListType;
 	DrawableEntityListType			mDrawableEntityList;

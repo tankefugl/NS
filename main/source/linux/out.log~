@@ -1,0 +1,68 @@
+mkdir release;
+mkdir: das Verzeichnis »release“ kann nicht angelegt werden: Die Datei existiert bereits
+make: [build_dir] Fehler 1 (ignoriert)
+cd release
+make -j8 -f Makefile.nsdll CC="gcc -m32" ARCH=i386 CPP_LIB="-L/usr/lib/gcc/x86_64-linux-gnu/4.8/32 -lstdc++ -ldl -lpthread" BUILD_DIR=release BUILD_OBJ_DIR=release/obj SOURCE_DIR=.. ENGINE_SRC_DIR=../engine COMMON_SRC_DIR=../common PM_SRC_DIR=../pm_shared GAME_SHARED_SRC_DIR=../game_shared GAMEDB_SRC_DIR=../common/gamedb BASE_CFLAGS="-fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX" SHLIBEXT=so SHLIBCFLAGS= SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -Wl,-Map,ns_map.txt" PUBLIC_SRC_DIR=../public CFG=release OS=Linux ARCH_CFLAGS="-O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387" 
+make[1]: Betrete Verzeichnis '/home/fabian/Schreibtisch/main/source/linux'
+mkdir release/obj
+mkdir: das Verzeichnis »release/obj“ kann nicht angelegt werden: Die Datei existiert bereits
+make[1]: [dirs] Fehler 1 (ignoriert)
+mkdir release/obj/hldll
+gcc -m32 -I../util -I../game_shared -I../dlls -I../public -I../common -fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX  -O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387  -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -DAVH_SERVER -DLINUX  -DVALVE_DLL -DQUIVER -DVOXEL -DQUAKE2 -DDEDICATED -DSWDS -D_STLP_USE_GLIBC -DUSE_OLDAUTH -Dsprintf_s=snprintf -D_stricmp=strcasecmp -o /AnimationUtil.o -c ../mod/AnimationUtil.cpp
+gcc -m32 -I../util -I../game_shared -I../dlls -I../public -I../common -fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX  -O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387  -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -DAVH_SERVER -DLINUX  -DVALVE_DLL -DQUIVER -DVOXEL -DQUAKE2 -DDEDICATED -DSWDS -D_STLP_USE_GLIBC -DUSE_OLDAUTH -Dsprintf_s=snprintf -D_stricmp=strcasecmp -o /AvHAcidRocketGun.o -c ../mod/AvHAcidRocketGun.cpp
+mkdir: das Verzeichnis »release/obj/hldll“ kann nicht angelegt werdengcc -m32 -I../util -I../game_shared -I../dlls -I../public -I../common -fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX  -O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387  -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -DAVH_SERVER -DLINUX  -DVALVE_DLL -DQUIVER -DVOXEL -DQUAKE2 -DDEDICATED -DSWDS -D_STLP_USE_GLIBC -DUSE_OLDAUTH -Dsprintf_s=snprintf -D_stricmp=strcasecmp -o /AvHAlienAbilities.o -c ../mod/AvHAlienAbilities.cpp
+: Die Datei existiert bereits
+make[1]: [dirs] Fehler 1 (ignoriert)
+mkdir release/obj/hldll/wpn_shared
+gcc -m32 -I../util -I../game_shared -I../dlls -I../public -I../common -fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX  -O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387  -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -DAVH_SERVER -DLINUX  -DVALVE_DLL -DQUIVER -DVOXEL -DQUAKE2 -DDEDICATED -DSWDS -D_STLP_USE_GLIBC -DUSE_OLDAUTH -Dsprintf_s=snprintf -D_stricmp=strcasecmp -o /AvHAlienEquipment.o -c ../mod/AvHAlienEquipment.cpp
+gcc -m32 -I../util -I../game_shared -I../dlls -I../public -I../common -fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX  -O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387  -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -DAVH_SERVER -DLINUX  -DVALVE_DLL -DQUIVER -DVOXEL -DQUAKE2 -DDEDICATED -DSWDS -D_STLP_USE_GLIBC -DUSE_OLDAUTH -Dsprintf_s=snprintf -D_stricmp=strcasecmp -o /AvHAlienTurret.o -c ../mod/AvHAlienTurret.cpp
+mkdir: das Verzeichnis »release/obj/hldll/wpn_shared“ kann nicht angelegt werden: Die Datei existiert bereits
+make[1]: [dirs] Fehler 1 (ignoriert)
+mkdir release/obj/hldll/pm_shared
+gcc -m32 -I../util -I../game_shared -I../dlls -I../public -I../common -fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX  -O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387  -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -DAVH_SERVER -DLINUX  -DVALVE_DLL -DQUIVER -DVOXEL -DQUAKE2 -DDEDICATED -DSWDS -D_STLP_USE_GLIBC -DUSE_OLDAUTH -Dsprintf_s=snprintf -D_stricmp=strcasecmp -o /AvHAlienWeapon.o -c ../mod/AvHAlienWeapon.cpp
+mkdir: das Verzeichnis »release/obj/hldll/pm_shared“ kann nicht angelegt werden: Die Datei existiert bereits
+make[1]: [dirs] Fehler 1 (ignoriert)
+mkdir release/obj/hldll/game_shared
+gcc -m32 -I../util -I../game_shared -I../dlls -I../public -I../common -fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX  -O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387  -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -DAVH_SERVER -DLINUX  -DVALVE_DLL -DQUIVER -DVOXEL -DQUAKE2 -DDEDICATED -DSWDS -D_STLP_USE_GLIBC -DUSE_OLDAUTH -Dsprintf_s=snprintf -D_stricmp=strcasecmp -o /AvHAssert.o -c ../mod/AvHAssert.cpp
+mkdir: das Verzeichnis »release/obj/hldll/game_shared“ kann nicht angelegt werden: Die Datei existiert bereits
+make[1]: [dirs] Fehler 1 (ignoriert)
+gcc -m32 -I../util -I../game_shared -I../dlls -I../public -I../common -fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX -D_LINUX -DGNUC -DHL1 -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -D_snprintf=snprintf -DQUIVER -DQUAKE2 -DVALVE_DLL -D_alloca=alloca -fno-exceptions -fexpensive-optimizations -D_vsnprintf=vsnprintf -DNO_MALLOC_OVERRIDE -Werror=return-type -w -DLINUX -D_LINUX  -O3 -gdwarf-2 -g2  -march=pentium-m -mfpmath=387  -Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp -DAVH_SERVER -DLINUX  -DVALVE_DLL -DQUIVER -DVOXEL -DQUAKE2 -DDEDICATED -DSWDS -D_STLP_USE_GLIBC -DUSE_OLDAUTH -Dsprintf_s=snprintf -D_stricmp=strcasecmp -o /AvHBaseBuildable.o -c ../mod/AvHBaseBuildable.cpp
+In file included from ../mod/AvHServerUtil.h:80:0,
+                 from ../mod/AvHAcidRocketGun.cpp:67:
+../mod/../util/STLUtil.h:35:19: fatal error: types.h: Datei oder Verzeichnis nicht gefunden
+ #include "types.h"
+                   ^
+compilation terminated.
+In file included from ../mod/AvHServerUtil.h:80:0,
+                 from ../mod/AvHAlienEquipment.cpp:50:
+../mod/../util/STLUtil.h:35:19: fatal error: types.h: Datei oder Verzeichnis nicht gefunden
+ #include "types.h"
+                   ^
+compilation terminated.
+In file included from ../mod/AvHServerUtil.h:80:0,
+                 from ../mod/AvHBaseBuildable.cpp:83:
+../mod/../util/STLUtil.h:35:19: fatal error: types.h: Datei oder Verzeichnis nicht gefunden
+ #include "types.h"
+                   ^
+compilation terminated.
+Assembler messages:
+Fatal error: can't create /AvHAssert.o: Keine Berechtigung
+make[1]: *** [/AvHAssert.o] Fehler 1
+make[1]: *** Warte auf noch nicht beendete Prozesse...
+make[1]: *** [/AvHAlienEquipment.o] Fehler 1
+make[1]: *** [/AvHAcidRocketGun.o] Fehler 1
+make[1]: *** [/AvHBaseBuildable.o] Fehler 1
+Assembler messages:
+Fatal error: can't create /AvHAlienWeapon.o: Keine Berechtigung
+make[1]: *** [/AvHAlienWeapon.o] Fehler 1
+Assembler messages:
+Fatal error: can't create /AnimationUtil.o: Keine Berechtigung
+make[1]: *** [/AnimationUtil.o] Fehler 1
+Assembler messages:
+Fatal error: can't create /AvHAlienAbilities.o: Keine Berechtigung
+make[1]: *** [/AvHAlienAbilities.o] Fehler 1
+Assembler messages:
+Fatal error: can't create /AvHAlienTurret.o: Keine Berechtigung
+make[1]: *** [/AvHAlienTurret.o] Fehler 1
+make[1]: Verlasse Verzeichnis '/home/fabian/Schreibtisch/main/source/linux'
+make: *** [ns] Fehler 2

@@ -70,14 +70,14 @@
 #ifndef AVH_SERVERUTIL_H
 #define AVH_SERVERUTIL_H
 
-#include "util/nowarnings.h"
-#include "dlls/extdll.h"
-#include "dlls/weapons.h"
-#include "mod/AvHMessage.h"
-#include "dlls/util.h"
-#include "mod/AvHEntities.h"
-#include "mod/AvHHive.h"
-#include "util/STLUtil.h"
+#include "../util/nowarnings.h"
+#include "../dlls/extdll.h"
+#include "../dlls/weapons.h"
+#include "AvHMessage.h"
+#include "../dlls/util.h"
+#include "AvHEntities.h"
+#include "AvHHive.h"
+#include "../util/STLUtil.h"
 
 class AvHPlayer;
 

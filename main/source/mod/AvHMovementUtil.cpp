@@ -56,14 +56,14 @@
 // - Post-crash checkin.  Restored @Backup from around 4/16.  Contains changes for last four weeks of development.
 //
 //===============================================================================
-#include "mod/AvHMovementUtil.h"
-#include "mod/AvHSpecials.h"
-#include "mod/AvHAlienWeaponConstants.h"
-#include "mod/AvHMarineEquipmentConstants.h"
-#include "mod/AvHHulls.h"
-#include "mod/AvHConstants.h"
-#include "util/Balance.h"
-#include "types.h"
+#include "AvHMovementUtil.h"
+#include "AvHSpecials.h"
+#include "AvHAlienWeaponConstants.h"
+#include "AvHMarineEquipmentConstants.h"
+#include "AvHHulls.h"
+#include "AvHConstants.h"
+#include "../util/Balance.h"
+#include "../types.h"
 
 int AvHMUGetHull(bool inIsDucking, int inUserVar)
 {

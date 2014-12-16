@@ -18,9 +18,9 @@
 // implementation of class-less helper functions
 //
 
-#include "STDIO.H"
-#include "STDLIB.H"
-#include "MATH.H"
+#include "stdio.h"
+#include "stdlib.h"
+#include "math.h"
 
 #include "hud.h"
 #include "cl_util.h"
@@ -141,16 +141,16 @@ int ScreenWidth()
 	return gHUD.m_scrinfo.iWidth;
 }
 
-
-SpriteHandle_t Safe_SPR_Load(const char* inSpriteName)
+/*
+HSPRITE SPR_Load(const char* inSpriteName)
 {
-	SpriteHandle_t theSpriteHandle = gEngfuncs.pfnSPR_Load(inSpriteName);
+	HSPRITE theSpriteHandle = gEngfuncs.pfnSPR_Load(inSpriteName);
 	
 	// Check for "Can't allocate 128 HUD sprites" crash
 	ASSERT(theSpriteHandle < 128);
 	
 	return theSpriteHandle;
-}
+}*/
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -254,7 +254,7 @@ void FillRGBAClipped(vgui::Panel* inPanel, int inStartX, int inStartY, int inWid
 }
 
 
-SpriteHandle_t LoadSprite(const char *pszName)
+HSPRITE LoadSprite(const char *pszName)
 {
 	int i;
 	char sz[256]; 
@@ -266,7 +266,7 @@ SpriteHandle_t LoadSprite(const char *pszName)
 
 	sprintf(sz, pszName, i);
 
-	return Safe_SPR_Load(sz);
+	return SPR_Load(sz);
 }
 
 bool LocalizeString(const char* inMessage, string& outputString)

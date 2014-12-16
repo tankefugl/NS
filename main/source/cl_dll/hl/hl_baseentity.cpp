@@ -21,14 +21,14 @@ This file contains "stubs" of class member implementations so that we can predic
  add in the functionality you need.
 ==========================
 */
-#include	"dlls/extdll.h"
-#include	"dlls/util.h"
-#include	"dlls/cbase.h"
-#include	"dlls/player.h"
-#include	"dlls/weapons.h"
-#include	"dlls/nodes.h"
-#include	"dlls/soundent.h"
-#include	"dlls/skill.h"
+#include	"extdll.h"
+#include	"util.h"
+#include	"cbase.h"
+#include	"player.h"
+#include	"weapons.h"
+#include	"nodes.h"
+#include	"soundent.h"
+#include	"skill.h"
 
 // Globals used by game logic
 const Vector g_vecZero = Vector( 0, 0, 0 );

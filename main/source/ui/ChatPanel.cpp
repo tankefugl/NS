@@ -2,7 +2,14 @@
 #include "VGUI_KeyCode.h"
 #include "VGUI_App.h"
 #include "cl_dll/hud.h"
+#include <string.h>
+#include <SDL2/SDL.h>
+#ifdef _WIN32
+#include "winsani_in.h"
 #include <windows.h>
+#include "winsani_out.h"
+#endif
+
 
 using namespace vgui;
 
@@ -37,20 +44,21 @@ void ChatPanel::CancelChat()
     }
     
 }
-
+//@2014 so many evil inputs
 void ChatPanel::KeyDown(int virtualKey, int scanCode)
+//void ChatPanel:VGUI::isKeyDown(KeyCode code)
 {
-
+    sprintf(virtualKey,"%s");
     if (virtualKey >= 0 && virtualKey < 256)
     {
         mKeyPushed[virtualKey] = true;
     }
     
-    if (virtualKey == VK_ESCAPE)
+    if (virtualKey == SDLK_ESCAPE)
     {
         CancelChat();
     }
-    else if (virtualKey == VK_RETURN)
+    else if (virtualKey ==SDLK_RETURN/*VK_RETURN*/)
     {
         
         std::string theCommand;
@@ -81,7 +89,7 @@ void ChatPanel::KeyDown(int virtualKey, int scanCode)
         CancelChat();
 
     }
-    else if (virtualKey == VK_BACK)
+    else if (virtualKey == KEY_BACKSPACE/*VK_BACK*/)
     {
         if (mText.length() > 0)
         {
@@ -91,22 +99,24 @@ void ChatPanel::KeyDown(int virtualKey, int scanCode)
     else
     {
 
-        BYTE keyState[256];
-        GetKeyboardState(keyState);
+        byte keyState[256]; // BYTE to byte
+       // GetKeyboardState(keyState); evil
+
 
         // Turn off caps lock since some people use it for voice comm.
 
-        keyState[VK_CAPITAL]  = 0;
+        keyState[KEY_CAPSLOCK]  = 0;
 
         // Turn off control since some people use it for crouching.
 
-        keyState[VK_LCONTROL] = 0;
-        keyState[VK_RCONTROL] = 0;
-        keyState[VK_CONTROL]  = 0;
+        keyState[KEY_LCONTROL] = 0;
+        keyState[KEY_RCONTROL] = 0;
+        //@2014 removed keyState[VK_CONTROL]  = 0;
 
         char buffer[3] = { 0 };
-        int count = ToAscii(virtualKey, scanCode, keyState, (LPWORD)buffer, 0);
-
+	//@2014 LPWORD is evil
+       // int count = toascii(virtualKey, scanCode, keyState, (LPWORD)buffer, 0);
+	int count = 1;
         if (count > 0)
         {
             mText += buffer;
@@ -133,7 +143,7 @@ void ChatPanel::paint()
     int y = (height - theFont.GetStringHeight()) / 2;
     
     char prompt[128];
-	strncpy_s(prompt, mChatMode.c_str(), 127);
+	strncpy(prompt, mChatMode.c_str(), 127);
 
 	prompt[0] = toupper( prompt[0] );
 
@@ -145,7 +155,7 @@ void ChatPanel::paint()
 			*pApersand = ' ';
 	}
 
-	strcat_s(prompt, ": ");
+	strcat(prompt, ": ");
 
     x = theFont.DrawString(x, y, prompt, 128, 128, 128);
     

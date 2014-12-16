@@ -1,7 +1,7 @@
 #!/bin/sh
-export CC=gcc-2.95
-export CPP=cpp-2.95
-export CXX=g++-2.95
+export CC=gcc-4.8.1
+export CPP=cpp-4.8.1
+export CXX=g++-4.8.1
 rm -R source -f
 mkdir source
 cd source

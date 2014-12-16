@@ -54,6 +54,55 @@ PARTICLEDLL_API enum PDomainEnum
 	PDRectangle = 10 // Rhombus-shaped planar region
 };
 
+// A single particle
+struct Particle
+{
+	pVector pos;
+	pVector posB;
+	pVector size;
+	pVector vel;
+	pVector velB;	// Used to compute binormal, normal, etc.
+	pVector color;	// Color must be next to alpha so glColor4fv works.
+	float alpha;	// This is both cunning and scary.
+	float age;
+};
+
+// A group of particles - Info and an array of Particles
+struct ParticleGroup
+{
+	int p_count;		// Number of particles currently existing.
+	int max_particles;	// Max particles allowed in group.
+	int particles_allocated; // Actual allocated size.
+	Particle list[1];	// Actually, num_particles in size
+	
+	inline void Remove(int i)
+	{
+		list[i] = list[--p_count];
+	}
+	
+	inline bool Add(const pVector &pos, const pVector &posB,
+		const pVector &size, const pVector &vel, const pVector &color,
+		const float alpha = 1.0f,
+		const float age = 0.0f)
+	{
+		if(p_count >= max_particles)
+			return false;
+		else
+		{
+			list[p_count].pos = pos;
+			list[p_count].posB = posB;
+			list[p_count].size = size;
+			list[p_count].vel = vel;
+			list[p_count].velB = vel;	// XXX This should be fixed.
+			list[p_count].color = color;
+			list[p_count].alpha = alpha;
+			list[p_count].age = age;
+			p_count++;
+			return true;
+		}
+	}
+};
+
 // State setting calls
 
 PARTICLEDLL_API void pColor(float red, float green, float blue, float alpha = 1.0f);
@@ -106,9 +155,13 @@ PARTICLEDLL_API void pNewActionList(int action_list_num);
 
 // Particle Group Calls
 
+PARTICLEDLL_API ParticleGroup* pGetParticleGroupRef(int p_group_num);
+
 PARTICLEDLL_API void pCopyGroup(int p_src_group_num, int index = 0, int copy_count = P_MAXINT);
 
 PARTICLEDLL_API void pCurrentGroup(int p_group_num);
+
+PARTICLEDLL_API ParticleGroup* pGetCurrentGroup(void);
 
 PARTICLEDLL_API void pDeleteParticleGroups(int p_group_num, int p_group_count = 1);
 
@@ -117,6 +170,10 @@ PARTICLEDLL_API void pDrawGroupl(int dlist, bool const_size = false,
 
 PARTICLEDLL_API void pDrawGroupp(int primitive, bool const_size = false,
 								 bool const_color = false);
+
+// Added <<< cgc >>>
+PARTICLEDLL_API void DrawGroupTriSplat(const pVector &view, const pVector &up, float size_scale = 1.0f, bool draw_tex=false, bool const_size=false, bool const_color=false);
+// end
 
 PARTICLEDLL_API int pGenParticleGroups(int p_group_count = 1, int max_particles = 0);
 

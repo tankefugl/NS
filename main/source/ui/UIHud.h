@@ -6,15 +6,16 @@
 #define UIHUD_H
 
 //#include "cl_dll/hud.h"
-#include "cl_dll/chud.h"
+#include "chud.h"
 #include "textrep/TRDescription.h"
-#include "ui/UIManager.h"
-#include "vgui_InputSignal.h"
-#include "vgui_Scheme.h"
-#include "vgui_BitmapTGA.h"
-#include "cl_dll/vgui_SchemeManager.h"
+#include "UIManager.h"
+#include "VGUI_InputSignal.h"
+#include "VGUI_Scheme.h"
+#include "VGUI_BitmapTGA.h"
+#include "vgui_SchemeManager.h"
+#include "winsani_in.h"
 #include "fmoddyn.h"
-
+#include "winsani_out.h"
 class UIFactory;
 
 //struct fmod_instance_struct;

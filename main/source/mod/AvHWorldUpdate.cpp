@@ -13,21 +13,21 @@
 //-------------------------------------------------------------------------------
 // $Log: $
 //===============================================================================
-#include "util/nowarnings.h"
-#include "dlls/extdll.h"
-#include "dlls/util.h"
-#include "dlls/cbase.h"
-#include "dlls/player.h"
-#include "dlls/weapons.h"
-#include "mod/AvHGamerules.h"
-#include "mod/AvHMarineEquipment.h"
-#include "mod/AvHMarineEquipmentConstants.h"
-#include "mod/AvHAlienEquipment.h"
-#include "mod/AvHAlienEquipmentConstants.h"
-#include "mod/AvHAlienWeapons.h"
-#include "mod/AvHAlienWeaponConstants.h"
-#include "mod/AvHServerUtil.h"
-#include "util/MathUtil.h"
+#include "../util/nowarnings.h"
+#include "../dlls/extdll.h"
+#include "../dlls/util.h"
+#include "../dlls/cbase.h"
+#include "../dlls/player.h"
+#include "../dlls/weapons.h"
+#include "AvHGamerules.h"
+#include "AvHMarineEquipment.h"
+#include "AvHMarineEquipmentConstants.h"
+#include "AvHAlienEquipment.h"
+#include "AvHAlienEquipmentConstants.h"
+#include "AvHAlienWeapons.h"
+#include "AvHAlienWeaponConstants.h"
+#include "AvHServerUtil.h"
+#include "../util/MathUtil.h"
 
 typedef vector<AvHPlayer*>			AvHPlayerListType;
 typedef vector<AvHObservatory*>		AvHObservatoryListType;

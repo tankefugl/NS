@@ -20,14 +20,14 @@
 //
 //
 //===============================================================================
-#include "mod/AvHActionButtons.h"
+#include "AvHActionButtons.h"
 #include "ui/UITags.h"
 #include "ui/UIUtil.h"
-#include "util/STLUtil.h"
-#include "mod/AvHMessage.h"
-#include "mod/AvHClientUtil.h"
-#include "mod/AvHClientVariables.h"
-#include "mod/AvHSharedUtil.h"
+#include "../util/STLUtil.h"
+#include "AvHMessage.h"
+#include "AvHClientUtil.h"
+#include "AvHClientVariables.h"
+#include "AvHSharedUtil.h"
 
 const int	kLineWidth = 1;
 //const char	kAcceleratorCharacter = '-';

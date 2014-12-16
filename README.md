@@ -1,22 +1,37 @@
-Natural Selection Visual Studio 2010 Rebuild
+Natural Selection LINUX Build
 ============================================
 
-What does work:
-- 1.) Both DLLs can be compiled
-- 2.) client.dll is working but needs libpng12.dll in hl folder
-- 3.) ns.dll is working too thanks to lib-no-sll
+Just hacked up, you will notice a lot of odd behavior.
+
+In order to compile: cd ../linux and type make hl_cdll &> out.log
+
+Additional libraries
+-1.) zlib1g-dev:i386
+-2.) libpng12-dev:i386
+-3.) The particle engine(David McAllister)
+
+If you get the this error when running the app: Fatal Error - could not load library (client.so)
+With a high chance it is because of some UNDEFINED SYMBOLS in the shared library.
+But you can check this with ldd -r -d client.so.
+
+If you want to debug:
+-1.) LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" gdb ./hl_linux
+-2.) r -game ns -dev -steam
 
 
-Additional Includes:
-- 1.) libpng
-- 2.) zlib
-- 3.) libcurl
+Due to the new engine and the nature of linux i had to make a lot of changes! You can find them with grep -Ril "@Linux".
 
-To do:
+List of (new) Bugs
+-1.) FMOD doesn't load
+-2.) play random song needs to be reimplemented for linux
+-3.) Commander Overview: Camera needs to be fixed
+-4.) Hud: Odd behavior of the displayed models
+-5.) Mouse rotation is locked to a specific angle
+-6.) NS had some special Gamma functions(many WIN func calls), so I removed them :-) --> Always standard gamma (BUG?)
+-7.) Fonts: ns/gfx/vgui/fonts High resolution fonts missing
 
-- fix ns bugs hud,fps...
-- build a linux client
 
+The server still needs some work(Segmentation fault)! But it can be compiled: make ns
 
 Half Life 1 SDK LICENSE
 =======================

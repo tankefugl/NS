@@ -22,7 +22,7 @@
 #ifndef AVH_CLIENTVARIABLES_H
 #define AVH_CLIENTVARIABLES_H
 
-#include "common/cvardef.h"
+#include "../common/cvardef.h"
 
 extern cvar_t*	cl_cmhotkeys;
 extern cvar_t*	cl_highdetail;

@@ -660,7 +660,7 @@ void PieNode::paintBackground()
 
 						if(this->mConnectorSprite == 0 && (this->mConnectorSpriteName != ""))
 						{
-							this->mConnectorSprite = Safe_SPR_Load(this->mConnectorSpriteName.c_str());
+							this->mConnectorSprite = SPR_Load(this->mConnectorSpriteName.c_str());
 						}
 
 						if(this->mConnectorSprite > 0)

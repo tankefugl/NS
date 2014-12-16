@@ -16,13 +16,15 @@
 // - Fixed bug where sound volume wasn't being set for omnipresent sounds, added document headers
 //
 //===============================================================================
-#include "mod/AvHAmbientSound.h"
+#include "AvHAmbientSound.h"
 #include "cl_dll/hud.h"
-#include "common/vec_op.h"
+#include "../common/vec_op.h"
 #include <stdlib.h>
 #pragma warning(push)
 #pragma warning(disable: 311)
+#include "winsani_in.h"
 #include <fmoddyn.h>
+#include "winsani_out.h"
 #pragma warning(pop)
 #include "cl_dll/cl_util.h"
 

@@ -2,18 +2,24 @@
 #include "textrep/TRFactory.h"
 #include "cl_dll/cl_util.h"
 #include "cl_dll/hud.h"
-#include "vgui_Scheme.h"
-#include "vgui_Panel.h"
+#include "VGUI_Scheme.h"
+#include "VGUI_Panel.h"
 #include "mod/AvHClientVariables.h"
-#include "vgui_App.h"
-
-// for FindFirst and FindNext
+#include "VGUI_App.h"
+#include <stdio.h>
+// for FindFirst and FindNext //@2014 implement those for linux
+#ifdef _WIN32
+#include "winsani_in.h"
 #include <windows.h>
+#include "winsani_out.h"
+#endif
 #pragma warning(push)
 #pragma warning(disable: 311)
 //#include <fmoddyn.h>
+#include "winsani_in.h"
 #include <fmoddyn.h>
 #include <fmod_errors.h>
+#include "winsani_out.h"
 #pragma warning(pop)
 
 using namespace vgui;
@@ -99,12 +105,15 @@ void UIHud::Init(void)
 
 void UIHud::InitializeSound(void)
 {
-
-    char theFileName[2][_MAX_PATH];
-
+    #ifdef _WIN32
+    char theFileName[2][_MAX_PATH]; // _MAX_PATH is evil
     sprintf(theFileName[0], "%s/fmod.dll", getModDirectory());
     sprintf(theFileName[1], "fmod.dll");
-    
+    #else 
+    char theFileName[2][PATH_MAX];	
+    sprintf(theFileName[0], "%s/libfmod-3.75.so", getModDirectory());
+    sprintf(theFileName[1], "libfmod-3.75.so");
+    #endif
     for (int i = 0; i < 2 && mFMOD == NULL; ++i)
     {
 
@@ -192,6 +201,8 @@ void UIHud::LoadSchemes(void)
 
 bool UIHud::PickRandomSong(string& outRelativeSongName) const
 {
+	bool theFoundSong = false;
+	/* @2014 needs to be reinplementet for linux	
 	WIN32_FIND_DATA		theFindData;
 	HANDLE				theFileHandle;
 	StringList			theSongList;
@@ -232,7 +243,7 @@ bool UIHud::PickRandomSong(string& outRelativeSongName) const
 		outRelativeSongName = string(theSongList[theSongOffset]);
 		theFoundSong = true;
 	}
-	
+	*/
 	return theFoundSong;
 }
 

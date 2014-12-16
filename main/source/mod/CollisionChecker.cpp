@@ -4,14 +4,14 @@
 #include <vector>
 #include <memory>
 
-#include "common/mathlib.h"
-#include "common/const.h"
-#include "common/com_model.h"
-#include "pm_shared/pm_defs.h"
-#include "common/vector_util.h"
-#include "mod/AvHHulls.h"
-#include "types.h"
-#include "util/MathUtil.h"
+#include "../common/mathlib.h"
+#include "../common/const.h"
+#include "../common/com_model.h"
+#include "../pm_shared/pm_defs.h"
+#include "../common/vector_util.h"
+#include "AvHHulls.h"
+#include "../types.h"
+#include "../util/MathUtil.h"
 
 #include "CollisionChecker.h"
 

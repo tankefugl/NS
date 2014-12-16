@@ -64,7 +64,7 @@
 #ifndef AVH_SERVERVARIABLES_H
 #define AVH_SERVERVARIABLES_H
 
-#include "common/cvardef.h"
+#include "../common/cvardef.h"
 
 extern cvar_t avh_blockscripts;
 extern cvar_t avh_combattime;

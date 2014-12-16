@@ -1,14 +1,14 @@
-#include "mod/AvHMiniMap.h"
-#include "mod/AvHSharedUtil.h"
-#include "mod/AvHSpecials.h"
-#include "mod/AvHNetworkMessages.h"
+#include "AvHMiniMap.h"
+#include "AvHSharedUtil.h"
+#include "AvHSpecials.h"
+#include "AvHNetworkMessages.h"
 
 #ifdef AVH_CLIENT
-	#include "util/hl/spritegn.h"
+	#include "../util/hl/spritegn.h"
 #endif
 
 #ifdef AVH_SERVER
-	#include "mod/AvHPlayer.h"
+	#include "AvHPlayer.h"
 #endif
 
 const int kMaxScreenWidth = 1600;

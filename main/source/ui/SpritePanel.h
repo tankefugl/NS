@@ -1,10 +1,10 @@
 #ifndef SPRITEPANEL_H
 #define SPRITEPANEL_H
 
-#include "vgui_Panel.h"
+#include "VGUI_Panel.h"
 #include "ui/GammaAwareComponent.h"
 #include "ui/ReloadableComponent.h"
-#include "types.h"
+#include "../types.h"
 
 class SpritePanel : public vgui::Panel, public ReloadableComponent, public GammaAwareComponent
 {

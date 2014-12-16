@@ -29,7 +29,7 @@
 #include "demo.h"
 #include "common/demo_api.h"
 #include "ui/UIComponent.h"
-#include "vgui_scorepanel.h"
+#include "vgui_ScorePanel.h"
 
 #include "mod/AvHNetworkMessages.h"
 #include "ui/ChatPanel.h"
@@ -351,7 +351,7 @@ void CHud :: VidInit( void )
 			}
 
 			// allocated memory for sprite handle arrays
- 			m_rghSprites = new SpriteHandle_t[m_iSpriteCount];
+ 			m_rghSprites = new HSPRITE[m_iSpriteCount];
 			m_rgrcRects = new wrect_t[m_iSpriteCount];
 			m_rgszSpriteNames = new char[m_iSpriteCount * MAX_SPRITE_NAME_LENGTH];
 
@@ -363,7 +363,7 @@ void CHud :: VidInit( void )
 				{
 					char sz[256];
 					sprintf(sz, "sprites/%s.spr", p->szSprite);
-					m_rghSprites[index] = Safe_SPR_Load(sz);
+					m_rghSprites[index] = SPR_Load(sz);
 					m_rgrcRects[index] = p->rc;
 					strncpy( &m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH], p->szName, MAX_SPRITE_NAME_LENGTH );
 
@@ -386,7 +386,7 @@ void CHud :: VidInit( void )
 			{
 				char sz[256];
 				sprintf( sz, "sprites/%s.spr", p->szSprite );
-				m_rghSprites[index] = Safe_SPR_Load(sz);
+				m_rghSprites[index] = SPR_Load(sz);
 				index++;
 			}
 

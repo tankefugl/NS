@@ -106,8 +106,8 @@
 #ifndef AVHCONSTANTS_H
 #define AVHCONSTANTS_H
 
-#include "types.h"
-#include "game_shared/teamconst.h"
+#include "../types.h"
+#include "../game_shared/teamconst.h"
 
 // Basic constants
 const   int								kMaxPlayers = 32;

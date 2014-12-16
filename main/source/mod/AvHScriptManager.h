@@ -19,9 +19,9 @@
 #ifndef AVH_SCRIPTMANAGER_H
 #define AVH_SCRIPTMANAGER_H
 
-#include "util/nowarnings.h"
-#include "util/Checksum.h"
-#include "util/STLUtil.h"
+#include "../util/nowarnings.h"
+#include "../util/Checksum.h"
+#include "../util/STLUtil.h"
 
 #ifdef USE_LUA
 extern "C" struct lua_State;

@@ -2,8 +2,8 @@
 #include <mod/NexusServerInterface.h>// Does not exist
 #include "AvHNexusServer.h"
 #include "AvHNexusTunnelToClient.h"
-#include "dlls/extdll.h"
-#include "dlls/util.h"
+#include "../dlls/extdll.h"
+#include "../dlls/util.h"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

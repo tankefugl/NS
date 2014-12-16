@@ -1,3 +1,10 @@
+//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//
+// Purpose: 
+//
+// $NoKeywords: $
+//=============================================================================
+
 #include <memory.h>
 #include "hud.h"
 #include "cl_util.h"
@@ -10,7 +17,7 @@
 AngleMatrix
 
 ====================
-*/
+
 void AngleMatrix (const float *angles, float (*matrix)[4] )
 {
 	float		angle;
@@ -40,7 +47,7 @@ void AngleMatrix (const float *angles, float (*matrix)[4] )
 	matrix[1][3] = 0.0;
 	matrix[2][3] = 0.0;
 }
-
+*/
 /*
 ====================
 VectorCompare

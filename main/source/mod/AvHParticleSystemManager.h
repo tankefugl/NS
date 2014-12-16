@@ -20,9 +20,9 @@
 #define AVH_PSMANAGER_H
 
 #include <string.h>
-#include "util/nowarnings.h"
-#include "types.h"
-#include "mod/AvHParticleSystem.h"
+#include "../util/nowarnings.h"
+#include "../types.h"
+#include "AvHParticleSystem.h"
 
 class AvHParticleSystemManager;
 
