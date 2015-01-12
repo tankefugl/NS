@@ -3,23 +3,23 @@ Natural Selection LINUX Build
 
 Just hacked up, you will notice a lot of odd behavior.
 
-In order to compile: cd ../linux and type make hl_cdll &> out.log
+In order to compile: `cd main/source/linux` and type `make hl_cdll &> out.log`
 
 Additional libraries
 - zlib1g-dev:i386
 - libpng12-dev:i386
 - The particle engine(David McAllister)
 
-If you get the this error when running the app: Fatal Error - could not load library (client.so)
+If you get the this error when running the app: Fatal Error - could not load library (client.so),
 With a high chance it is because of some UNDEFINED SYMBOLS in the shared library.
-But you can check this with ldd -r -d client.so.
+But you can check this with `ldd -r -d client.so`.
 
 If you want to debug:
-- LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" gdb ./hl_linux
-- r -game ns -dev -steam
+- `LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" gdb ./hl_linux`
+- `r -game ns -dev -steam`
 
 
-Due to the new engine and the nature of linux i had to make a lot of changes! You can find them with grep -Ril "@Linux".
+Due to the new engine and the nature of Linux I had to make a lot of changes! You can find them with `grep -Ril "@Linux"`.
 
 List of (new) Bugs
 
@@ -32,7 +32,7 @@ List of (new) Bugs
 7. Fonts: ns/gfx/vgui/fonts High resolution fonts missing
 
 
-The server still needs some work(Segmentation fault)! But it can be compiled: make ns
+The server still needs some work (Segmentation fault)! But it can be compiled: `make ns`
 
 Half Life 1 SDK LICENSE
 =======================
