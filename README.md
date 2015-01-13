@@ -3,12 +3,14 @@ Natural Selection LINUX Build
 
 Just hacked up, you will notice a lot of odd behavior.
 
-In order to compile: `cd main/source/linux` and type `make hl_cdll &> out.log`
-
-Additional libraries
+In order to compile: `cd main/source/linux` and type `make hl_cdll &> out.log` with g++-multilib and the following  additional libraries:
 - zlib1g-dev:i386
 - libpng12-dev:i386
-- The particle engine(David McAllister)
+- libc6-dev:i386
+
+installed.
+
+- The particle engine (David McAllister)
 
 If you get the this error when running the app: Fatal Error - could not load library (client.so),
 With a high chance it is because of some UNDEFINED SYMBOLS in the shared library.
