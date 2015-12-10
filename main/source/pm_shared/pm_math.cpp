@@ -111,7 +111,7 @@ void AngleVectorsTranspose (const vec3_t angles, vec3_t forward, vec3_t right, v
 	}
 }
 
-#ifndef DISABLE_VEC_FUNCS
+
 void AngleMatrix (const vec3_t angles, float (*matrix)[4] )
 {
 	float		angle;
@@ -142,37 +142,6 @@ void AngleMatrix (const vec3_t angles, float (*matrix)[4] )
 	matrix[2][3] = 0.0;
 }
 
-void AngleIMatrix (const vec3_t angles, float matrix[3][4] )
-{
-	float		angle;
-	float		sr, sp, sy, cr, cp, cy;
-	
-	angle = angles[YAW] * (M_PI*2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
-	angle = angles[PITCH] * (M_PI*2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
-	angle = angles[ROLL] * (M_PI*2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
-
-	// matrix = (YAW * PITCH) * ROLL
-	matrix[0][0] = cp*cy;
-	matrix[0][1] = cp*sy;
-	matrix[0][2] = -sp;
-	matrix[1][0] = sr*sp*cy+cr*-sy;
-	matrix[1][1] = sr*sp*sy+cr*cy;
-	matrix[1][2] = sr*cp;
-	matrix[2][0] = (cr*sp*cy+-sr*-sy);
-	matrix[2][1] = (cr*sp*sy+-sr*cy);
-	matrix[2][2] = cr*cp;
-	matrix[0][3] = 0.0;
-	matrix[1][3] = 0.0;
-	matrix[2][3] = 0.0;
-}
-#endif
-
 #ifndef DISABLE_VEC_FUNCS
 void VectorTransform (const vec3_t in1, float in2[3][4], vec3_t out)
 {
@@ -180,7 +149,7 @@ void VectorTransform (const vec3_t in1, float in2[3][4], vec3_t out)
 	out[1] = DotProduct(in1, in2[1]) + in2[1][3];
 	out[2] = DotProduct(in1, in2[2]) + in2[2][3];
 }
-
+#endif
 int VectorCompare (const vec3_t v1, const vec3_t v2)
 {
 	int		i;
@@ -191,7 +160,7 @@ int VectorCompare (const vec3_t v1, const vec3_t v2)
 			
 	return 1;
 }
-
+#ifndef DISABLE_VEC_FUNCS
 void VectorMA (const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc)
 {
 	vecc[0] = veca[0] + scale*vecb[0];
@@ -227,14 +196,14 @@ void _VectorCopy (vec3_t in, vec3_t out)
 	out[2] = in[2];
 }
 
-#ifndef DISABLE_VEC_FUNCS
+
 void CrossProduct (const vec3_t v1, const vec3_t v2, vec3_t cross)
 {
 	cross[0] = v1[1]*v2[2] - v1[2]*v2[1];
 	cross[1] = v1[2]*v2[0] - v1[0]*v2[2];
 	cross[2] = v1[0]*v2[1] - v1[1]*v2[0];
 }
-#endif
+
 
 double sqrt(double x);
 
