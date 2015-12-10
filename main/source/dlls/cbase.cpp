@@ -545,7 +545,7 @@ int CBaseEntity :: TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, 
 // save damage based on the target's armor level
 
 // figure momentum add (don't let hurt brushes or other triggers move player)
-	if ((!FNullEnt(pevInflictor)) && (pev->movetype == MOVETYPE_WALK || pev->movetype == MOVETYPE_STEP) && (pevAttacker->solid != SOLID_TRIGGER) )
+	if ((!FNullEnt(pevInflictor)) && (pev->movetype == MOVETYPE_WALK || pev->movetype == MOVETYPE_STEP) && (pevAttacker->solid != SOLID_TRIGGER) && !this->IsPlayer())
 	{
 		Vector vecDir = pev->origin - (pevInflictor->absmin + pevInflictor->absmax) * 0.5;
 		vecDir = vecDir.Normalize();

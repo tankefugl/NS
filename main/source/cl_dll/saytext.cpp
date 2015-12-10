@@ -266,7 +266,7 @@ void CHudSayText :: SayTextPrint( const char *pszBuf, int iBufSize, int clientIn
 	gHUD.PlayHUDSound("misc/talk.wav", 1);
 
     Y_START = ScreenHeight()*.7f;
-
+    /* @linux no chat panel
     ChatPanel* theChatPanel = gViewPort->GetChatPanel();
 
     if (theChatPanel != NULL)
@@ -284,7 +284,7 @@ void CHudSayText :: SayTextPrint( const char *pszBuf, int iBufSize, int clientIn
 		//KGP: then move the viewport
         Y_START = theY + theHeight + 5;
     }
-
+	*/
 }
 
 void CHudSayText :: EnsureTextFitsInOneLineAndWrapIfHaveTo( int line )

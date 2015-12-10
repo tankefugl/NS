@@ -12,24 +12,28 @@
 #include <iostream>
 // using namespace std;
 
+// <<< cgc >>> removed DllMain() because I'm linking statically
 // For Windows DLL.
-#ifdef WIN32
-BOOL APIENTRY DllMain( HANDLE hModule, 
-                       DWORD  ul_reason_for_call, 
-                       LPVOID lpReserved
-					 )
-{
-    switch (ul_reason_for_call)
-	{
-		case DLL_PROCESS_ATTACH:
-		case DLL_THREAD_ATTACH:
-		case DLL_THREAD_DETACH:
-		case DLL_PROCESS_DETACH:
-			break;
-    }
-    return TRUE;
-}
-#endif
+//#ifdef WIN32
+//BOOL APIENTRY DllMain( HANDLE hModule, 
+//                       DWORD  ul_reason_for_call, 
+//                       LPVOID lpReserved
+//					 )
+//{
+//    switch (ul_reason_for_call)
+//	{
+//		case DLL_PROCESS_ATTACH:
+//		case DLL_THREAD_ATTACH:
+//		case DLL_THREAD_DETACH:
+//		case DLL_PROCESS_DETACH:
+//			break;
+//    }
+//    return TRUE;
+//}
+//#endif
+
+// <<< cgc >>> added this pre-declaration
+extern void _pSendAction(ParticleAction *S, PActionEnum type, int size);
 
 float ParticleAction::dt;
 
@@ -604,7 +608,8 @@ PARTICLEDLL_API void pCallActionList(int action_list_num)
 	if(_ps.in_new_list)
 	{
 		// Add this call as an action to the current list.
-		extern void _pSendAction(ParticleAction *S, PActionEnum type, int size);
+		// <<< cgc >>> commented out predeclaration
+		//void _pSendAction(ParticleAction *S, PActionEnum type, int size);
 
 		PACallActionList S;
 		S.action_list_num = action_list_num;
@@ -704,6 +709,13 @@ PARTICLEDLL_API void pCurrentGroup(int p_group_num)
 		_ps.group_id = -1;
 }
 
+PARTICLEDLL_API ParticleGroup* pGetCurrentGroup(void)
+{
+	_ParticleState &_ps = _GetPState();
+	ParticleGroup *pg = _ps.pgrp;
+	return pg;
+}
+
 // Change the maximum number of particles in the current group.
 PARTICLEDLL_API int pSetMaxParticles(int max_count)
 {
@@ -795,6 +807,19 @@ PARTICLEDLL_API void pCopyGroup(int p_src_group_num, int index, int copy_count)
 			srcgrp->list[index+i];
 	}
 	destgrp->p_count += ccount;
+}
+
+PARTICLEDLL_API ParticleGroup* pGetParticleGroupRef(int p_group_num)
+{
+	ParticleGroup* theGroup = NULL;
+
+	_ParticleState &_ps = _GetPState();
+
+	if(!_ps.in_new_list)
+	{	
+		theGroup = _ps.GetGroupPtr(p_group_num);
+	}
+	return theGroup;
 }
 
 // Copy from the current group to application memory.

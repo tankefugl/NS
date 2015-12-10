@@ -8034,7 +8034,6 @@ void AvHPlayer::SetUser3(AvHUser3 inUser3, bool inForceChange, bool inGiveWeapon
         mSavedJetpackEnergy = this->pev->fuser3;
 
         this->ClearUserVariables();
-
         switch(inUser3)
         {
         case AVH_USER3_NONE:
@@ -8413,7 +8412,6 @@ void AvHPlayer::StartTopDownMode()
 //      GetGameRules()->GetMapExtents(theMinViewHeight, theMaxViewHeight, theMinX, theMinY, theMaxX, theMaxY, theDrawMapBG);
 
         this->pev->origin.z = GetGameRules()->GetMapExtents().GetMaxViewHeight();
-
         this->mInTopDownMode = true;
 
         // Cheesy way to make sure player class change is sent to everyone

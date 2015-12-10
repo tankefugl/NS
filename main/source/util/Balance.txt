@@ -47,7 +47,7 @@
 #define kCatalystDuration 8
 #define kCatalystResearchCost 20
 #define kCatalystResearchTime 40
-#define kChargeDamage 320
+#define kChargeDamage 80
 #define kClawsDamage 90
 #define kCombatBaseExperience 100
 #define kCombatBaseRespawnTime 5
@@ -84,7 +84,7 @@
 #define kDefenseChamberThinkInterval 2
 #define kDefensiveChamberHealRange 400
 #define kDefensiveChamberRegenAmount 10
-#define kDefensiveChamberRegenPercent 1
+#define kDefensiveChamberRegenPercent 3
 #define kDevourDamage 3
 #define kDevourRange 100
 #define kDistressBeaconCost 15
@@ -121,7 +121,7 @@
 #define kGameHDSpaceNeeded 300
 #define kGameVersionMajor 3
 #define kGameVersionMinor 2
-#define kGameVersionRevision 0
+#define kGameVersionRevision 1
 #define kGestateBaseArmor 150
 #define kGestateHealth 200
 #define kGorgeArmorUpgrade 50
@@ -224,7 +224,7 @@
 #define kOnosBaseSpeed 240
 #define kOnosCost 75
 #define kOnosGestateTime 35
-#define kOnosHealth 700
+#define kOnosHealth 950
 #define kOrganicStructureHealRate 5
 #define kParasiteDamage 10
 #define kPhaseGateBuildTime 12
@@ -245,7 +245,7 @@
 #define kResourceTowerBuildDistanceTolerance 250
 #define kResourceTowerBuildTime 15
 #define kResourceTowerCost 15
-#define kResourceTowerHealth 6000
+#define kResourceTowerHealth 5500
 #define kSGBulletsPerShot 10
 #define kSGDamage 17
 #define kSGMaxAmmo 40
@@ -265,7 +265,7 @@
 #define kScoringKillPlayerLerk 3
 #define kScoringKillPlayerOnos 5
 #define kScoringMarineBuildableValue 2
-#define kScoringResourceTowerValue 3
+#define kScoringResourceTowerValue 5
 #define kScoringSiegeValue 3
 #define kScoringTurretValue 2
 #define kSensoryChamberBuildTime 14
@@ -353,7 +353,7 @@
 #define kCatalystROFFactor 0.25
 #define kCatalystSpeedIncrease 0.25
 #define kChargeEnergyCost 0.15
-#define kChargeMaxPushbackSpeedFactor 2.50
+#define kChargeMaxPushbackSpeedFactor 2.75
 #define kChargeMaxPushbackForce 100.0
 #define kChargePushbackRadius 100.0
 #define kChargeSpeed 1.00
@@ -361,7 +361,7 @@
 #define kChargingEnergyScalar 2.80
 #define kClawsEnergyCost 0.07
 #define kClawsROF 0.90
-#define kCloakTime 6.00
+#define kCloakTime 12.0
 #define kCombatAdditiveRespawnTime 2.00
 #define kCombatDistressBeaconDeadPercentage 0.70
 #define kCombatExperienceAlienGrowthRate 0.00
@@ -423,7 +423,7 @@
 #define kParasiteEnergyCost 0.30
 #define kParasiteROF 0.50
 #define kPhaseGateDelay 2.00
-#define kPhaseGateDepartureInterval 0.50
+#define kPhaseGateDepartureInterval 0.40
 #define kPrimalScreamDamageModifier 0.30
 #define kPrimalScreamDuration 4.00
 #define kPrimalScreamEnergyCost 0.45
@@ -431,7 +431,7 @@
 #define kPrimalScreamROF 5.00
 #define kPrimalScreamROFFactor 0.30
 #define kRecycleResourcePercentage 0.50
-#define kRecloakTime 3.0f
+#define kRecloakTime 1.0
 #define kRedemptionChance 0.45
 #define kRedemptionThreshold 0.40
 #define kReinforcementMinimumWaitLevelScalar 0.20

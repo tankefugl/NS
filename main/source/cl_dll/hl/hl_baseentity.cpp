@@ -98,6 +98,7 @@ void CGrenade::Spawn( void ) { }
 CGrenade * CGrenade:: ShootTimed( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity, float time ){ return 0; }
 CGrenade *CGrenade::ShootContact( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity ){ return 0; }
 void CGrenade::DetonateUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value ){ }
+void CGrenade::SetDamageType(int inDamageType) {} //@linux otherwise it says undefined symbol
 
 void UTIL_Remove( CBaseEntity *pEntity ){ }
 struct skilldata_t  gSkillData;

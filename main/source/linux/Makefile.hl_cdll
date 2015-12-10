@@ -25,15 +25,14 @@ GAME_SHARED_OBJ_DIR=$(HL1_OBJ_DIR)/game_shared
 PM_SHARED_OBJ_DIR=$(HL1_OBJ_DIR)/pm_shared
 HL1_SERVER_OBJ_DIR=$(HL1_OBJ_DIR)/server
 
-CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -DCLIENT_DLL -I/usr/include/malloc -D_snwprintf=swprintf \
-		 -DDISABLE_JUMP_ORIGIN -DDISABLE_VEC_FUNCS -DDISABLE_VEC_ORIGIN -DAVH_CLIENT -DUSE_OLDAUTH -DAVH_NO_NEXUS -DNDEBUG -DASSERT=assert -Dsprintf_s=snprintf
+CFLAGS=$(BASE_CFLAGS) $(ARCH_CFLAGS) -DCLIENT_DLL -I/usr/include/malloc -D_snwprintf=swprintf -DAVH_CLIENT -DUSE_OLDAUTH -DAVH_NO_NEXUS -DNDEBUG -DASSERT=assert -Dsprintf_s=snprintf -DDISABLE_VEC_FUNCS -DDISABLE_VEC_ORIGIN
 		 
 INCLUDEDIRS= -I$(HL_SRC_DIR) -I$(NS_MOD_SRC_DIR) -I$(COMMON_SRC_DIR) -I$(PUBLIC_SRC_DIR) -I$(PM_SHARED_SRC_DIR) -I../engine -I$(GAME_SHARED_SRC_DIR) -I../external/ -I../particles -I../includes/fmodapi375linux/api/inc -I$(HL_SERVER_SRC_DIR) -I$(HL_SRC_DIR)/cl_dll -I$(VGUI_INCLUDE_DIR) -I$(UI_INCLUDE_DIR) -I$(UTIL_SRC_DIR) -I../ -I../includes/fmodapi375linux/api
 
 ifeq ($(OS),Darwin)
 LDFLAGS=$(SHLIBLDFLAGS) $(CPP_LIB) -framework Carbon $(CFG)/vgui.dylib -L. -lSDL2-2.0.0
 else
-LDFLAGS=$(SHLIBLDFLAGS) $(CPP_LIB) -lpng -lz -lparticleMP -lfmod-3.75 -L$(CFG) vgui.so -L. libSDL2-2.0.so.0
+LDFLAGS=$(SHLIBLDFLAGS) $(CPP_LIB) -lpng -lz -lfmod-3.75 -L$(CFG) vgui.so -L. libSDL2-2.0.so.0 -L. libparticleMP.a 
 endif
 
 DO_CC=$(CPLUS) $(INCLUDEDIRS) $(CFLAGS) -o $@ -c $<
@@ -252,9 +251,7 @@ all: client.$(SHLIBEXT)
 
 client.$(SHLIBEXT): $(HL1_OBJS) $(MOD_OBJS) $(PUBLIC_OBJS) $(COMMON_OBJS) $(GAME_SHARED_OBJS) $(DLL_OBJS) $(PM_SHARED_OBJS) $(UI_OBJS) $(UTIL_OBJS) $(TEXTREP_OBJS)
 	$(CLINK) -o $(BUILD_DIR)/$@ $(HL1_OBJS) $(MOD_OBJS) $(PUBLIC_OBJS) $(COMMON_OBJS) $(GAME_SHARED_OBJS) $(DLL_OBJS) $(PM_SHARED_OBJS) $(UI_OBJS) $(UTIL_OBJS) $(TEXTREP_OBJS) $(LDFLAGS) $(CPP_LIB)
-	p4 edit ../../game/mod/cl_dlls/$@
-	cp $(BUILD_DIR)/$@  ../../game/mod/cl_dlls
-	./gendbg.sh ../../game/mod/cl_dlls/client.$(SHLIBEXT)
+	@echo "Done..."	
 
 $(HL1_OBJ_DIR):
 	mkdir -p $(HL1_OBJ_DIR)

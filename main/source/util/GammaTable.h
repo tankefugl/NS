@@ -1,4 +1,4 @@
-#ifdef _WIN32
+
 
 #ifndef GAMMATABLE_H
 #define GAMMATABLE_H
@@ -44,4 +44,4 @@ private:
 };
 
 #endif
-#endif
+

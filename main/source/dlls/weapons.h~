@@ -206,7 +206,7 @@ private:
 #define AMMO_URANIUMBOX_GIVE	20
 #define AMMO_SNARKBOX_GIVE		5
 
-#include "../common/bullettypes.h"
+#include "..common/bullettypes.h"
 
 #define ITEM_FLAG_SELECTONEMPTY		1
 #define ITEM_FLAG_NOAUTORELOAD		2

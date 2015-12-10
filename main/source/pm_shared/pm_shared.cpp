@@ -1,4 +1,4 @@
-//  Copyright (c) 1999, Valve LLC. All rights reserved.
+//Copyright (c) 1999, Valve LLC. All rights reserved.
 //  
 //  This product contains software technology licensed from Id 
 //  Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -182,7 +182,7 @@ float   gTopDownViewAngles[3];
 
 static int pm_shared_initialized = 0;
 
-void InterpolateAngles( float *start, float *end, float *output, float frac );
+//void InterpolateAngles( float *start, float *end, float *output, float frac );
     
 #pragma warning( disable : 4305 )
 
@@ -6076,11 +6076,11 @@ bool PM_TopDown()
 
         //theMaxZ = min(theMaxZ, theNewStartPos[2]);
         
-		#ifdef AVH_CLIENT /*
-		extern DebugPointListType gSquareDebugLocations;
-		DebugPoint theDebugPoint(theNewStartPos[0], theNewStartPos[1], theMaxZ - theNewStartPos[2]);
-		gSquareDebugLocations.push_back(theDebugPoint);*/
-		#endif
+		//#ifdef AVH_CLIENT /*
+		//extern DebugPointListType gSquareDebugLocations;
+		//DebugPoint theDebugPoint(theNewStartPos[0], theNewStartPos[1], theMaxZ - theNewStartPos[2]);
+		//gSquareDebugLocations.push_back(theDebugPoint);*/
+		//#endif
         
         float       speed, drop, friction, control, newspeed;
         float       currentspeed, addspeed, accelspeed;
@@ -6222,8 +6222,8 @@ bool PM_TopDown()
         theAngles[2] = kTopDownRoll;
         
         // Set angles facing down so observer knows which way to point
-        VectorCopy(theAngles, pmove->angles);
-        
+        VectorCopy(theAngles,pmove->angles);	
+
         // Set origin
         //pmove->origin[2] = 1080;
         //pmove->origin[2] = PM_GetDesiredTopDownCameraHeight();

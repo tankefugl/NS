@@ -1,4 +1,3 @@
-#ifdef _WIN32
 #include "GammaTable.h"
 
 // Include windows gamma functions
@@ -12,7 +11,7 @@
 GammaTable::GammaTable()
 {
 	this->mSlope = 1.0f;
-	this->InitializeToFlat();
+	//this->InitializeToFlat(); // will cause @linux client to crash at start
 	this->mDirect3DMode = false;
 }
 
@@ -121,4 +120,3 @@ void GammaTable::ProcessSlope(float inSlope)
 		}
 	}
 }
-#endif

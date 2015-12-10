@@ -45,11 +45,11 @@ void CL_DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams );
 void	PM_ParticleLine( float *start, float *end, int pcolor, float life, float vert);
 int		PM_GetVisEntInfo( int ent );
 int		PM_GetPhysEntInfo( int ent );
-//@2014 
+//@linux
 void	InterpolateAngles(  float * start, float * end, float * output, float frac );
 void	NormalizeAngles( float * angles );
 //extern "C" float	Distance(const float * v1, const float * v2);
-float	AngleBetweenVectors(const float * v1, const float * v2 );
+//float	AngleBetweenVectors(const float * v1, const float * v2 );
 
 void V_DropPunchAngle ( float frametime, float *ev_punchangle );
 void VectorAngles( const float *forward, float *angles );
@@ -119,8 +119,8 @@ cvar_t	v_ipitch_level		= {"v_ipitch_level", "0.3", 0, 0.3};
 
 float	v_idlescale;  // used by TFC for concussion grenade effect
 
-//@2014 hack linker error??? only win??
-#ifdef _WIN32
+//@linux
+
 void NormalizeAngles( float *angles )
 {
 	int i;
@@ -176,7 +176,6 @@ void InterpolateAngles( float *start, float *end, float *output, float frac )
 
 	NormalizeAngles( output );
 }
- 
 
 /*
 ===================
@@ -184,7 +183,7 @@ AngleBetweenVectors
 
 ===================
 */
-float AngleBetweenVectors( const vec3_t v1, const vec3_t v2 )
+float AngleBetweenVectors( float* v1, float* v2 )
 {
 	float angle;
 	float l1 = Length( v1 );
@@ -198,7 +197,7 @@ float AngleBetweenVectors( const vec3_t v1, const vec3_t v2 )
 
 	return angle;
 }
-#endif
+
 //=============================================================================
 /*
 void V_NormalizeAngles( float *angles )
@@ -2222,7 +2221,14 @@ void CL_DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 	}
 	else if ( !pparams->paused )
 	{
-		V_CalcNormalRefdef ( pparams );
+		if(gHUD.GetInTopDownMode())
+	    {
+		    V_CalcTopDownRefdef ( pparams );
+	    }
+	    else
+	    {
+		    V_CalcNormalRefdef ( pparams );
+	    }
 	}
 
 /*

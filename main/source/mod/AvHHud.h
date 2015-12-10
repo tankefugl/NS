@@ -128,7 +128,7 @@
 #include "AvHVisibleBlipList.h"
 #include "AvHMapExtents.h"
 #include "AvHSpecials.h"
-//#include "GammaTable.h"
+#include "GammaTable.h"
 #include "AvHBaseInfoLocation.h"
 #include "AvHTooltip.h"
 #include "AvHTechSlotManager.h"
@@ -671,10 +671,9 @@ private:
 	int						mNumLocalSelectEvents;
 	AvHMapMode				mMapMode;
 	//@2014 make this work for linux
-	/*
 	static GammaTable		sPregameGammaTable;
 	static GammaTable		sGameGammaTable;
-	*/
+	
 	
 	float					mDesiredGammaSlope;
 

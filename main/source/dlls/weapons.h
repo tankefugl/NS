@@ -77,12 +77,11 @@ public:
 	virtual void BounceSound( void );
 	virtual int	BloodColor( void ) { return DONT_BLEED; }
 	virtual void Killed( entvars_t *pevAttacker, int iGib );
-	//virtual void SetDamageType(int inDamageType);
-	int	 m_damageType;
+	virtual void SetDamageType(int inDamageType);
 
 	BOOL m_fRegisteredSound;// whether or not this grenade has issued its DANGER sound to the world sound list yet.
 private:
-	//int	 m_damageType;//@2014
+	int	 m_damageType;
 };
 
 

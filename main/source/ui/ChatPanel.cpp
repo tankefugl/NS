@@ -3,7 +3,6 @@
 #include "VGUI_App.h"
 #include "cl_dll/hud.h"
 #include <string.h>
-#include <SDL2/SDL.h>
 #ifdef _WIN32
 #include "winsani_in.h"
 #include <windows.h>
@@ -48,17 +47,17 @@ void ChatPanel::CancelChat()
 void ChatPanel::KeyDown(int virtualKey, int scanCode)
 //void ChatPanel:VGUI::isKeyDown(KeyCode code)
 {
-    sprintf(virtualKey,"%s");
+    
     if (virtualKey >= 0 && virtualKey < 256)
     {
         mKeyPushed[virtualKey] = true;
     }
     
-    if (virtualKey == SDLK_ESCAPE)
+    if (virtualKey == KEY_ESCAPE)
     {
         CancelChat();
     }
-    else if (virtualKey ==SDLK_RETURN/*VK_RETURN*/)
+    else if (virtualKey == KEY_ENTER/*VK_RETURN*/)
     {
         
         std::string theCommand;

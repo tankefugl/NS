@@ -39,9 +39,7 @@
 //===============================================================================
 #include "AvHParticleSystem.h"
 #include "AvHParticleTemplate.h"
-#include "winsani_in.h"
 #include <papi.h>
-#include "winsani_out.h"
 
 #ifdef AVH_CLIENT
   #include "cl_dll/cl_util.h"
@@ -50,16 +48,16 @@
   #include "../common/const.h"
   #include "../engine/progdefs.h"
   #include "../engine/edict.h"
-  #include "../pm_shared/pm_defs.h"
+  #include "pm_shared/pm_defs.h"
   #include "../engine/cdll_int.h"
   #include "../common/event_api.h"
   #include "../common/cl_entity.h"
  // #include <particledefs.h> //@2014 already included via <papi.h>
   #include <p_vector.h>
   #include "../common/usercmd.h"
-  #include "../pm_shared/pm_shared.h"
-  #include "../pm_shared/pm_movevars.h"
-  #include "../pm_shared/pm_debug.h"
+  #include "pm_shared/pm_shared.h"
+  #include "pm_shared/pm_movevars.h"
+  #include "pm_shared/pm_debug.h"
   #include "AvHParticleSystemManager.h"
   #include "cl_dll/ev_hldm.h"
   #include "AvHParticleTemplateClient.h"

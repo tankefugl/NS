@@ -15,6 +15,7 @@
 #endif
 
 // A single particle
+/*
 struct Particle
 {
 	pVector pos;
@@ -61,7 +62,7 @@ struct ParticleGroup
 			return true;
 		}
 	}
-};
+};*/
 
 struct pDomain
 {

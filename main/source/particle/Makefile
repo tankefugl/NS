@@ -19,7 +19,7 @@ CFLAGS = $(COPT) $(COMPFLAGS) -I. -I.. -I$(GLUT_HOME)/include -I/usr/include/c++
 
 POBJS =action_api.o actions.o HLRender.o opengl.o system.o
 
-ALL = libparticleMP.a SPDir
+ALL = libparticleMP.a
 
 all: $(ALL)
 
@@ -34,10 +34,9 @@ libparticleMP.a: $(POBJS)
 	ar clq $@ $(POBJS)
 
 SPDir:
-	(cd SP ; smake)
+	(make)
 
 clean:
-	(cd SP ; smake clean)
 	rm -f libpar*
 	rm -f *.o
 	rm -rf *ii_files

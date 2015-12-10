@@ -54,7 +54,7 @@
   #include "../engine/cdll_int.h"
   #include "../common/event_api.h"
   #include "../common/cl_entity.h"
-  #include <particledefs.h> 
+  #include <particledefs.h>
   #include <p_vector.h>
   #include "../common/usercmd.h"
   #include "../pm_shared/pm_shared.h"
@@ -1125,5 +1125,3 @@ AvHParticleSystem::UpdateFirst()
 ////		this->mBaseEntityPos.z = this->mOrigin[2];
 ////	}
 //}
-
-

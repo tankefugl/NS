@@ -1767,13 +1767,12 @@ AvHMessageID AvHHud::HotKeyHit(char inChar)
 	return gCommanderHandler.HotKeyHit(inChar);
 }
 //@2014 make this work for linux
-
+#ifdef _WIN
 float AvHHud::GetGammaSlope() const
 {	
-	//return sGameGammaTable.GetGammaSlope();
-	float mSlope = 1.0f;
-	return mSlope;
+	return sGameGammaTable.GetGammaSlope();
 }
+#endif
 string AvHHud::GetMapName(bool inLocalOnly) const
 {
     string theMapName = this->mMapName;
@@ -6766,7 +6765,6 @@ bool AvHHud::GetSafeForSpriteDrawing() const
 	bool theSafeForDrawing = false;
 
 	const char* theLevelName = gEngfuncs.pfnGetLevelName();
-
 	string theCurrentMapName = this->GetMapName(true);
 	if(theLevelName && (theCurrentMapName != ""))
 	{

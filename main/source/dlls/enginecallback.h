@@ -56,7 +56,6 @@ extern enginefuncs_t g_engfuncs;
 #define TRACE_HULL		(*g_engfuncs.pfnTraceHull)
 #define GET_AIM_VECTOR	(*g_engfuncs.pfnGetAimVector)
 #define SERVER_COMMAND	(*g_engfuncs.pfnServerCommand)
-
 #ifdef SERVER_EXECUTE
 #undef SERVER_EXECUTE
 #endif

@@ -25,7 +25,7 @@
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
-void AngleMatrix(const float* angles, float matrix[3][4]);
+//void AngleMatrix(const float* angles, float matrix[3][4]);
 double sqrt(double x);
 float Length(const float *v);
 void CreateOrthoNormalBasis(float inZAxis[3], float outXAxis[3], float outYAxis[3]);

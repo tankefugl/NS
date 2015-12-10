@@ -228,10 +228,10 @@ extern int CL_ButtonBits(int);
 extern int g_iVisibleMouse;
 
 //@2014 make this work for linux
-/*
+
 GammaTable AvHHud::sPregameGammaTable;
 GammaTable AvHHud::sGameGammaTable;
-*/
+
 
 bool AvHHud::sShowMap = false;
 
@@ -347,10 +347,11 @@ sPregameGammaTable.InitializeToVideoState();
 
 bool AvHHud::OnKeyEvent(int virtualKey, int scanCode, bool pressed)
 {
+
     if (gViewPort != NULL && !mSteamUIActive)
     {
-
-        ChatPanel* theChatPanel = gViewPort->GetChatPanel();
+    	//@linux no chat Panel for Linux
+        /*ChatPanel* theChatPanel = gViewPort->GetChatPanel();
 
         if (theChatPanel && theChatPanel->isVisible())
         {
@@ -365,8 +366,8 @@ bool AvHHud::OnKeyEvent(int virtualKey, int scanCode, bool pressed)
                 // the key up needs to go to HL.
                 return theChatPanel->WasKeyPushed(virtualKey);
             }
-        }
-       //@2014 VK_ESCAPE --> KEY_ESCAPE
+        }*/
+       //@linux VK_ESCAPE --> KEY_ESCAPE
         if (virtualKey == KEY_ESCAPE && GetInTopDownMode() && mGhostBuilding != MESSAGE_NULL)
         {
             if (pressed)
@@ -1766,12 +1767,9 @@ AvHMessageID AvHHud::HotKeyHit(char inChar)
 	return gCommanderHandler.HotKeyHit(inChar);
 }
 //@2014 make this work for linux
-
 float AvHHud::GetGammaSlope() const
 {	
-	//return sGameGammaTable.GetGammaSlope();
-	float mSlope = 1.0f;
-	return mSlope;
+	return sGameGammaTable.GetGammaSlope();
 }
 string AvHHud::GetMapName(bool inLocalOnly) const
 {
@@ -6765,7 +6763,6 @@ bool AvHHud::GetSafeForSpriteDrawing() const
 	bool theSafeForDrawing = false;
 
 	const char* theLevelName = gEngfuncs.pfnGetLevelName();
-
 	string theCurrentMapName = this->GetMapName(true);
 	if(theLevelName && (theCurrentMapName != ""))
 	{

@@ -11,7 +11,9 @@
 // $Date: $
 //
 //-------------------------------------------------------------------------------
-// $Log: $
+// $Log: AvHWorldUpdate.cpp $
+// 2015/12/02  fmoraw
+// - removed infinite detection range of the observatory on the z axis 
 //===============================================================================
 #include "../util/nowarnings.h"
 #include "../dlls/extdll.h"
@@ -98,7 +100,7 @@ bool AvHSUGetInViewOfEnemy(CBaseEntity* inEntity, int& outSightedStatus)
 					if((*theObservatoryIter)->pev->team != inEntity->pev->team && ( inEntity->pev->team != TEAM_IND ) && !(*theObservatoryIter)->GetIsRecycling() )
 					{
 						// Check that entity is in range of scan (only check XY distance, for commander's purposes)
-						float theDistance = VectorDistance2D((*theObservatoryIter)->pev->origin, inEntity->pev->origin);
+						float theDistance = VectorDistance((*theObservatoryIter)->pev->origin, inEntity->pev->origin);
 						if(theDistance < BALANCE_VAR(kObservatoryXYDetectionRadius))
 						{
 							outSightedStatus |= MASK_VIS_DETECTED;

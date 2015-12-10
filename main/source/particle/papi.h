@@ -9,7 +9,8 @@
 #define _particle_api_h
 
 #include <stdlib.h>
-
+#include <p_vector.h>
+#include <general.h>
 // This is the major and minor version number of this release of the API.
 #define P_VERSION 120
 
@@ -23,7 +24,7 @@
 #endif
 
 #else
-#define PARTICLEDLL_API
+#define PARTICLEDLL_API extern "C"
 #endif
 
 // Actually this must be < sqrt(MAXFLOAT) since we store this value squared.

@@ -12,6 +12,9 @@
 //
 //-------------------------------------------------------------------------------
 // $Log: AvHMarineEquipment.cpp,v $
+// Revision 1.51  2015/12/03 fmoraw
+// - observatory detection method no longer uses vector2d
+//
 // Revision 1.50  2002/11/22 21:28:16  Flayra
 // - mp_consistency changes
 //
@@ -2414,7 +2417,7 @@ void AvHObservatory::ObservatoryThink()
 		if(theEntity->GetIsRelevant() && (theEntity->pev->team != this->pev->team))
 		{
 			// Check that entity is in range of scan
-			float theDistance = VectorDistance2D(theEntity->pev->origin, this->pev->origin);
+			float theDistance = VectorDistance(theEntity->pev->origin, this->pev->origin);
 			if(theDistance < BALANCE_VAR(kObservatoryXYDetectionRadius))
 			{
 				// Remove cloaking, if player has it

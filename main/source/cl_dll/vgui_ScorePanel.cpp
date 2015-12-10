@@ -401,6 +401,10 @@ bool HACK_GetPlayerUniqueID( int iPlayer, char playerID[16] )
 //-----------------------------------------------------------------------------
 // Purpose: Recalculate the internal scoreboard data
 //-----------------------------------------------------------------------------
+//@linux make snprintf work for win32
+#ifdef _WIN32
+#define snprintf _snprintf
+#endif
 void ScorePanel::Update()
 {
 	
@@ -412,7 +416,8 @@ void ScorePanel::Update()
 	{
 		memset(theServerName, 0, MAX_SERVERNAME_LENGTH+1);
 		int iServerNameLength = max((int)strlen(gViewPort->m_szServerName),MAX_SERVERNAME_LENGTH);
-		strncat(theServerName, gViewPort->m_szServerName, iServerNameLength);
+		//strncat(theServerName, gViewPort->m_szServerName, iServerNameLength); Buffer Overflow?
+		snprintf(theServerName, MAX_SERVERNAME_LENGTH, "%s%s",theServerName ,gViewPort->m_szServerName);
 	}
 	theServerName[MAX_SERVERNAME_LENGTH]=0;
 	char theMapName[MAX_MAPNAME_LENGTH+1];

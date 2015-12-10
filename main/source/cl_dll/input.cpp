@@ -377,6 +377,39 @@ void KeyDown (kbutton_t *b)
 	else
 		k = -1;		// typed manually at the console for continuous down
 
+	int theBlockScripts = (int)gHUD.GetServerVariableFloat(kvBlockScripts);
+
+	char *pCmd = gEngfuncs.Cmd_Argv(0);
+
+	if(theBlockScripts && pCmd)
+	{
+		bool bFound = false;
+
+		//Check thier last few commands (this prevents false positives if a player is hits several keys real fast)
+		for (int i = 0; i < g_PrevCmds.size(); i++) 
+		{
+			//Check both the key pressed and the command it executed.
+			if(k == g_PrevCmds[i].first && !strcmp(pCmd, g_PrevCmds[i].second.c_str()))
+			{
+				bFound = true;
+				break;
+			}
+		}
+		
+
+		if(!bFound 
+			&& strcmp(pCmd, "+mlook") 
+			&& strcmp(pCmd, "+jlook")
+			&& strcmp(pCmd, "+showscores")
+			&& strcmp(pCmd, "+use"))
+		{
+			gEngfuncs.pfnCenterPrint("Scripting is not allowed on this server.");
+			b->down[0] = b->down[1] = 0;
+			b->state = 4;	// impulse up
+			return;
+		}
+	}
+
 	if (k == b->down[0] || k == b->down[1])
 		return;		// repeating key
 	
@@ -928,8 +961,7 @@ if active == 1 then we are 1) not playing back demos ( where our commands are ig
 void CL_DLLEXPORT CL_CreateMove ( float frametime, struct usercmd_s *cmd, int active )
 {	
 	//RecClCL_CreateMove(frametime, cmd, active);
-	//@2014 Commander overview needs to be fixed!
-
+	//@linux Commander overview needs to be fixed!
 	float spd;
 	vec3_t viewangles;
 	static vec3_t oldangles;
@@ -939,14 +971,17 @@ void CL_DLLEXPORT CL_CreateMove ( float frametime, struct usercmd_s *cmd, int ac
 		int theButtonState = CL_ButtonBits(1);
 		//memset( viewangles, 0, sizeof( vec3_t ) );
 		//viewangles[ 0 ] = viewangles[ 1 ] = viewangles[ 2 ] = 0.0;
-		gEngfuncs.GetViewAngles( (float *)viewangles );
+		//gEngfuncs.GetViewAngles( (float *)viewangles );
 
-		CL_AdjustAngles ( frametime, viewangles );
+		//CL_AdjustAngles ( frametime, viewangles );
 
 		memset (cmd, 0, sizeof(*cmd));
-		
-		gEngfuncs.SetViewAngles( (float *)viewangles );
-		/*
+		//@ linux void IN_Move ( float frametime, usercmd_t *cmd)
+		float theRotationDeltas[3] = {0,0,0}; //{90,0,90} --> top down --> 	viewangles[YAW] 
+		float theTranslationDeltas[3] = {0,0,0}; //--> cmd->sidemove
+
+		IN_Move ( frametime, cmd );
+
 		if(gResetViewAngles)
 		{
 			VectorCopy(gViewAngles,viewangles);
@@ -955,11 +990,11 @@ void CL_DLLEXPORT CL_CreateMove ( float frametime, struct usercmd_s *cmd, int ac
 		else
 		{
 			gEngfuncs.GetViewAngles( (float *)viewangles );
-		}*/
-		//VectorAdd(viewangles,rotation,viewangles);
-		//CL_AdjustAngles ( frametime, viewangles );
+		}
+		VectorAdd(viewangles,theRotationDeltas,viewangles);
+		CL_AdjustAngles ( frametime, viewangles );
 
-		//gEngfuncs.SetViewAngles( (float *)viewangles );
+		gEngfuncs.SetViewAngles( (float *)viewangles );
 		VectorCopy (viewangles,gWorldViewAngles);
 
 		// If we're in topdown mode

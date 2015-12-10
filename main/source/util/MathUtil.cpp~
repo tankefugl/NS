@@ -19,6 +19,8 @@
 // - Added VectorDistance2D, added document headers
 //
 //===============================================================================
+#ifdef MATH_UTIL
+#define MATH_UTIL
 #include <cmath>
 #include "stdio.h"
 #include "stdlib.h"
@@ -285,7 +287,7 @@ void RotateValuesByVector(int32& ioX, int32& ioY, int32& ioZ, /*const float* inB
 	ioY = (int32)ioFloatY;
 	ioZ = (int32)ioFloatZ;
 }
-/*
+
 void VectorAngles( const float *forward, float *angles )
 {
 	float	tmp, yaw, pitch;
@@ -313,7 +315,7 @@ void VectorAngles( const float *forward, float *angles )
 	angles[0] = pitch;
 	angles[1] = yaw;
 	angles[2] = 0;
-}*/
+}
 
 void VectorInverse ( float *v )
 {
@@ -380,7 +382,6 @@ double VectorDistance2D(const float* in1, const float* in2)
 }
 
 // Added by mmcguire.
-
 void VectorsToAngles(const float forward[3], const float right[3], const float up[3], float angles[3])
 {
    
@@ -412,3 +413,4 @@ void VectorsToAngles(const float forward[3], const float right[3], const float u
     angles[0] = p * (180 / M_PI); // Pitch
     angles[1] = y * (180 / M_PI); // Yaw
 }
+#endif

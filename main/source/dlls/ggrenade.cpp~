@@ -31,8 +31,8 @@
 #include "../mod/AvHMarineWeaponConstants.h"
 #include "../mod/AvHGamerules.h"
 #include "../mod/AvHServerVariables.h"
-#include "../util/MathUtil.h"
-#include "../util/MathUtil.h"
+
+#include "util/MathUtil.h"
 #include "../common/vec_op.h"
 
 //===================grenade
@@ -46,11 +46,9 @@ LINK_ENTITY_TO_CLASS( grenade, CGrenade );
 //
 // Grenade Explode
 //
-//@2014 however never called --> leads to undefined symbol
-/*
 void CGrenade::SetDamageType(int inDamageType) {
 	this->m_damageType=inDamageType;
-}*/
+}
 
 void CGrenade::Explode( Vector vecSrc, Vector vecAim)
 {

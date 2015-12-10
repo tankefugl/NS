@@ -7,7 +7,8 @@
 #include "mod/AvHClientVariables.h"
 #include "VGUI_App.h"
 #include <stdio.h>
-// for FindFirst and FindNext //@2014 implement those for linux
+//@linux support
+#include "../util/LinuxSupport.h"
 #ifdef _WIN32
 #include "winsani_in.h"
 #include <windows.h>
@@ -199,16 +200,19 @@ void UIHud::LoadSchemes(void)
 //	this->InitializeScheme("Heading1", pScheme);
 }
 
+// @linux needs to be reinplementet for linux
 bool UIHud::PickRandomSong(string& outRelativeSongName) const
 {
-	bool theFoundSong = false;
-	/* @2014 needs to be reinplementet for linux	
-	WIN32_FIND_DATA		theFindData;
-	HANDLE				theFileHandle;
+	#ifdef WIN32
+	const string kDelimiter("\\");
+	#else
+	const string kDelimiter("/");
+	#endif
+	
 	StringList			theSongList;
 	bool				theFoundSong = false;
 	size_t				theNumSongs;
-
+	
 	// Find random song in directory
 	string thePath;
 	if(strcmp(cl_musicdir->string, ""))
@@ -217,16 +221,19 @@ bool UIHud::PickRandomSong(string& outRelativeSongName) const
 	}
 	else
 	{
-		thePath = string(getModDirectory()) + string("\\") + string(kMusicDirectory);
+		thePath = string(getModDirectory()) + kDelimiter + string(kMusicDirectory);
 	}
-
-	string theFileQualifier = thePath + string("\\*.mp3");
+	string theFileQualifier = thePath + kDelimiter +string("*.mp3");
+	#ifdef WIN32
+	WIN32_FIND_DATA		theFindData;
+	HANDLE				theFileHandle;
 	theFileHandle = FindFirstFile(theFileQualifier.c_str(), &theFindData);
+
 	if (theFileHandle != INVALID_HANDLE_VALUE)
 	{
 		do
 		{
-			theSongList.push_back(thePath + string("\\") + string(theFindData.cFileName));
+			theSongList.push_back(thePath + kDelimiter + string(theFindData.cFileName));
 		} 
 		while(FindNextFile(theFileHandle, &theFindData));
 	
@@ -234,7 +241,20 @@ bool UIHud::PickRandomSong(string& outRelativeSongName) const
         theFileHandle = INVALID_HANDLE_VALUE;
     
     }
+	#else
+	string theFoundFilename;
+	FIND_DATA theFindData;
+	int theRC = FindFirstFile(theFileQualifier.c_str(), &theFindData);
 
+	if(theRC != -1)
+	{
+		do
+		{
+			theSongList.push_back(thePath + kDelimiter + string(theFindData.cFileName));
+		}
+		while(FindNextFile(0, &theFindData));
+	}
+	#endif
 	// Pick a random song in the list
 	theNumSongs = theSongList.size();
 	if(theNumSongs > 0)
@@ -243,7 +263,7 @@ bool UIHud::PickRandomSong(string& outRelativeSongName) const
 		outRelativeSongName = string(theSongList[theSongOffset]);
 		theFoundSong = true;
 	}
-	*/
+	
 	return theFoundSong;
 }
 
