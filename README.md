@@ -89,7 +89,7 @@ There is an updated version of metamod called [metamodp](http://metamod-p.source
 
    [Natural Selection]: <http://unknownworlds.com/ns/>
    [Unknownworlds Entertainment]:<https://github.com/unknownworlds/NS>
-   [ns_patch_v321a.7z]:<https://github.com/fmoraw/NS/blob/linux/ns_patch_v321a.7z>
+   [ns_patch_v321a.7z]:<https://github.com/fmoraw/NS/blob/linux/ns_patch_v321a.7z?raw=true>
    [FPS_Effects]:<http://wiki.sourceruns.org/wiki/FPS_Effects>
    [Steam]: <http://store.steampowered.com/about/>
    [sg reload bug]:<https://github.com/unknownworlds/NS/issues/5>
