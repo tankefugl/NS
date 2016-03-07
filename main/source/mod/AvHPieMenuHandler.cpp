@@ -161,7 +161,7 @@ void AvHPieMenuHandler::OpenPieMenu(void)
 {
 	PieMenu* theMarineMenu = NULL;
 	
-	CenterPrint("AvHPieMenuHandler::openPieMenu.\n");
+	//CenterPrint("AvHPieMenuHandler::openPieMenu.\n");
 	
 	
 	// Pie menu only active when playing
