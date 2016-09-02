@@ -74,7 +74,7 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">V:\temp\$(ProjectName)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">V:\temp\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">.\Playtest</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">.\Playtest\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Playtest - balance disabled|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
