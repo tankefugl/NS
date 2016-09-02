@@ -190,7 +190,7 @@
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\includes\lua\include;$(SolutionDir)\particles\;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\libcurl-7.18-nossl\include\;$(SolutionDir)\common;$(SolutionDir)\public;$(SolutionDir)\util;$(SolutionDir)\engine;$(SolutionDir)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\includes\lua\include;$(SolutionDir)\particles\;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\libcurl-7.50-nossl\include;$(SolutionDir)\common;$(SolutionDir)\public;$(SolutionDir)\util;$(SolutionDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;QUIVER;VOXEL;QUAKE2;VALVE_DLL;AVH_SERVER;AVH_NO_NEXUS;USE_OLDAUTH</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
@@ -209,7 +209,7 @@
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;ws2_32.lib;particles.lib;lua5.1.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;ws2_32.lib;particles.lib;lua5.1.lib;libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>gdi32.lib user32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\hl.def</ModuleDefinitionFile>
@@ -221,7 +221,7 @@
       <SetChecksum>false</SetChecksum>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>$(SolutionDir)\includes\lua\lib;$(SolutionDir)\particles\WIN32_Release;$(SolutionDir)\includes\libcurl-7.18-nossl\;$(SolutionDir)\includes\vgui\lib\win32_vc6;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\includes\lua\lib;$(SolutionDir)\particles\WIN32_Release;$(SolutionDir)\includes\libcurl-7.50-nossl;$(SolutionDir)\includes\vgui\lib\win32_vc6;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
