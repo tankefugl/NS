@@ -2396,8 +2396,8 @@ void AvHGamerules::VoteMap(int inPlayerIndex, int inMapIndex)
 			//	typedef vector< pair <string, int> >	MapVoteListType;
             // Increment votes for map
            // MapVoteListType::iterator theIter = (MapVoteListType::iterator)&this->mMapVoteList[inMapIndex-1]; //to fix 20214
-			MapVoteListType::iterator theIter = this->mMapVoteList.begin();
-            int theVotes = ++theIter->second;
+			//MapVoteListType::iterator theIter = this->mMapVoteList.begin();
+            int theVotes = this->mMapVoteList.at(inMapIndex - 1).second++;
 		
 			// If player has already voted, decrement previous map and update which map the player has voted
 			if(theMappedPlayer != this->mPlayersVoted.end()) {
@@ -2410,20 +2410,20 @@ void AvHGamerules::VoteMap(int inPlayerIndex, int inMapIndex)
 			{
 				this->mPlayersVoted.insert(pair < int, int >(inPlayerIndex, inMapIndex));
 			}
-
+			
             // Tell everyone
             CBaseEntity* theVotingPlayer = CBaseEntity::Instance(g_engfuncs.pfnPEntityOfEntIndex(inPlayerIndex));
             ASSERT(theVotingPlayer);
-            char* theMessage = UTIL_VarArgs("%s executed votemap %d (%s %d/%d)\n", STRING(theVotingPlayer->pev->netname), inMapIndex, theIter->first.c_str(), theIter->second, this->GetVotesNeededForMapChange());
+            char* theMessage = UTIL_VarArgs("%s executed votemap %d (%s %d/%d)\n", STRING(theVotingPlayer->pev->netname), inMapIndex, this->mMapVoteList.at(inMapIndex - 1).first.c_str(), this->mMapVoteList.at(inMapIndex - 1).second, this->GetVotesNeededForMapChange());
             UTIL_ClientPrintAll(HUD_PRINTTALK, theMessage);
-			UTIL_LogPrintf( "%s executed votemap %d (%s %d/%d)\n", GetLogStringForPlayer( theVotingPlayer->edict() ).c_str(), inMapIndex, theIter->first.c_str(), theIter->second, this->GetVotesNeededForMapChange());
+			UTIL_LogPrintf( "%s executed votemap %d (%s %d/%d)\n", GetLogStringForPlayer( theVotingPlayer->edict() ).c_str(), inMapIndex, this->mMapVoteList.at(inMapIndex - 1).first.c_str(), this->mMapVoteList.at(inMapIndex - 1).second, this->GetVotesNeededForMapChange());
 
             // Does this map enough votes to change?
             if(theVotes >= this->GetVotesNeededForMapChange())
             {
                 // Changelevel now
                 char theLevelName[256];
-                strcpy(theLevelName, theIter->first.c_str());
+                strcpy(theLevelName, this->mMapVoteList.at(inMapIndex - 1).first.c_str());
                 CHANGE_LEVEL(theLevelName, NULL);
             }
 			
