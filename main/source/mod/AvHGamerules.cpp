@@ -2397,8 +2397,8 @@ void AvHGamerules::VoteMap(int inPlayerIndex, int inMapIndex)
             // Increment votes for map
            // MapVoteListType::iterator theIter = (MapVoteListType::iterator)&this->mMapVoteList[inMapIndex-1]; //to fix 20214
 			//MapVoteListType::iterator theIter = this->mMapVoteList.begin();
-            int theVotes = this->mMapVoteList.at(inMapIndex - 1).second++;
-		
+			this->mMapVoteList.at(inMapIndex - 1).second++;
+			int theVotes = this->mMapVoteList.at(inMapIndex - 1).second;
 			// If player has already voted, decrement previous map and update which map the player has voted
 			if(theMappedPlayer != this->mPlayersVoted.end()) {
 			//	((MapVoteListType::iterator)&this->mMapVoteList[theMappedPlayer->second - 1])->second--; /to fix 20214
