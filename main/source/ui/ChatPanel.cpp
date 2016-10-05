@@ -193,3 +193,75 @@ bool ChatPanel::WasKeyPushed(int virtualKey) const
         return true;
     }
 }
+
+std::string ChatPanel::UTF8toASCII(unsigned char* multibyte)
+{
+	string ASCIIValue;
+	if (multibyte[0] <= 127)// let ascii pass
+		ASCIIValue = multibyte[0];
+
+	if (multibyte[0] == 0xC3)// is it a UTF8 multibyte?
+	{
+		ASCIIValue = multibyte[1] + 64; 
+	}
+
+	return ASCIIValue;
+}
+
+void ChatPanel::KeyEvent()
+{
+	const Uint8 *state = SDL_GetKeyboardState(NULL);	
+
+	if (SDL_PollEvent(&event)) {
+
+		if (event.type == SDL_TEXTINPUT)
+		{
+			unsigned char* buffer;
+			buffer = (unsigned char*)event.text.text;
+
+			mText += UTF8toASCII(buffer);
+		}
+
+	}
+
+	if (state[SDL_SCANCODE_ESCAPE])
+	{
+		CancelChat();		
+	}
+	if (state[SDL_SCANCODE_BACKSPACE])
+	{
+		if (mText.length() > 0)
+		{
+			mText.erase(mText.length() - 1, mText.length());
+		}		
+	}
+	if (state[SDL_SCANCODE_RETURN])
+	{
+		std::string theCommand;
+
+		theCommand += mChatMode;
+
+		theCommand += " \"";
+
+		// Replace all ';' characters with ':' characters since we can't have
+		// ';' characters on a console message.
+
+		for (unsigned int i = 0; i < mText.length(); ++i)
+		{
+			if (mText[i] == ';')
+			{
+				mText[i] = ':';
+			}
+		}
+
+		theCommand += mText;
+
+		theCommand += "\"";
+
+		//say_x "the message here" instead of 
+		//say_x the message here (ever word was treated as another argument)
+		gEngfuncs.pfnClientCmd((char*)theCommand.c_str());
+
+		CancelChat();
+	}
+}

@@ -2384,11 +2384,11 @@ bool TeamFortressViewport::SlotInput( int iSlot )
 // Direct Key Input
 int	TeamFortressViewport::KeyInput( int down, int keynum, const char *pszCurrentBinding )
 {
-	/*@linux remove chat
+	
     if (m_chatPanel->isVisible())
     {
-        // Don't let the game handle the input while the user is typing in the
-        // chat window.
+        // Don't let the game handle the input while the user is typing in the chat window.
+		m_chatPanel->KeyEvent();
         return 0;
     }
     
@@ -2405,7 +2405,7 @@ int	TeamFortressViewport::KeyInput( int down, int keynum, const char *pszCurrent
         m_chatPanel->requestFocus();
 		m_chatPanel->SetChatMode(ChatPanel::chatModeTeam);
 		return 0;
-	}*/
+	}
  
 	// Open Text Window?
 	if (m_pCurrentMenu && gEngfuncs.Con_IsVisible() == false)

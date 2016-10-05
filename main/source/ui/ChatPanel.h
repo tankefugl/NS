@@ -11,9 +11,9 @@
 #include <string>
 //@2014 
 
-//#define VK_ESCAPE	0x1B
-//#define VK_RETURN	0x0D 
-//#define VK_CAPITAL	0x14
+#include <SDL2\SDL_events.h>	//#define VK_ESCAPE	0x1B
+#include <SDL2\SDL_keyboard.h>	//#define VK_RETURN	0x0D 
+#include <SDL2\SDL_keycode.h>	//#define VK_CAPITAL	0x14
 //#define VK_LCONTROL	0xA2
 //#define VK_RCONTROL	0xA3
 
@@ -25,7 +25,7 @@ public:
 
     void CancelChat();
     void SetChatMode(std::string sChatMode);
-
+	void KeyEvent();
     void KeyDown(int virtualKey, int scanCode);
 
     // Checks if a key was pushed since the chat window was opened.
@@ -40,9 +40,9 @@ public:
 private:
     std::string mText;
     std::string mChatMode;
-
+	std::string UTF8toASCII(unsigned char* multibyte);
     bool        mKeyPushed[256];
-
+	SDL_Event event;
 };
 
 #endif
