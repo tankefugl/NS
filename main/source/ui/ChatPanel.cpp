@@ -212,7 +212,7 @@ void ChatPanel::KeyEvent()
 {
 	const Uint8 *state = SDL_GetKeyboardState(NULL);	
 
-	if (SDL_PollEvent(&event)) {
+	while (SDL_PollEvent(&event)) {
 
 		if (event.type == SDL_TEXTINPUT)
 		{
