@@ -11,7 +11,7 @@
 #include <windows.h>
 #endif
 
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 // XXX #include <iostream.h>
 
 // Emit OpenGL calls to draw the particles. These are drawn with
