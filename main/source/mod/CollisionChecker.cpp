@@ -454,7 +454,7 @@ void CollisionChecker::SetIgnoreEntityClass(int ignore_entity_class)
 
 int CollisionChecker::GetContentsAtPoint(const nspoint_t& point) const
 {
-	return GetContents(&PointCollisionTest(point));
+	return GetContents(new PointCollisionTest(point));
 }
 
 //-------------------------------------------------------------------
@@ -468,14 +468,14 @@ int CollisionChecker::GetWorldContentsAtPoint(const nspoint_t& point) const
 
 int CollisionChecker::GetAllEntityContentsAtPoint(const nspoint_t& point) const
 {
-	return GetAllEntityContents(&PointCollisionTest(point));
+	return GetAllEntityContents(new PointCollisionTest(point));
 }
 
 //-------------------------------------------------------------------
 
 int CollisionChecker::GetSingleEntityContentsAtPoint(const nspoint_t& point, int entity_index) const
 {
-	return GetSingleEntityContents(&PointCollisionTest(point),entity_index);
+	return GetSingleEntityContents(new PointCollisionTest(point),entity_index);
 }
 
 //-------------------------------------------------------------------
@@ -486,28 +486,28 @@ const static nspoint_t CYLINDER_UP_DEFAULT = {0,0,1.0f};
 
 int CollisionChecker::GetContentsInCylinder(const nspoint_t& base, float radius, float height) const
 {
-	return GetContents(&CylinderCollisionTest(CYLINDER_UP_DEFAULT,base,radius,height));
+	return GetContents(new CylinderCollisionTest(CYLINDER_UP_DEFAULT,base,radius,height));
 }
 
 //-------------------------------------------------------------------
 
 int CollisionChecker::GetWorldContentsInCylinder(const nspoint_t& base, float radius, float height) const
 {
-	return GetSingleEntityContents(&CylinderCollisionTest(CYLINDER_UP_DEFAULT,base,radius,height),WORLD_ENTITY);
+	return GetSingleEntityContents(new CylinderCollisionTest(CYLINDER_UP_DEFAULT,base,radius,height),WORLD_ENTITY);
 }
 
 //-------------------------------------------------------------------
 
 int CollisionChecker::GetAllEntityContentsInCylinder(const nspoint_t& base, float radius, float height) const
 {
-	return GetAllEntityContents(&CylinderCollisionTest(CYLINDER_UP_DEFAULT,base,radius,height));
+	return GetAllEntityContents(new CylinderCollisionTest(CYLINDER_UP_DEFAULT,base,radius,height));
 }
 
 //-------------------------------------------------------------------
 
 int CollisionChecker::GetSingleEntityContentsInCylinder(const nspoint_t& base, float radius, float height, int entity_index) const
 {
-	return GetSingleEntityContents(&CylinderCollisionTest(CYLINDER_UP_DEFAULT,base,radius,height),entity_index);
+	return GetSingleEntityContents(new CylinderCollisionTest(CYLINDER_UP_DEFAULT,base,radius,height),entity_index);
 }
 
 //-------------------------------------------------------------------
@@ -516,28 +516,28 @@ int CollisionChecker::GetSingleEntityContentsInCylinder(const nspoint_t& base, f
 
 int CollisionChecker::GetContentsInAABB(const nspoint_t& mins, const nspoint_t& maxs) const
 {
-	return GetContents(&AABBCollisionTest(mins,maxs));
+	return GetContents(new AABBCollisionTest(mins,maxs));
 }
 
 //-------------------------------------------------------------------
 
 int CollisionChecker::GetWorldContentsInAABB(const nspoint_t& mins, const nspoint_t& maxs) const
 {
-	return GetSingleEntityContents(&AABBCollisionTest(mins,maxs),WORLD_ENTITY);
+	return GetSingleEntityContents(new AABBCollisionTest(mins,maxs),WORLD_ENTITY);
 }
 
 //-------------------------------------------------------------------
 
 int CollisionChecker::GetAllEntityContentsInAABB(const nspoint_t& mins, const nspoint_t& maxs) const
 {
-	return GetAllEntityContents(&AABBCollisionTest(mins,maxs));
+	return GetAllEntityContents(new AABBCollisionTest(mins,maxs));
 }
 
 //-------------------------------------------------------------------
 
 int CollisionChecker::GetSingleEntityContentsInAABB(const nspoint_t& mins, const nspoint_t& maxs, int entity_index) const
 {
-	return GetSingleEntityContents(&AABBCollisionTest(mins,maxs),entity_index);
+	return GetSingleEntityContents(new AABBCollisionTest(mins,maxs),entity_index);
 }
 
 //-------------------------------------------------------------------
