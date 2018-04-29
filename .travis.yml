@@ -1,0 +1,13 @@
+language: cpp
+
+matrix:
+  - os: linux
+    compiler: gcc
+    script: cd main/source/linux && make
+
+  - os: osx
+    compiler: clang
+    before_script:
+    - export CC=clang
+    - export CPLUS=clang++
+    script: cd main/source/linux && make
