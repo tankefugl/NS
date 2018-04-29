@@ -5,6 +5,10 @@ matrix:
     - os: linux
       compiler: gcc
       script: cd main/source/linux && make
+      packages:
+        - g++-6
+        - g++-6-multilib
+        - gcc-multilib
 
     - os: osx
       compiler: clang
