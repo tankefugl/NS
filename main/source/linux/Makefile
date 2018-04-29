@@ -88,9 +88,9 @@ endif
 
 ifeq ($(OS),Darwin)
 # force 387 for FP math so the precision between win32 and linux and osx match
-ARCH_CFLAGS_I486+=-target i386-apple-darwin16.7.0 -DCMAKE_OSX_ARCHITECTURES=i386
-ARCH_CFLAGS_I686+=-target i386-apple-darwin16.7.0 -DCMAKE_OSX_ARCHITECTURES=i386
-ARCH_CFLAGS_AMD+=-mfpmath=387
+ARCH_CFLAGS_I486+=-mno-sse -mfpmath=387 -target i386-apple-darwin -DCMAKE_OSX_ARCHITECTURES=i386
+ARCH_CFLAGS_I686+=-mno-sse -mfpmath=387 -target i386-apple-darwin -DCMAKE_OSX_ARCHITECTURES=i386
+ARCH_CFLAGS_AMD+=-mno-sse -mfpmath=387 -target i386-apple-darwin -DCMAKE_OSX_ARCHITECTURES=i386
 endif
 
 
@@ -100,7 +100,7 @@ BASE_CFLAGS=-fpermissive -fno-strict-aliasing -DNDEBUG -DPOSIX -D_POSIX -DLINUX 
 BASE_CFLAGS+=-w
 
 ifeq ($(OS),Darwin)
-	BASE_CFLAGS += -DOSX -D_OSX -fvisibility=hidden -DCMAKE_OSX_ARCHITECTURES=i386
+	BASE_CFLAGS += -DOSX -D_OSX -fvisibility=hidden -target i386-apple-darwin -DCMAKE_OSX_ARCHITECTURES=i386
 else
 	BASE_CFLAGS+= -DLINUX -D_LINUX
 endif
@@ -109,7 +109,7 @@ DEDICATED_CFLAGS="-DDEDICATED -DSWDS"
 ifeq ($(OS),Darwin)
 SHLIBEXT=dylib
 SHLIBCFLAGS=
-SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -DCMAKE_OSX_ARCHITECTURES=i386 -target i386-apple-darwin16.7.0"
+SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -DCMAKE_OSX_ARCHITECTURES=i386 -target i386-apple-darwin"
 else
 SHLIBEXT=so
 SHLIBCFLAGS=
