@@ -5,10 +5,12 @@ matrix:
     - os: linux
       compiler: gcc
       script: cd main/source/linux && make
-      packages:
-        - g++-6
-        - g++-6-multilib
-        - gcc-multilib
+      env: OPJ_CI_ARCH=i386
+      addons:
+        apt:
+          packages:
+            - gcc-multilib
+            - g++-multilib
 
     - os: osx
       compiler: clang
