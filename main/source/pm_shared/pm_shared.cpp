@@ -1687,7 +1687,7 @@ void PM_InitTextureTypes()
     char buffer[512];
     int i, j;
     byte *pMemFile;
-    int fileSize, filePos;
+    int fileSize = 0, filePos = 0;
     static qboolean bTextureTypeInit = false;
 
     if ( bTextureTypeInit )
@@ -6356,8 +6356,12 @@ void PM_Jetpack()
 
             float theWeightScalar = kBaseScalar + (1.0f - kBaseScalar)*((pmove->clientmaxspeed - theMinMarineSpeed)/(theMaxMarineSpeed - theMinMarineSpeed));
             
-            pmove->velocity[0] += (theWishVelocity[0]/pmove->clientmaxspeed)*kJetpackLateralScalar;
-            pmove->velocity[1] += (theWishVelocity[1]/pmove->clientmaxspeed)*kJetpackLateralScalar;
+			// Old lateral jetpack code - acceleration scales with framerate
+			//pmove->velocity[0] += (theWishVelocity[0]/pmove->clientmaxspeed)*kJetpackLateralScalar;
+			//pmove->velocity[1] += (theWishVelocity[1]/pmove->clientmaxspeed)*kJetpackLateralScalar;
+
+			pmove->velocity[0] += (theWishVelocity[0] / pmove->clientmaxspeed) * (theTimePassed * theWeightScalar*kJetpackForce);
+			pmove->velocity[1] += (theWishVelocity[1] / pmove->clientmaxspeed) * (theTimePassed * theWeightScalar*kJetpackForce);
             pmove->velocity[2] += theTimePassed*theWeightScalar*kJetpackForce;
 
             // Play an event every so often
