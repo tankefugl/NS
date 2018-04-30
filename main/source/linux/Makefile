@@ -131,8 +131,8 @@ all: build_dir targets
 TARGETS=
 
 TARGETS+= \
-    particles \
- 	ns \
+	particles \
+	ns \
 	hl_cdll \
 
 build_dir:

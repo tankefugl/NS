@@ -9,7 +9,6 @@
 #ifdef WIN32
 // This is for something in gl.h.
 #include <windows.h>
-#include <GL/gl.h>
 #else
 #define NULL 0
 #endif
