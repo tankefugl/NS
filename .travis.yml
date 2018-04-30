@@ -2,17 +2,18 @@ language: cpp
 
 matrix:
   include:
-# Curl fails on x86_64 travis VMs, someone who knows what they are doing should fix
-#    - os: linux
-#      compiler: gcc
-#      script: cd main/source/linux && make
-#      env: OPJ_CI_ARCH=i386
-#      addons:
-#        apt:
-#          packages:
-#            - gcc-multilib
-#            - g++-multilib
-#            - libcurl4-openssl-dev
+    - os: linux
+      compiler: gcc
+      script: cd main/source/linux && make
+      env: OPJ_CI_ARCH=i386
+      addons:
+        apt:
+          packages:
+            - gcc-multilib
+            - g++-multilib
+            - libc6-i386
+            - libcurl4-openssl-dev:i386
+            - libpng12-dev:i386
 
     - os: osx
       compiler: clang
