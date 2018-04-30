@@ -11,8 +11,13 @@
 #include <windows.h>
 #include <GL/gl.h>
 #else
-#include <OpenGL/gl.h>
 #define NULL 0
+#endif
+
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
 #endif
 
 // XXX #include <iostream.h>

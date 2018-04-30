@@ -14,7 +14,6 @@ matrix:
             - libc6-i386
             - libcurl4-openssl-dev:i386
             - libpng12-dev:i386
-            - libgl1-mesa-dev:i386
 
     - os: osx
       compiler: clang
