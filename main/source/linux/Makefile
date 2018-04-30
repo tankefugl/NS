@@ -69,10 +69,10 @@ endif
 CLINK=$(CC)
 
 ifeq "$(CFG)" "release"
-ARCH_CFLAGS_I486=-O3 -gdwarf-2 -g2 
-ARCH_CFLAGS_I686=-O3 -gdwarf-2 -g2 
-ARCH_CFLAGS_AMD=-O3 -gdwarf-2 -g2 
-ARCH_CFLAGS_AMD64=-m64 -O3 -gdwarf-2 -g2 
+ARCH_CFLAGS_I486=-O3
+ARCH_CFLAGS_I686=-O3
+ARCH_CFLAGS_AMD=-O3
+ARCH_CFLAGS_AMD64=-m64
 else
 ARCH_CFLAGS_I486=-gdwarf-2 -g2 
 ARCH_CFLAGS_I686=-gdwarf-2 -g2 
