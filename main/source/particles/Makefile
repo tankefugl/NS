@@ -20,7 +20,7 @@ COPT = $(MP) -O3 $(LNO)  -fPIC
 CFLAGS = $(COPT) $(COMPFLAGS) -I. -I.. -I$(GLUT_HOME)/include -I/usr/include/c++/4.8/ -I../common -I../public -I../pm_shared -I../engine
 
 ifeq ($(OS),Darwin)
-SLIBB = $(C++) -dynamiclib -undefined suppress -flat_namespace *.o -o libparticles.dylib
+SLIBB = libtool -static *.o -o libparticleMP.a
 CFLAGS += -target i386-apple-darwin -DCMAKE_OSX_ARCHITECTURES=i386
 else
 SLIBB = ar clq $@ $(POBJS)
