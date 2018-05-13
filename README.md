@@ -1,31 +1,29 @@
 # Natural Selection v3.2.1a
-This is a complete rebuild of the game [Natural Selection] for Windows and Linux. After the SteamPipe update the game remained in an pretty bad state for years, therefore I decided to recompile its sources which are provided by [Unknownworlds Entertainment]. With this update this might be the first half-life mod which achieves multi-platform support. Speaking of this you are encouraged to compile for Mac OS X. The ultimate goal is to provide a better expierence of the Natural Selection gameplay on all major platforms and a possible distribution in the future through [Steam].
 
-### Downloads
-Here you find the new compiled `.dlls` or `.so` files for client and server. If you just want to play or to host a server you can download them here:
-- [ns_patch_v321a.7z]
+This is a complete rebuild of the game [Natural Selection] for Windows and Linux. It includes fixes by fmoraw, Bacsu, puzl and others mostly just to make this source code build and run on all platforms.
 
-Remember to extract them to your Half-Life/ns directory.
+## Downloads
 
-The offical download url for the complete version ns v3.2 is not working with firefox. Either use:
-```sh
-$ wget http://www.unknownworlds.com/files/ns/ns_install_v32.exe
-``` 
-or
-```sh
-$ curl -LO http://www.unknownworlds.com/files/ns/ns_install_v32.exe
-``` 
-or follow this link http://sllegacy.unknownworlds.com/files/ns/ns_install_v32.exe
-### Changes
+First you need NS 3.2 full installation. Download from UWE website or from here [here](https://www.ensl.org/files/client/ns_install_v32.exe)
+
+You can find releases [here](https://github.com/ENSL/NS/releases).
+
+Download latest: [ns_v321b_patch.zip](https://github.com/ENSL/NS/releases/download/v3.2.1b/ns_v321b_patch.zip)
+
+Remember to extract them to your Half-Life/ns directory. It should replace the existing files.
+
+## Changes
+
 In order to make this game work for linux the old half-life engine files were replaced with the newer ones. In addtion some changes are accounted for the use of an acient glibc library. Some changes to the game itself have been made and these include:
+
 - The ChatPanel has been replaced in favor of the old hl chat.
 - The observatory has now a spherical detection like the sensory chamber
 - Removed special NS gamma since it is windows only
 
 The plan is to bring the chat and the gamma back when a cross-platfrom solution can be achieved.
 
-### Bugs
-With great changes come great bugs.
+## Bugs
+
 - Chat input is not visible while spectating
 - [sg reload bug] 
 - [FPS_Effects] FPS dependant fire rates and player physics 
@@ -36,38 +34,57 @@ With great changes come great bugs.
 - windows server works only with the hlds tool
 
 If you find more please report them!
-### Compile
 
-First you will need to get the files:
+## Compiling
+
+First. you need some libraries. On Ubuntu it is:
+
 ```sh
-$ git clone https://github.com/fmoraw/NS.git
+apt-get install build-essential git gdb gcc-multilib g++-multilib libc6-i386 libcurl4-openssl-dev:i386 libpng12-dev:i386
 ``` 
 
-Then goto `NS/main/source/linux` and use `make hl_cll` for the client and `make ns` for the server.
+For windows compilation should be working if you have VS2010 installed.
 
-Make sure you have `g++-multilib` set up for x64 operating systems. For windows compilation should be working if you have VS2010 installed.
+Then you will need to get the files:
+```sh
+git clone https://github.com/fmoraw/NS.git
+``` 
+
+Then to build `` and use `make hl_cll` for the client and `make ns` for the server.
+
+```sh
+cd NS/main/source/linux
+```
+
+For client use `make hl_cll` and for server use `make ns`
+
 
 If you get the this error when running the app: `Fatal Error - could not load library (client.so)`, With a high chance it is because of some `UNDEFINED SYMBOLS` in the shared library. But you can check this with this command:
+
 ``` sh 
-$ ldd -r -d client.so
+ldd -r -d client.so
 ``` 
+
+Make sure you have vgui.so copied to cl_dll folder too on Linux.
+
+## Debugging
 
 If you want to debug:
 ```sh
-$ LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" gdb ./hl_linux r -game ns -dev -steam
+LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" gdb ./hl_linux r -game ns -dev -steam
 ``` 
 Due to the new engine and the nature of Linux I had to make a lot of changes! You can find them with grep -Ril `@Linux`.
 
 ### Hosting a server
+
 Since servers are really rare at this point in time here is a tutorial how to set up an [Natural Selection] server with [hlds]. 
 
 1. Follow these steps: https://developer.valvesoftware.com/wiki/SteamCMD
 2. Copy the [Natural Selection] directory to steamcmd/servers/
 3. Run the game : 
 ```sh
-$ ./hlds_run -game ns -autoupdate +map ns_eclipse + sv_secure 1 + port 27015 + ip 127.0.0.1 +hostname "Natural Selection" +maxplayers 32
+./hlds_run -game ns -autoupdate +map ns_eclipse + sv_secure 1 + port 27015 + ip 127.0.0.1 +hostname "Natural Selection" +maxplayers 32
 ``` 
-
 If you are behind a NAT(Router) make sure to open at least those ports: 
 - 27015 UDP (game transmission, pings) 
 - 26900 UDP (VAC service) -- automatically increments if used in case of additional server processes
@@ -82,6 +99,7 @@ There is an updated version of metamod called [metamodp](http://metamod-p.source
  - [rcbot linux dlls](http://filebase.bots-united.com/index.php?act=download&id=428)
 
 ### Usefull links
+
 * [Usefull collection of ns files server addons, maps and erverything ](http://www.brywright.co.uk/downloads/files/index.php?dir=natural-selection/)
 * [Great collection of ns guides/tutorials](http://www.naturalns.clanservers.com/forums/index.php?topic=5.0)
 *  [rcbot downloads](http://filebase.bots-united.com/index.php?act=category&id=19)

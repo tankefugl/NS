@@ -47,6 +47,7 @@ extern cvar_t*	cl_musicdir;
 // :
 #define	kvCMHotKeys			"cl_cmhotkeys"
 #define	kvForceDefaultFOV	"cl_forcedefaultfov"
+#define	kvWidescreen		"cl_widescreen"
 #define kvCenterEntityID	"cl_centerentityid"
 #define kvHighDetail		"cl_highdetail"
 #define kvCMHotkeys			"cl_cmhotkeys"
