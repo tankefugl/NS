@@ -509,6 +509,9 @@
     <ClCompile Include="..\textrep\TRFactory.cpp">
       <Filter>textrep</Filter>
     </ClCompile>
+    <ClCompile Include="compatibility.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="activity.h">

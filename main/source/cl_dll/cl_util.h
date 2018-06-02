@@ -94,8 +94,8 @@ int ScreenWidth();
 
 
 // Gets the height & width of a sprite,  at the specified frame
-inline int SPR_Height( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Height(x, f); }
-inline int SPR_Width( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Width(x, f); }
+inline int SPR_Height( AVHHSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Height(x, f); }
+inline int SPR_Width( AVHHSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Width(x, f); }
 
 inline 	client_textmessage_t	*TextMessageGet( const char *pName ) { return gEngfuncs.pfnTextMessageGet( pName ); }
 inline 	int						TextMessageDrawChar( int x, int y, int number, int r, int g, int b ) 
@@ -141,7 +141,7 @@ inline void UnpackRGB(int &r, int &g, int &b, unsigned long ulRGB)\
 
 void FillRGBAClipped(vgui::Panel* inPanel, int inStartX, int inStartY, int inWidth, int inHeight, int r, int g, int b, int a);
 
-HSPRITE LoadSprite(const char *pszName);
+AVHHSPRITE LoadSprite(const char *pszName);
 
 //bool LocalizeString(const char* inMessage, char* outBuffer, int inBufferSize);
 bool LocalizeString(const char* inMessage, string& outputString);

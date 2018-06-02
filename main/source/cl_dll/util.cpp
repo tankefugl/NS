@@ -254,7 +254,7 @@ void FillRGBAClipped(vgui::Panel* inPanel, int inStartX, int inStartY, int inWid
 }
 
 
-HSPRITE LoadSprite(const char *pszName)
+AVHHSPRITE LoadSprite(const char *pszName)
 {
 	int i;
 	char sz[256]; 

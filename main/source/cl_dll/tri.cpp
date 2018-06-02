@@ -195,7 +195,7 @@ void CL_DLLEXPORT HUD_DrawNormalTriangles( void )
 void DrawHitBox(const OBBox& inBox)
 {
 
-    HSPRITE sprite = SPR_Load("sprites/white.spr");
+	AVHHSPRITE sprite = SPR_Load("sprites/white.spr");
 
     vec3_t theBoxPoint[8];
 

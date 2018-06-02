@@ -305,7 +305,7 @@ void SetWarpHUDSprites(bool inMode, float inWarpXAmount = 0.0f, float inWarpYAmo
 	gWarpYSpeed = inWarpYSpeed;
 }
 
-void DrawScaledHUDSprite(int inSpriteHandle, int inMode, int inRowsInSprite = 1, int inX = 0, int inY = 0, int inWidth = ScreenWidth(), int inHeight = ScreenHeight(), int inForceSpriteFrame = -1, float inStartU = 0.0f, float inStartV = 0.0f, float inEndU = 1.0f, float inEndV = 1.0f, float inRotateUVRadians = 0.0f, bool inUVWrapsOverFrames = false)
+void DrawScaledHUDSprite(AVHHSPRITE inSpriteHandle, int inMode, int inRowsInSprite = 1, int inX = 0, int inY = 0, int inWidth = ScreenWidth(), int inHeight = ScreenHeight(), int inForceSpriteFrame = -1, float inStartU = 0.0f, float inStartV = 0.0f, float inEndU = 1.0f, float inEndV = 1.0f, float inRotateUVRadians = 0.0f, bool inUVWrapsOverFrames = false)
 {
 	// Count number of frames
 	int theNumFrames = SPR_Frames(inSpriteHandle);
@@ -588,7 +588,7 @@ void DrawScaledHUDSprite(int inSpriteHandle, int inMode, int inRowsInSprite = 1,
 	}
 }
 
-void DrawVariableScaledHUDSprite(float inFactor, int inSpriteHandle, int inMode, int inX, int inY, int inWidth, int inHeight)
+void DrawVariableScaledHUDSprite(float inFactor, AVHHSPRITE inSpriteHandle, int inMode, int inX, int inY, int inWidth, int inHeight)
 {
 	// Draw as two scaled sprites, one for the level and one for the "empty" level
 	// Assumes that sprite has two frames, with the empty level being frame 0 and the full frame being frame 1
@@ -611,7 +611,7 @@ void DrawVariableScaledHUDSprite(float inFactor, int inSpriteHandle, int inMode,
 	DrawScaledHUDSprite(inSpriteHandle, inMode, 1, theX, theY, theWidth, theHeight, 0, theStartU, theStartV, theEndU, theEndV);
 }
 
-void DrawSpriteOnGroundAtPoint(vec3_t inOrigin, int inRadius, HSPRITE inSprite, int inRenderMode = kRenderNormal, int inFrame = 0, float inAlpha = 1.0f)
+void DrawSpriteOnGroundAtPoint(vec3_t inOrigin, int inRadius, AVHHSPRITE inSprite, int inRenderMode = kRenderNormal, int inFrame = 0, float inAlpha = 1.0f)
 {
 	if(gEngfuncs.pTriAPI->SpriteTexture((struct model_s *)gEngfuncs.GetSpritePointer(inSprite), inFrame))
 	{
@@ -889,7 +889,7 @@ void AvHHud::DrawToolTips()
 	}
 }
 
-void AvHHud::DrawWorldSprite(int inSpriteHandle, int inRenderMode, vec3_t inWorldPosition, int inFrame, float inWorldSize, float inAlpha)
+void AvHHud::DrawWorldSprite(AVHHSPRITE inSpriteHandle, int inRenderMode, vec3_t inWorldPosition, int inFrame, float inWorldSize, float inAlpha)
 // : added inAlpha
 {
 	vec3_t theUpperLeft;
@@ -1415,7 +1415,7 @@ int AvHHud::GetHelpIconFrameFromUser3(AvHUser3 inUser3)
 	return theFrame;
 }
 
-HSPRITE	AvHHud::GetHelpSprite() const
+AVHHSPRITE AvHHud::GetHelpSprite() const
 {
 	return this->mHelpSprite;
 }
@@ -1651,7 +1651,7 @@ void AvHHud::DrawMouseCursor(int inBaseX, int inBaseY)
 	if ( g_iVisibleMouse && !(this->GetInTopDownMode() && gEngfuncs.pDemoAPI->IsPlayingback()) )
 	{
 
-        HSPRITE theCursorSprite;
+        AVHHSPRITE theCursorSprite;
         int theCursorFrame;
 
         GetCursor(theCursorSprite, theCursorFrame);
@@ -1696,7 +1696,7 @@ void AvHHud::DrawMouseCursor(int inBaseX, int inBaseY)
             if (mSelectionBoxVisible)
             {
 				
-                int sprite = SPR_Load(kWhiteSprite);
+                AVHHSPRITE sprite = SPR_Load(kWhiteSprite);
                 
                 int r, g, b;
                 GetPrimaryHudColor(r, g, b, true, false);
@@ -2179,7 +2179,7 @@ void AvHHud::DrawActionButtons()
 	}
 }
 
-int AvHHud::GetTechTreeSprite(AvHMessageID inMessageID)
+AVHHSPRITE AvHHud::GetTechTreeSprite(AvHMessageID inMessageID)
 {
 	// Find the group that it belongs to (20, 30, 40, etc.)
 	int theMessageNumber = (int)inMessageID - (inMessageID % 10);
@@ -2193,14 +2193,14 @@ int AvHHud::GetTechTreeSprite(AvHMessageID inMessageID)
 		sprintf(theMessageNumberString, "%d", (int)theMessageNumber);
 		//string theSpriteName = kTechTreeSpriteDirectory + string("/") + kTechTreeSpritePrefix + string(theMessageIDString) + string(".spr");
 		string theSpriteName = kTechTreeSpriteDirectory + string("/") + kTechTreeSpritePrefix + string(theMessageNumberString) + string("s.spr");
-		int theSpriteHandle = SPR_Load(theSpriteName.c_str());
+		AVHHSPRITE theSpriteHandle = SPR_Load(theSpriteName.c_str());
 		
 		// Sprite handle can be 0, as I don't have sprites for all tech yet
 		this->mActionButtonSprites[theMessageNumber] = theSpriteHandle;
 	}
 	
 	// Fetch sprite handle
-	int theSpriteHandle = this->mActionButtonSprites[theMessageNumber];
+	AVHHSPRITE theSpriteHandle = this->mActionButtonSprites[theMessageNumber];
 
 	return theSpriteHandle;
 }
@@ -2211,7 +2211,7 @@ void AvHHud::DrawTechTreeSprite(AvHMessageID inMessageID, int inPosX, int inPosY
 	{
 		// Check for alien sprites
 		bool theIsAlienSprite = false;
-		int theSpriteHandle = 0;
+		AVHHSPRITE theSpriteHandle = 0;
 		int theRenderMode = kRenderTransAlpha; // kRenderNormal
 		
 		switch(inMessageID)
@@ -2507,7 +2507,7 @@ void AvHHud::DrawBuildHealthEffectsForEntity(int inEntityIndex, float inAlpha)
 				AvHSHUGetBuildResearchState(theUser3, theUser4, theFuser1, theIsBuilding, theIsResearching, theNormalizedPercentage);
 		
 				bool theDrawHealth = true;
-				int theSpriteToUse = this->GetIsAlien() ? this->mAlienHealthSprite : this->mMarineHealthSprite;
+				AVHHSPRITE theSpriteToUse = this->GetIsAlien() ? this->mAlienHealthSprite : this->mMarineHealthSprite;
                 bool theDrawAsRecyling = (GetHasUpgrade(theUser4, MASK_RECYCLING) && theIsOnOurTeam);
 
 				if((theIsOnOurTeam && theIsBuilding && (GetHasUpgrade(theUser4, MASK_BUILDABLE))) || theDrawAsRecyling)
@@ -3050,7 +3050,7 @@ void AvHHud::RenderCommonUI()
 		// Now draw our current experience level, so people know how close they are to the next level
 		// Load alien resource and energy sprites
 		string theSpriteName = UINameToSprite(kCombatExperienceSprite, ScreenWidth());
-		int theExperienceSprite = SPR_Load(theSpriteName.c_str());
+		AVHHSPRITE theExperienceSprite = SPR_Load(theSpriteName.c_str());
 		
 		if(theExperienceSprite)
 		{
@@ -3103,7 +3103,7 @@ void AvHHud::RenderProgressBar(char *spriteName)
 	const float progressBarStayTime = 0.2f;
 	if (this->mProgressBarLastDrawn + progressBarStayTime > this->GetTimeOfLastUpdate())
 	{
-		HSPRITE currentSprite=0;
+		AVHHSPRITE currentSprite=0;
 		if ( spriteName && ( strcmp(spriteName, kExperienceBarSprite) == 0 ) ) {
 			currentSprite=this->mExperienceBarSprite;
 		}
@@ -3603,7 +3603,7 @@ void AvHHud::RenderStructureRanges()
 			thePosition = AvHSHUGetRealLocation(theEntity->origin, theEntity->mins, theEntity->maxs);
 
 			//int theSprite = (theEntity->iuser3 == AVH_USER3_SIEGETURRET) ? this->mSiegeTurretSprite : this->mBuildCircleSprite;
-			int theSprite = this->mBuildCircleSprite;
+			AVHHSPRITE theSprite = this->mBuildCircleSprite;
 
 			int theDistanceRequirement = theDistanceRequirements[theDistanceCounter];
 			RenderStructureRange(thePosition, theDistanceRequirement, theSprite, kRenderTransAdd, 0, theRangeR, theRangeG, theRangeB, theRangeA);
@@ -3630,7 +3630,7 @@ void AvHHud::RenderStructureRanges()
 				if(!GetHasUpgrade(theEntity->curstate.iuser4, MASK_RECYCLING))
 				{
 					//int theSprite = (theEntity->curstate.iuser3 == AVH_USER3_SIEGETURRET) ? this->mSiegeTurretSprite : this->mBuildCircleSprite;
-					int theSprite = this->mBuildCircleSprite;
+					AVHHSPRITE theSprite = this->mBuildCircleSprite;
 					RenderStructureRange(thePosition, theRange, theSprite, kRenderTransAdd, 0, theRangeR, theRangeG, theRangeB, theRangeA);
 				}
 			}
@@ -3670,7 +3670,7 @@ void AvHHud::RenderStructureRanges()
             AvHSHUGetSizeForUser3(theUser3, theMinSize, theMaxSize);
             float theMaxRadius2 = max(max(theMinSize.x, theMaxSize.x), max(theMinSize.y, theMaxSize.y));
 
-            int theSprite = this->mBuildCircleSprite;
+            AVHHSPRITE theSprite = this->mBuildCircleSprite;
 			// : 0000291 
 			// It's possible to place "on" marines if you're offset a little from center. This code and 
 			// associated changes above and in AvHSharedUtil.cpp is to enforce a build distance around marines,
@@ -3690,7 +3690,7 @@ void AvHHud::RenderStructureRanges()
 	}
 }
 
-void AvHHud::RenderStructureRange(vec3_t inOrigin, int inRadius, HSPRITE inSprite, int inRenderMode, int inFrame, float inR, float inG, float inB, float inAlpha)
+void AvHHud::RenderStructureRange(vec3_t inOrigin, int inRadius, AVHHSPRITE inSprite, int inRenderMode, int inFrame, float inR, float inG, float inB, float inAlpha)
 {
 
     vec3_t w1;
@@ -4178,7 +4178,7 @@ void AvHHud::RenderAlienUI()
 
 }
 
-void AvHHud::DrawWarpedOverlaySprite(int spriteHandle, int numXFrames, int numYFrames, float inWarpXAmount, float inWarpYAmount, float inWarpXSpeed, float inWarpYSpeed)
+void AvHHud::DrawWarpedOverlaySprite(AVHHSPRITE spriteHandle, int numXFrames, int numYFrames, float inWarpXAmount, float inWarpYAmount, float inWarpXSpeed, float inWarpYSpeed)
 {
     
     float dx = ScreenWidth();

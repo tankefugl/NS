@@ -87,7 +87,7 @@ void AvHVisibleBlipList::Draw(const pVector& inView, int kDefaultStatus)
 			this->mSprite[theStatus] = SPR_Load(theSpriteName.c_str());
 		}
 
-		int theSprite = this->mSprite[theStatus];
+		AVHHSPRITE theSprite = this->mSprite[theStatus];
 		if(!theSprite)
 		{
 			theSprite = this->mSprite[kDefaultStatus];

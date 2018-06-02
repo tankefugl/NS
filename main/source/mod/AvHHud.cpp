@@ -3896,7 +3896,7 @@ bool AvHHud::SetCursor(AvHOrderType inOrderType)
 	return theSuccess;
 }
 
-void AvHHud::GetCursor(HSPRITE& outSprite, int& outFrame)
+void AvHHud::GetCursor(AVHHSPRITE& outSprite, int& outFrame)
 {
 
     if (g_iUser1 == 0)
@@ -6923,7 +6923,7 @@ void AvHHud::HideCommandMenu()
 		gViewPort->HideCommandMenu();
 }
 
-void AvHHud::GetSpriteForUser3(AvHUser3 inUser3, int& outSprite, int& outFrame, int& outRenderMode)
+void AvHHud::GetSpriteForUser3(AvHUser3 inUser3, AVHHSPRITE& outSprite, int& outFrame, int& outRenderMode)
 {
 
     switch (inUser3)
@@ -7095,7 +7095,7 @@ void AvHHud::HideCrosshair()
 
 }
 
-void AvHHud::SetCurrentCrosshair(HSPRITE hspr, wrect_t rc, int r, int g, int b)
+void AvHHud::SetCurrentCrosshair(AVHHSPRITE hspr, wrect_t rc, int r, int g, int b)
 {
     mCrosshairSprite = hspr;
     mCrosshairRect   = rc;
