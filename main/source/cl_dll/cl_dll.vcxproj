@@ -164,6 +164,8 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="hudgl.cpp" />
+    <ClCompile Include="hud_crosshairs.cpp" />
     <ClCompile Include="hud_msg.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -799,6 +801,8 @@
     <ClInclude Include="GameStudioModelRenderer.h" />
     <ClInclude Include="health.h" />
     <ClInclude Include="hud.h" />
+    <ClInclude Include="hudgl.h" />
+    <ClInclude Include="hud_crosshairs.h" />
     <ClInclude Include="hud_iface.h" />
     <ClInclude Include="hud_servers.h" />
     <ClInclude Include="hud_servers_priv.h" />

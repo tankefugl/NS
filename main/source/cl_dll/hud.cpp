@@ -251,6 +251,7 @@ void CHud :: Init( void )
 	m_AmmoSecondary.Init();
 	m_TextMessage.Init();
 	m_StatusIcons.Init();
+	m_Crosshairs.Init();
 	
     m_Spectator.m_chatEnabled = (m_SayText.m_HUD_saytext->value!=0);
     
@@ -414,6 +415,7 @@ void CHud :: VidInit( void )
 	m_AmmoSecondary.VidInit();
 	m_TextMessage.VidInit();
 	m_StatusIcons.VidInit();
+	m_Crosshairs.VidInit();
 	GetClientVoiceMgr()->VidInit();
 }
 
