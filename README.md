@@ -75,6 +75,12 @@ LD_LIBRARY_PATH=".:$LD_LIBRARY_PATH" gdb ./hl_linux r -game ns -dev -steam
 ``` 
 Due to the new engine and the nature of Linux I had to make a lot of changes! You can find them with grep -Ril `@Linux`.
 
+For MacOS & lldb:
+```
+DYLD_LIBRARY_PATH=".:$DYLD_LIBRARY_PATH" /Applications/Xcode.app/Contents/Developer/usr/bin/lldb -- ./hl_osx r -game ns -dev -steam -windowed
+```
+Have to use XCode's lldb to get around https://stackoverflow.com/a/33589760 (Lack of environment variables). `-windowed` as windowed mode makes it easier to deal with crashes on MacOS.
+
 ### Hosting a server
 
 Since servers are really rare at this point in time here is a tutorial how to set up an [Natural Selection] server with [hlds]. 
