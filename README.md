@@ -1,5 +1,7 @@
 # Natural Selection v3.2.1a
 
+[![Build Status](https://travis-ci.org/ENSL/NS.svg?branch=develop)](https://travis-ci.org/ENSL/NS)
+
 This is a complete rebuild of the game [Natural Selection] for Windows and Linux. It includes fixes by fmoraw, Bacsu, puzl and others mostly just to make this source code build and run on all platforms.
 
 ## Downloads
