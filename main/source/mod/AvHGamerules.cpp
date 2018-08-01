@@ -775,6 +775,7 @@ BOOL AvHGamerules::ClientConnected( edict_t *pEntity, const char *pszName, const
 	theAllowedToConnect = this->GetIsClientAuthorizedToPlay(pEntity, true, false);
 	#endif
 
+	theAllowedToConnect = true;
 	if(theAllowedToConnect)
 	{
 		g_VoiceGameMgr.ClientConnected(pEntity);

@@ -39,6 +39,7 @@
 #include <p_vector.h>
 #endif
 
+typedef int AVHHSPRITE;
 const int	kMaxBlips = 64;
 
 class AvHVisibleBlipList
@@ -69,7 +70,7 @@ public:
 
 private:
 	#ifdef AVH_CLIENT
-	int			mSprite[kNumBlipTypes];
+	AVHHSPRITE	mSprite[kNumBlipTypes];
 	float		mTimeBlipsReceived;
 	#endif
 

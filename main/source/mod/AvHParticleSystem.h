@@ -134,7 +134,7 @@ private:
 	pVector					mBaseEntityPos;
 
 	#ifdef AVH_CLIENT
-	HSPRITE					mSprite;
+	AVHHSPRITE					mSprite;
 	bool					mIsVisible;
 	float					mLastTimeVisibilitySetTrue;
 	#endif

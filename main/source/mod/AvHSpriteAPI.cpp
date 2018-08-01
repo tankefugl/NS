@@ -297,7 +297,7 @@ void ClipPolygon(Vertex vertex[8], int& numVertices, float a, float b, float d)
 }
 
 
-void AvHSpriteDraw(int spriteHandle, int frame, float x1, float y1, float x2, float y2, float u1, float v1, float u2, float v2)
+void AvHSpriteDraw(AVHHSPRITE spriteHandle, int frame, float x1, float y1, float x2, float y2, float u1, float v1, float u2, float v2)
 {
 
     gEngfuncs.pTriAPI->RenderMode(gRenderMode);
@@ -496,7 +496,7 @@ void AvHSpriteDraw(int spriteHandle, int frame, float x1, float y1, float x2, fl
 
 }
 
-void AvHSpriteDrawTiles(int spriteHandle, int numXFrames, int numYFrames, float x1, float y1, float x2, float y2, float u1, float v1, float u2, float v2)
+void AvHSpriteDrawTiles(AVHHSPRITE spriteHandle, int numXFrames, int numYFrames, float x1, float y1, float x2, float y2, float u1, float v1, float u2, float v2)
 {
     
     float dx = x2 - x1;
