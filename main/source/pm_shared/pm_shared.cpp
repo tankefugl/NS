@@ -132,6 +132,7 @@ bool AvHSHUGetCenterPositionForGroup(int inGroupNumber, float* inPlayerOrigin, f
 float PM_GetDesiredTopDownCameraHeight(qboolean& outFoundEntity);
 qboolean PM_CanWalljump();
 qboolean PM_CanFlap();
+qboolean jumpheld;
 void PM_Overwatch();
 bool PM_TopDown();
 void PM_Jump(void);
@@ -5334,12 +5335,14 @@ void PM_Jump (void)
 {
     int i;
     qboolean tfc = false;
-    
+	qboolean autojump = false;
+	qboolean queuedjump = false;
     qboolean cansuperjump = false;
     
     if (pmove->dead || GetHasUpgrade(pmove->iuser4, MASK_ENSNARED))
     {
-        pmove->oldbuttons |= IN_JUMP ;  // don't jump again until released
+        //pmove->oldbuttons |= IN_JUMP ;  // don't jump again until released
+		jumpheld = true;
         return;
     }
     
@@ -5449,7 +5452,7 @@ void PM_Jump (void)
         // Flag that we jumped.
         // HACK HACK HACK
         // Remove this when the game .dll no longer does physics code!!!!
-        pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
+        //pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
         return;     // in air, so no effect
     }
 
@@ -5459,8 +5462,20 @@ void PM_Jump (void)
 //	if ( pmove->oldbuttons & IN_JUMP && (pmove->velocity[0] == 0 || !theIsAlien  || pmove->iuser3 == AVH_USER3_ALIEN_PLAYER3) )
 		//return;     // don't pogo stick
 
-	if ( pmove->oldbuttons & IN_JUMP )
+	autojump = atoi(pmove->PM_Info_ValueForKey(pmove->physinfo, "jm2"));
+	queuedjump = atoi(pmove->PM_Info_ValueForKey(pmove->physinfo, "jm1"));
+
+	if ((!autojump && !queuedjump) || pmove->iuser3 == AVH_USER3_ALIEN_PLAYER3)
+	{
+		if (pmove->oldbuttons & IN_JUMP)
 		return;     // don't pogo stick
+	}
+
+	if (queuedjump)
+	{
+		if (jumpheld)
+			return;
+	}
 
 	// In the air now.
     pmove->onground = -1;
@@ -5513,7 +5528,8 @@ void PM_Jump (void)
     PM_FixupGravityVelocity();
     
     // Flag that we jumped.
-    pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
+    //pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
+	jumpheld = true;
 }
 
 /*
@@ -6678,6 +6694,7 @@ void PM_PlayerMove ( qboolean server )
             else
             {
                 pmove->oldbuttons &= ~IN_JUMP;
+				jumpheld = false;
             }
 
             // Fricion is handled before we add in any base velocity. That way, if we are on a conveyor, 
