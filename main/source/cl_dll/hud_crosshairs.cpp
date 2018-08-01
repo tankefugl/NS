@@ -83,11 +83,11 @@ int CHudCrosshairs::Draw(float time)
 		gl.color(0, 0, 0, outalpha);
 		gl.line_width(cl_cross_outline->value);
 
-		auto size = cl_cross_size->value;
-		auto gap = cl_cross_gap->value;
-		auto half_thickness = cl_cross_thickness->value / 2.0f;
-		auto half_width = cl_cross_outline->value / 2.0f;
-		auto offset = half_thickness + half_width;
+		float size = cl_cross_size->value;
+		float gap = cl_cross_gap->value;
+		float half_thickness = cl_cross_thickness->value / 2.0f;
+		float half_width = cl_cross_outline->value / 2.0f;
+		float offset = half_thickness + half_width;
 
 		// Top line
 		if (cl_cross_line_top->value) {
@@ -155,9 +155,9 @@ int CHudCrosshairs::Draw(float time)
 
 		// Dot
 		if (cl_cross_dot_size->value > 0.0f && cl_cross_dot_outline->value > 0.0f) {
-			auto size = cl_cross_dot_size->value;
-			auto offset = Vector2D(size / 2.0f, size / 2.0f);
-			auto dot_half_width = cl_cross_dot_outline->value / 2.0f;
+			float size = cl_cross_dot_size->value;
+			Vector2D offset = Vector2D(size / 2.0f, size / 2.0f);
+			float dot_half_width = cl_cross_dot_outline->value / 2.0f;
 
 			gl.line(Vector2D(center.x - offset.x - dot_half_width, center.y - offset.y), Vector2D(center.x + offset.x + dot_half_width, center.y - offset.y));
 			gl.line(Vector2D(center.x + offset.x, center.y - offset.y + dot_half_width), Vector2D(center.x + offset.x, center.y + offset.y - dot_half_width));
@@ -172,8 +172,8 @@ int CHudCrosshairs::Draw(float time)
 	if (cl_cross_thickness->value > 0.0f) {
 		gl.line_width(cl_cross_thickness->value);
 
-		auto size = cl_cross_size->value;
-		auto gap = cl_cross_gap->value;
+		float size = cl_cross_size->value;
+		float gap = cl_cross_gap->value;
 
 		if (cl_cross_line_top->value)
 			gl.line(Vector2D(center.x, center.y - gap - size), Vector2D(center.x, center.y - gap));
@@ -189,7 +189,7 @@ int CHudCrosshairs::Draw(float time)
 	if (cl_cross_circle_radius->value > 0.0f) {
 		gl.line_width(1.0f);
 
-		auto radius = cl_cross_circle_radius->value;
+		float radius = cl_cross_circle_radius->value;
 		if (old_circle_radius != radius) {
 			// Recompute the circle points.
 			circle_points = HudGL::compute_circle(radius);
@@ -205,8 +205,8 @@ int CHudCrosshairs::Draw(float time)
 		if (sscanf(cl_cross_dot_color->string, "%hhu %hhu %hhu", &r, &g, &b) == 3)
 			gl.color(r, g, b, alpha);
 
-		auto size = cl_cross_dot_size->value;
-		auto offset = Vector2D(size / 2.0f, size / 2.0f);
+		float size = cl_cross_dot_size->value;
+		Vector2D offset = Vector2D(size / 2.0f, size / 2.0f);
 
 		gl.rectangle(center - offset, center + offset);
 	}

@@ -9,7 +9,11 @@
 #include <Windows.h>
 #endif
 
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 
 HudGL::HudGL() {
 	// Same steps as FillRGBA does.
@@ -51,7 +55,7 @@ void HudGL::line(const Vector2D& start, const Vector2D& end) const {
 void HudGL::circle(const Vector2D& center, const std::vector<Vector2D>& points) const {
 	glBegin(GL_LINE_STRIP);
 
-	for (const auto& point : points)
+	for (const Vector2D& point : points)
 		glVertex2f(center.x + point.x, center.y + point.y);
 
 	glVertex2f(center.x + points[0].x, center.y + points[0].y);
