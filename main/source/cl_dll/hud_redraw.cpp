@@ -70,7 +70,7 @@ void CHud::Think(void)
 	// the clients fov is actually set in the client data update section of the hud
 
 	// Set a new sensitivity
-	if ( m_iFOV == default_fov->value )
+	if ( m_iFOV == default_fov->value || CVAR_GET_FLOAT("senslock") == 1.0f)
 	{  
 		// reset to saved sensitivity
 		m_flMouseSensitivity = 0;

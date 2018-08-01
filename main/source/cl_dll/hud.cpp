@@ -537,7 +537,7 @@ int CHud::MsgFunc_SetFOV(const char *pszName,  int iSize, void *pbuf)
 	// the clients fov is actually set in the client data update section of the hud
 
 	// Set a new sensitivity
-	if ( m_iFOV == def_fov )
+	if ( m_iFOV == def_fov || CVAR_GET_FLOAT("senslock") == 1.0f)
 	{  
 		// reset to saved sensitivity
 		m_flMouseSensitivity = 0;
