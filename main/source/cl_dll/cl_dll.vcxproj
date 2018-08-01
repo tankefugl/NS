@@ -170,8 +170,10 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="hudgl.cpp" />
-    <ClCompile Include="hud_crosshairs.cpp" />
+    <ClCompile Include="hud_crosshairs.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="hud_msg.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -189,6 +191,10 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="hud_update.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="hudgl.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
