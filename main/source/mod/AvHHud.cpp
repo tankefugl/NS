@@ -4816,8 +4816,8 @@ void AvHHud::InitExploitPrevention() {
 	ForceCvar("gl_max_size", gl_max_size, 256.0f);
 
 	RemoveAlias("lightgamma");
-	if(lightgamma && lightgamma->value < 2.0) {
-		ForceCvar("lightgamma", lightgamma, 2.0f);
+	if(lightgamma && lightgamma->value < 1.0) {
+		ForceCvar("lightgamma", lightgamma, 1.0f);
 	}
 	if(lightgamma && lightgamma->value > 5.0) {
 		ForceCvar("lightgamma", lightgamma, 5.0f);
