@@ -147,7 +147,7 @@ bool getIsOnCommMinimap(int user3) {
 			user3 ==  AVH_USER3_FUNC_RESOURCE || 
 			user3 ==  AVH_USER3_WELD;
 }
-void AvHOverviewMap::GetSpriteForEntity(const DrawableEntity& entity, int& outSprite, int& outFrame, int& outRenderMode, bool commanderOverview)
+void AvHOverviewMap::GetSpriteForEntity(const DrawableEntity& entity, AVHHSPRITE& outSprite, int& outFrame, int& outRenderMode, bool commanderOverview)
 {
     outRenderMode = kRenderTransTexture;
 	
@@ -344,7 +344,7 @@ void AvHOverviewMap::DrawMiniMapEntity(const DrawInfo& inDrawInfo, const Drawabl
 		theEntityPosY = this->mWorldPlayerY;
 	}
 
-	int theSprite = 0;
+	AVHHSPRITE theSprite = 0;
     int theFrame = 0;
     int theRenderMode;
 
@@ -406,7 +406,7 @@ void AvHOverviewMap::DrawMiniMapEntity(const DrawInfo& inDrawInfo, const Drawabl
             if (inEntity.mIsLocalPlayer && mUser3 != AVH_USER3_COMMANDER_PLAYER)
             {
                 
-                int theSprite = SPR_Load("sprites/fov.spr");
+                AVHHSPRITE theSprite = SPR_Load("sprites/fov.spr");
                 int theFrame  = 0;
 
                 int theSprWidth = SPR_Width(theSprite, theFrame);
@@ -451,7 +451,7 @@ void AvHOverviewMap::DrawMiniMapEntity(const DrawInfo& inDrawInfo, const Drawabl
 
                 // Draw friendly players as little arrows on the edge of the minimap.
 
-                int theSprite = SPR_Load(kMarinePlayersSprite);
+                AVHHSPRITE theSprite = SPR_Load(kMarinePlayersSprite);
 				int theFrame  = theIsWaypoint ? 4 : 3;
 
                 ASSERT(theSprite != 0);
@@ -543,7 +543,7 @@ void AvHOverviewMap::DrawMiniMap(const DrawInfo& inDrawInfo)
 		int drawLabels=CVAR_GET_FLOAT(kvLabelMaps);
 		if ( mLastMinimap != drawLabels || mMiniMapSprite == -1 )
 		{
-			int tmpSpr=0;
+			AVHHSPRITE tmpSpr=0;
 			for ( int i=drawLabels; i >=0 && tmpSpr == 0 ; i-- ) {
 				string theMiniMapName = AvHMiniMap::GetSpriteNameFromMap(ScreenWidth(), mMapName, i);
 				tmpSpr = SPR_Load(theMiniMapName.c_str());
@@ -636,7 +636,7 @@ void AvHOverviewMap::DrawAlerts(const DrawInfo& inDrawInfo)
     AvHSpriteEnableClippingRect(true);
     AvHSpriteSetClippingRect(theX, theY, theX + theWidth, theY + theHeight);
 
-    int theSprite = SPR_Load(kAlertSprite);
+    AVHHSPRITE theSprite = SPR_Load(kAlertSprite);
 	int theFrame  = 0;
 
     ASSERT(theSprite != 0);

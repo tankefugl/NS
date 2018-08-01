@@ -3,27 +3,30 @@
 #include "parsemsg.h"
 #include "hudgl.h"
 
+// Crosshair system based on OpenAG
+// https://github.com/YaLTeR/OpenAG
+
 int CHudCrosshairs::Init()
 {
 	m_iFlags = HUD_ACTIVE;
 
 	cl_cross = CVAR_CREATE("cl_cross", "0", FCVAR_ARCHIVE);
-	cl_cross_color = CVAR_CREATE("cl_cross_color", "0 255 0", FCVAR_ARCHIVE);
+	cl_cross_color = CVAR_CREATE("cl_cross_color", "255 255 255", FCVAR_ARCHIVE);
 	cl_cross_alpha = CVAR_CREATE("cl_cross_alpha", "255", FCVAR_ARCHIVE);
 	cl_cross_thickness = CVAR_CREATE("cl_cross_thickness", "2", FCVAR_ARCHIVE);
-	cl_cross_size = CVAR_CREATE("cl_cross_size", "10", FCVAR_ARCHIVE);
+	cl_cross_size = CVAR_CREATE("cl_cross_size", "6", FCVAR_ARCHIVE);
 	cl_cross_gap = CVAR_CREATE("cl_cross_gap", "3", FCVAR_ARCHIVE);
-	cl_cross_outline = CVAR_CREATE("cl_cross_outline", "0", FCVAR_ARCHIVE);
-	//cl_cross_outline_alpha = CVAR_CREATE("cl_cross_outline_alpha", "255", FCVAR_ARCHIVE);
-	cl_cross_outline_inner = CVAR_CREATE("cl_cross_outline_inner", "1", FCVAR_ARCHIVE);
-	//cl_cross_circle_radius = CVAR_CREATE("cl_cross_circle_radius", "0", FCVAR_ARCHIVE);
+	cl_cross_outline = CVAR_CREATE("cl_cross_outline", "2", FCVAR_ARCHIVE);
+	cl_cross_outline_alpha = CVAR_CREATE("cl_cross_outline_alpha", "255", FCVAR_ARCHIVE);
+	cl_cross_outline_inner = CVAR_CREATE("cl_cross_outline_inner", "0", FCVAR_ARCHIVE);
+	cl_cross_circle_radius = CVAR_CREATE("cl_cross_circle_radius", "0", FCVAR_ARCHIVE);
 	cl_cross_dot_size = CVAR_CREATE("cl_cross_dot_size", "0", FCVAR_ARCHIVE);
 	cl_cross_dot_color = CVAR_CREATE("cl_cross_dot_color", "", FCVAR_ARCHIVE);
-	cl_cross_dot_outline = CVAR_CREATE("cl_cross_dot_outline", "1", FCVAR_ARCHIVE);
-	cl_cross_top_line = CVAR_CREATE("cl_cross_top_line", "1", FCVAR_ARCHIVE);
-	cl_cross_bottom_line = CVAR_CREATE("cl_cross_bottom_line", "1", FCVAR_ARCHIVE);
-	cl_cross_left_line = CVAR_CREATE("cl_cross_left_line", "1", FCVAR_ARCHIVE);
-	cl_cross_right_line = CVAR_CREATE("cl_cross_right_line", "1", FCVAR_ARCHIVE);
+	cl_cross_dot_outline = CVAR_CREATE("cl_cross_dot_outline", "0", FCVAR_ARCHIVE);
+	cl_cross_line_top = CVAR_CREATE("cl_cross_line_top", "1", FCVAR_ARCHIVE);
+	cl_cross_line_bottom = CVAR_CREATE("cl_cross_line_bottom", "1", FCVAR_ARCHIVE);
+	cl_cross_line_left = CVAR_CREATE("cl_cross_line_left", "1", FCVAR_ARCHIVE);
+	cl_cross_line_right = CVAR_CREATE("cl_cross_line_right", "1", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem(this);
 	return 0;
@@ -46,13 +49,16 @@ int CHudCrosshairs::Draw(float time)
 	if (alpha == 0)
 		return 0;
 
-	//// outline alpha perhaps unnecessary since odd numbered thicknesses feather the outline edges
-	//unsigned char outalpha;
-	//if (sscanf(cl_cross_outline_alpha->string, "%hhu", &outalpha) != 1)
-	//	outalpha = 255;
-	//
-	//if (outalpha == 0)
-	//	return 0;
+	if (gHUD.GetInTopDownMode())
+		return 0;
+
+	// outline alpha perhaps unnecessary since odd numbered thicknesses feather the outline edges
+	unsigned char outalpha;
+	if (sscanf(cl_cross_outline_alpha->string, "%hhu", &outalpha) != 1)
+		outalpha = 255;
+	
+	if (outalpha == 0)
+		return 0;
 
 	unsigned char r, g, b;
 	if (sscanf(cl_cross_color->string, "%hhu %hhu %hhu", &r, &g, &b) != 3) {
@@ -68,11 +74,13 @@ int CHudCrosshairs::Draw(float time)
 
 	// Draw the outline.
 	// TODO: this contains a terrible amount of repeating complex code.
-	// Possible solution: can be changed to this with the one downside being in rare cases where cl_cross_thickness is high AND its alpha is <255, the center of each line will be slightly darker.  ex. below is for bottom line. Would also cause certain crosshairs that have outlines on invisible cross lines to not look right.
+	//
+	// Possible solution: can be changed to this with the one downside being in rare cases where cl_cross_thickness is high AND its alpha is <255, the center of each line will be slightly darker.
+	// Example below is for bottom line. Would also cause certain crosshairs that have outlines on invisible cross lines to not look right.
 	// gl.rectangle(Vector2D(center.x + offset, center.y + gap - half_width), Vector2D(center.x - offset, center.y + gap + size + half_width));
 	if (cl_cross_outline->value > 0.0f) {
-		gl.color(0, 0, 0, alpha);
-		//gl.color(0, 0, 0, outalpha);
+		//gl.color(0, 0, 0, alpha);
+		gl.color(0, 0, 0, outalpha);
 		gl.line_width(cl_cross_outline->value);
 
 		auto size = cl_cross_size->value;
@@ -82,7 +90,7 @@ int CHudCrosshairs::Draw(float time)
 		auto offset = half_thickness + half_width;
 
 		// Top line
-		if (cl_cross_top_line->value) {
+		if (cl_cross_line_top->value) {
 			gl.line(Vector2D(center.x - offset, center.y - gap - size), Vector2D(center.x + offset, center.y - gap - size));
 			if (cl_cross_outline_inner->value == 0.0f)
 			{
@@ -98,7 +106,7 @@ int CHudCrosshairs::Draw(float time)
 		}
 
 		// Bottom line
-		if (cl_cross_bottom_line->value) {
+		if (cl_cross_line_bottom->value) {
 			gl.line(Vector2D(center.x - offset, center.y + gap + size), Vector2D(center.x + offset, center.y + gap + size));
 			if (cl_cross_outline_inner->value == 0.0f)
 			{
@@ -114,7 +122,7 @@ int CHudCrosshairs::Draw(float time)
 		}
 
 		// Left line
-		if (cl_cross_left_line->value) {
+		if (cl_cross_line_left->value) {
 			gl.line(Vector2D(center.x - gap - size, center.y - offset), Vector2D(center.x - gap - size, center.y + offset));
 			if (cl_cross_outline_inner->value == 0.0f)
 			{
@@ -130,7 +138,7 @@ int CHudCrosshairs::Draw(float time)
 		}
 
 		// Right line
-		if (cl_cross_right_line->value) {
+		if (cl_cross_line_right->value) {
 			gl.line(Vector2D(center.x + gap + size, center.y - offset), Vector2D(center.x + gap + size, center.y + offset));
 			if (cl_cross_outline_inner->value == 0.0f)
 			{
@@ -167,30 +175,29 @@ int CHudCrosshairs::Draw(float time)
 		auto size = cl_cross_size->value;
 		auto gap = cl_cross_gap->value;
 
-		if (cl_cross_top_line->value)
+		if (cl_cross_line_top->value)
 			gl.line(Vector2D(center.x, center.y - gap - size), Vector2D(center.x, center.y - gap));
-		if (cl_cross_bottom_line->value)
+		if (cl_cross_line_bottom->value)
 			gl.line(Vector2D(center.x, center.y + gap + size), Vector2D(center.x, center.y + gap));
-		if (cl_cross_left_line->value)
+		if (cl_cross_line_left->value)
 			gl.line(Vector2D(center.x - gap - size, center.y), Vector2D(center.x - gap, center.y));
-		if (cl_cross_right_line->value)
+		if (cl_cross_line_right->value)
 			gl.line(Vector2D(center.x + gap + size, center.y), Vector2D(center.x + gap, center.y));
 	}
 
-	// PLZ FIX: compile errors
-	//// Draw the circle.
-	//if (cl_cross_circle_radius->value > 0.0f) {
-	//	gl.line_width(1.0f);
+	// Draw the circle.
+	if (cl_cross_circle_radius->value > 0.0f) {
+		gl.line_width(1.0f);
 
-	//	auto radius = cl_cross_circle_radius->value;
-	//	if (old_circle_radius != radius) {
-	//		// Recompute the circle points.
-	//		circle_points = HudGL::compute_circle(radius);
-	//		old_circle_radius = radius;
-	//	}
+		auto radius = cl_cross_circle_radius->value;
+		if (old_circle_radius != radius) {
+			// Recompute the circle points.
+			circle_points = HudGL::compute_circle(radius);
+			old_circle_radius = radius;
+		}
 
-	//	gl.circle(center, circle_points);
-	//}
+		gl.circle(center, circle_points);
+	}
 
 	// Draw the dot.
 	if (cl_cross_dot_size->value > 0.0f) {

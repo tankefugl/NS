@@ -1,4 +1,3 @@
-# pragma comment(lib,"opengl32.lib")
 #include <vector>
 
 class HudGL {

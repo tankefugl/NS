@@ -11,7 +11,7 @@ class CHud
 {
 private:
 	HUDLIST						*m_pHudList;
-	HSPRITE						m_hsprLogo;
+	AVHHSPRITE						m_hsprLogo;
 	int							m_iLogo;
 	client_sprite_t				*m_pSpriteList;
 	int							m_iSpriteCount;
@@ -20,7 +20,7 @@ private:
 
 public:
 
-	HSPRITE						m_hsprCursor;
+	AVHHSPRITE					m_hsprCursor;
 	float m_flTime;	   // the current client time
 	float m_fOldTime;  // the time at which the HUD was last redrawn
 	float m_wsFOV; //fov recalc corrected for widescreen
@@ -47,7 +47,7 @@ public:
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
 	// freed in ~CHud()
-	HSPRITE *m_rghSprites;	/*[HUD_SPRITE_COUNT]*/			// the sprites loaded from hud.txt
+	AVHHSPRITE *m_rghSprites;	/*[HUD_SPRITE_COUNT]*/			// the sprites loaded from hud.txt
 	wrect_t *m_rgrcRects;	/*[HUD_SPRITE_COUNT]*/
 	char *m_rgszSpriteNames; /*[HUD_SPRITE_COUNT][MAX_SPRITE_NAME_LENGTH]*/
 
@@ -55,7 +55,7 @@ private:
 
 
 public:
-	HSPRITE GetSprite( int index ) 
+	AVHHSPRITE GetSprite( int index )
 	{
 		return (index < 0) ? 0 : m_rghSprites[index];
 	}

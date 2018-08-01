@@ -50,7 +50,7 @@ public:
 
 private:
 
-    HSPRITE mSprite;
+	AVHHSPRITE mSprite;
 
     int mSpriteWidth;
     int mSpriteHeight;

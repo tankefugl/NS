@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Developer - debug|Win32">
       <Configuration>Developer - debug</Configuration>
@@ -26,29 +26,29 @@
     <SccLocalPath />
     <SccProvider />
     <ProjectGuid>{BC87A180-F17B-83FC-5D7D-470FAD003ABC}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Playtest - balance disabled|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Developer - release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -68,11 +68,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Developer - release|Win32'">V:\temp\$(ProjectName)\$(Configuration)/\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Developer - release|Win32'">V:\temp\$(ProjectName)\$(Configuration)/\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Developer - release|Win32'">$(SolutionDir)$(Configuration)/\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Developer - release|Win32'">$(Configuration)/\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Developer - release|Win32'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">V:\temp\$(ProjectName)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">V:\temp\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">.\Playtest\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">$(Configuration)\</IntDir>
@@ -82,12 +82,14 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Playtest - balance disabled|Win32'">false</LinkIncremental>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">ns</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">
+    <CustomBuildAfterTargets />
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Developer - release|Win32'">
     <ClCompile>
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir);U:\include\stlport;U:\include\nexus;U:\include\lua;U:\include\particle;U:\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;QUIVER;VOXEL;QUAKE2;VALVE_DLL;AVH_SERVER;AVH_SECURE_PRERELEASE_BUILD;USE_OLDAUTH</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
@@ -104,6 +106,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\includes\lua\include;$(SolutionDir)\particles\;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\libcurl-7.50-nossl\include;$(SolutionDir)\common;$(SolutionDir)\public;$(SolutionDir)\util;$(SolutionDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;ws2_32.lib;particles.lib;liblua.lib;liblualib.lib;ssleay32.lib;libeay32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -136,7 +140,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir);U:\include\stlport;U:\include\nexus;U:\include\lua;U:\include\particle;U:\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_WINDOWS;QUIVER;VOXEL;QUAKE2;VALVE_DLL;AVH_SERVER;AVH_SECURE_PRERELEASE_BUILD;USE_OLDAUTH</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -151,6 +154,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\includes\lua\include;$(SolutionDir)\particles\;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\libcurl-7.50-nossl\include;$(SolutionDir)\common;$(SolutionDir)\public;$(SolutionDir)\util;$(SolutionDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;ws2_32.lib;particles.lib;liblua.lib;liblualib.lib;nexus_server.lib;ssleay32.lib;libeay32.lib;libcurl.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -190,11 +195,10 @@
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\includes\lua\include;$(SolutionDir)\particles\;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\libcurl-7.50-nossl\include;$(SolutionDir)\common;$(SolutionDir)\public;$(SolutionDir)\util;$(SolutionDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;QUIVER;VOXEL;QUAKE2;VALVE_DLL;AVH_SERVER;AVH_NO_NEXUS;USE_OLDAUTH</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>
@@ -207,9 +211,11 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\includes\lua\include;$(SolutionDir)\particles\;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\libcurl-7.50-nossl\include;$(SolutionDir)\common;$(SolutionDir)\public;$(SolutionDir)\util;$(SolutionDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;ws2_32.lib;particles.lib;lua5.1.lib;libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;ws2_32.lib;particles.lib;lua5.1.lib;libcurl_a.lib;%(AdditionalDependencies);legacy_stdio_definitions.lib</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>gdi32.lib user32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\hl.def</ModuleDefinitionFile>
@@ -221,9 +227,10 @@
       <SetChecksum>false</SetChecksum>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalLibraryDirectories>$(SolutionDir)\includes\lua\lib;$(SolutionDir)\particles\WIN32_Release;$(SolutionDir)\includes\libcurl-7.50-nossl;$(SolutionDir)\includes\vgui\lib\win32_vc6;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)includes\lua\lib;$(SolutionDir)particles\Release;$(SolutionDir)includes\libcurl-7.50-nossl;$(SolutionDir)includes\vgui\lib\win32_vc6;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <OutputFile>C:\Program Files (x86)\Steam\steamapps\common\Half-Life\ns\dlls\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -245,11 +252,10 @@
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir);U:\include\stlport;U:\include\nexus;U:\include\lua;U:\include\particle;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;QUIVER;VOXEL;QUAKE2;VALVE_DLL;AVH_SERVER;SERVER;AVH_PLAYTEST_BUILD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;QUIVER;VOXEL;QUAKE2;VALVE_DLL;AVH_SERVER;AVH_NO_NEXUS;SERVER;AVH_PLAYTEST_BUILD;USE_OLDAUTH</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>true</MinimalRebuild>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>
@@ -262,12 +268,14 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\includes\lua\include;$(SolutionDir)\particles\;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\libcurl-7.50-nossl\include;$(SolutionDir)\common;$(SolutionDir)\public;$(SolutionDir)\util;$(SolutionDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;ws2_32.lib;particles.lib;liblua.lib;liblualib.lib;ssleay32.lib;libeay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcurl_a.lib;winmm.lib;ws2_32.lib;particles.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(SolutionDir)..\dlls\ns.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>U:\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\includes\libcurl-7.50-nossl;$(SolutionDir)\particles\Release;U:\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>gdi32.lib user32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\hl.def</ModuleDefinitionFile>
       <ProgramDatabaseFile>
@@ -362,6 +370,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="compatibility.cpp" />
     <ClCompile Include="doors.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Developer - debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

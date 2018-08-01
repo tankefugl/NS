@@ -1,6 +1,9 @@
 #pragma once
 #include <vector>
 
+// Crosshair system based on OpenAG
+// https://github.com/YaLTeR/OpenAG
+
 class CHudCrosshairs : public CHudBase
 {
 	cvar_t* cl_cross;
@@ -10,18 +13,19 @@ class CHudCrosshairs : public CHudBase
 	cvar_t* cl_cross_size;
 	cvar_t* cl_cross_gap;
 	cvar_t* cl_cross_outline;
+	cvar_t* cl_cross_outline_alpha;
 	cvar_t* cl_cross_outline_inner;
-	//cvar_t* cl_cross_circle_radius;
+	cvar_t* cl_cross_circle_radius;
 	cvar_t* cl_cross_dot_size;
 	cvar_t* cl_cross_dot_color;
 	cvar_t* cl_cross_dot_outline;
-	cvar_t* cl_cross_top_line;
-	cvar_t* cl_cross_bottom_line;
-	cvar_t* cl_cross_left_line;
-	cvar_t* cl_cross_right_line;
+	cvar_t* cl_cross_line_top;
+	cvar_t* cl_cross_line_bottom;
+	cvar_t* cl_cross_line_left;
+	cvar_t* cl_cross_line_right;
 
-	//float old_circle_radius;
-	//std::vector<Vector2D> circle_points;
+	float old_circle_radius;
+	std::vector<Vector2D> circle_points;
 
 public:
 	virtual int Init();

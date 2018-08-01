@@ -1872,15 +1872,15 @@ void EV_EndJetpack(struct event_args_s* args)
 
 void DrawCircleOnGroundAtPoint(vec3_t inOrigin, int inNumSides, int inStartAngle, int inRadius, float inR, float inG, float inB, float inA, bool inUseRedInstead, float inInnerRadius)
 {
-	static HSPRITE theGreenSprite = 0;
+	static AVHHSPRITE theGreenSprite = 0;
 	if(!theGreenSprite)
 		theGreenSprite = SPR_Load("sprites/green.spr");
 	
-	static HSPRITE theRedSprite = 0;
+	static AVHHSPRITE theRedSprite = 0;
 	if(!theRedSprite)
 		theRedSprite = SPR_Load("sprites/red.spr");
 	
-	HSPRITE theSprite = theGreenSprite;
+	AVHHSPRITE theSprite = theGreenSprite;
 	if(inUseRedInstead)
 		theSprite = theRedSprite;
 	
