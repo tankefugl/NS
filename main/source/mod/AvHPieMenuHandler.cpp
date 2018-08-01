@@ -138,7 +138,9 @@ void AvHPieMenuHandler::InternalClosePieMenu(void)
 		{
 			gHUD.GetManager().SetMouseVisibility(false);
 			//attempt at fixing OS cursor appearing over game's cursor
+			#ifdef WIN32
 			ShowCursor(TRUE);
+			#endif
 		}
 
         theMarineMenu->SetFadeState(false);
@@ -184,7 +186,9 @@ void AvHPieMenuHandler::OpenPieMenu(void)
 				{
 					gHUD.GetManager().SetMouseVisibility(true);
 					//attempt at fixing OS cursor appearing over game's cursor
+					#ifdef WIN32
 					ShowCursor(FALSE);
+					#endif
 				}
 
                 gHUD.HideCrosshair();
