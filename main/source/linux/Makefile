@@ -31,7 +31,7 @@ ELF-GC-DYNSTR=./elf-gc-dynstr
 
 ifeq ($(OS),Linux)
 	CC="gcc -m32"
-	CPLUS="g++ -m32"
+	CPLUS="g++ -m32 -std=c++14"
 	CPP_LIB:=-L$(shell g++ -m32 -print-file-name=libstdc++.so | xargs dirname) -lstdc++ -ldl -lpthread
 endif
 
@@ -61,7 +61,7 @@ ifeq ($(OS),Darwin)
 		CC ="$(COMPILER_BIN_DIR)/clang -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.5 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
 	endif
 	ifeq ($(origin CPLUS), default)
-		CPLUS ="$(COMPILER_BIN_DIR)/clang++ -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.5 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
+		CPLUS ="$(COMPILER_BIN_DIR)/clang++ -std=c++14 -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.5 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
 	endif
 	LINK ?= $(CPLUS)
 endif
