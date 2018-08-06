@@ -15,7 +15,7 @@ MP = #-mp -DPARTICLE_MP
 #LNO =-LNO:opt=1:fusion=2:fission=2:fusion_peeling_limit=2048:cs1=32K:cs2=8M
 COPT = $(MP) -O3 $(LNO)  -fPIC
 
-CFLAGS = $(COPT) $(COMPFLAGS) -I. -I.. -I$(GLUT_HOME)/include -I/usr/include/c++/4.8/ -I../common -I../public -I../pm_shared -I../engine
+CFLAGS = $(COPT) $(COMPFLAGS) -I. -I.. -I$(GLUT_HOME)/include -I/usr/include/c++/7/ -I../common -I../public -I../pm_shared -I../engine
 
 POBJS =action_api.o actions.o HLRender.o opengl.o system.o
 
