@@ -52,7 +52,7 @@ ifeq ($(OS),Darwin)
 	SDKROOT ?= $(SDK_DIR)/MacOSX10.8.sdk
 
 	ARCH_FLAGS ?= -arch i386 -m32 -march=prescott -gdwarf-2 -g2  -Wno-typedef-redefinition -momit-leaf-frame-pointer -mtune=core2
-	CPP_LIB=-lstdc++ -lpthread
+	CPP_LIB=-stdlib=libc++ -lpthread
 
 	ifeq ($(origin AR), default)
 		AR = libtool -static -o
