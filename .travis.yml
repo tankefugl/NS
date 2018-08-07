@@ -8,11 +8,9 @@ matrix:
       env: OPJ_CI_ARCH=i386
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
-            - gcc-7-multilib
-            - g++-7-multilib
+            - gcc-multilib
+            - g++-multilib
             - libc6-i386
             - libcurl4-openssl-dev:i386
             - libpng12-dev:i386
