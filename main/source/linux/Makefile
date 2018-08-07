@@ -109,7 +109,7 @@ DEDICATED_CFLAGS="-DDEDICATED -DSWDS"
 ifeq ($(OS),Darwin)
 SHLIBEXT=dylib
 SHLIBCFLAGS=
-SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -DCMAKE_OSX_ARCHITECTURES=i386 -target i386-apple-darwin"
+SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -mmacosx-version-min=10.7 -DCMAKE_OSX_ARCHITECTURES=i386 -target i386-apple-darwin"
 else
 SHLIBEXT=so
 SHLIBCFLAGS=
