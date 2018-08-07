@@ -58,10 +58,10 @@ ifeq ($(OS),Darwin)
 		AR = libtool -static -o
 	endif
 	ifeq ($(origin CC), default)
-		CC ="$(COMPILER_BIN_DIR)/clang -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.5 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
+		CC ="$(COMPILER_BIN_DIR)/clang -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.7 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
 	endif
 	ifeq ($(origin CPLUS), default)
-		CPLUS ="$(COMPILER_BIN_DIR)/clang++ -std=c++11 -stdlib=libc++ -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.5 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
+		CPLUS ="$(COMPILER_BIN_DIR)/clang++ -std=c++11 -stdlib=libc++ -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.7 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
 	endif
 	LINK ?= $(CPLUS)
 endif
