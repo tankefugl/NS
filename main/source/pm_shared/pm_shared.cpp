@@ -160,6 +160,7 @@ extern int gBlinkEffectSuccessEventID;
 #include "../mod/AvHSelectionHelper.h"
 
 int gHeightLevel = 0;
+int JpEventTimer = 0;
 
 const float kMarineBackpedalSpeedScalar = .4f;
 const float kMarineSidestepSpeedScalar = 1.0f;
@@ -6380,11 +6381,17 @@ void PM_Jetpack()
 			pmove->velocity[1] += (theWishVelocity[1] / pmove->clientmaxspeed) * (theTimePassed * theWeightScalar*kJetpackForce);
             pmove->velocity[2] += theTimePassed*theWeightScalar*kJetpackForce;
 
-            // Play an event every so often
-            if(pmove->runfuncs /*&& (pmove->RandomLong(0, 2) == 0)*/)
-            {
-                pmove->PM_PlaybackEventFull(0, pmove->player_index, gJetpackEventID, 0, (float *)pmove->origin, (float *)pmove->origin, 0.0, 0.0, /*theWeaponIndex*/ 0, 0, 0, 0 );
-            }
+			//FPS independent jetpack event. Scales with FPS without timer.
+			JpEventTimer += pmove->cmd.msec;
+			if (JpEventTimer > 7)
+			{
+				// Play an event every so often
+				if (pmove->runfuncs /*&& (pmove->RandomLong(0, 2) == 0)*/)
+				{
+					pmove->PM_PlaybackEventFull(0, pmove->player_index, gJetpackEventID, 0, (float *)pmove->origin, (float *)pmove->origin, 0.0, 0.0, /*theWeaponIndex*/ 0, 0, 0, 0);
+				}
+				JpEventTimer = 0;
+			}
         }
 
         float theJetpackEnergy = pmove->fuser3/kNormalizationNetworkFactor;
