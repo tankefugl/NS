@@ -2192,7 +2192,11 @@ AVHHSPRITE AvHHud::GetTechTreeSprite(AvHMessageID inMessageID)
 		char theMessageNumberString[16];
 		sprintf(theMessageNumberString, "%d", (int)theMessageNumber);
 		//string theSpriteName = kTechTreeSpriteDirectory + string("/") + kTechTreeSpritePrefix + string(theMessageIDString) + string(".spr");
-		string theSpriteName = kTechTreeSpriteDirectory + string("/") + kTechTreeSpritePrefix + string(theMessageNumberString) + string("s.spr");
+		string theSpriteName;
+		if (CVAR_GET_FLOAT("hud_style") == 2.0f)
+			theSpriteName = kTechTreeSpriteDirectoryNL + string("/") + kTechTreeSpritePrefix + string(theMessageNumberString) + string("s.spr");
+		else
+		theSpriteName = kTechTreeSpriteDirectory + string("/") + kTechTreeSpritePrefix + string(theMessageNumberString) + string("s.spr");
 		AVHHSPRITE theSpriteHandle = SPR_Load(theSpriteName.c_str());
 		
 		// Sprite handle can be 0, as I don't have sprites for all tech yet
@@ -4371,12 +4375,82 @@ void AvHHud::VidInit(void)
 	//		string theSpriteName = "sprites/level1_hud.spr";//UINameToSprite(theBaseName, theScreenWidth, true);
 	//		this->mAlienUILifeforms[i] = SPR_Load(theSpriteName.c_str());
 	//	}
+
+	if (CVAR_GET_FLOAT("hud_style") == 2.0f)
+	{
+		this->mAlienUIUpgrades = SPR_Load(kAlienUpgradeSpriteNL);
+		this->mAlienUIEnergySprite = SPR_Load(kAlienEnergySpriteNL);
+		this->mAlienUICloakSprite = SPR_Load(kAlienCloakSpriteNL);
+		this->mBackgroundSprite = SPR_Load(kTopDownBGSpriteNL);
+		this->mTopDownTopSprite = SPR_Load(kTopDownTopHUDSpriteNL);
+		this->mTopDownBottomSprite = SPR_Load(kTopDownBottomHUDSpriteNL);
+		this->mMarineTopSprite = SPR_Load(kMarineTopHUDSpriteNL);
+		this->mLogoutSprite = SPR_Load(kLogoutSpriteNL);
+		this->mCommandButtonSprite = SPR_Load(kCommandButtonSpriteNL);
+		this->mCommandStatusSprite = SPR_Load(kCommandStatusSpriteNL);
+		this->mSelectAllSprite = SPR_Load(kSelectAllSpriteNL);
+		this->mOrderSprite = SPR_Load(kOrdersSpriteNL);
+		this->mHiveInfoSprite = SPR_Load(kHiveInfoSpriteNL);
+		this->mHiveHealthSprite = SPR_Load(kHiveHealthSpriteNL);
+		this->mMarineOrderIndicator = SPR_Load(kMarineOrderSpriteNL);
+		this->mMarineUpgradesSprite = SPR_Load(kMarineUpgradesSpriteNL);
+	}
+	else if (CVAR_GET_FLOAT("hud_style") == 1.0f)
+	{
+		this->mAlienUIUpgrades = SPR_Load(kAlienUpgradeSprite);
+		this->mAlienUIEnergySprite = SPR_Load(kAlienEnergySprite);
+		this->mAlienUICloakSprite = SPR_Load(kAlienCloakSprite);
+		this->mBackgroundSprite = SPR_Load(kTopDownBGSprite);
+		this->mTopDownTopSprite = SPR_Load(kTopDownTopHUDSpriteMin);
+		this->mTopDownBottomSprite = SPR_Load(kTopDownBottomHUDSpriteMin);
+		this->mMarineTopSprite = SPR_Load(kMarineTopHUDSpriteMin);
+		this->mLogoutSprite = SPR_Load(kLogoutSprite);
+		this->mCommandButtonSprite = SPR_Load(kCommandButtonSprite);
+		this->mCommandStatusSprite = SPR_Load(kCommandStatusSpriteMin);
+		this->mSelectAllSprite = SPR_Load(kSelectAllSpriteMin);
+		this->mOrderSprite = SPR_Load(kOrdersSprite);
+		this->mHiveInfoSprite = SPR_Load(kHiveInfoSprite);
+		this->mHiveHealthSprite = SPR_Load(kHiveHealthSprite);
+		this->mMarineOrderIndicator = SPR_Load(kMarineOrderSprite);
+		this->mMarineUpgradesSprite = SPR_Load(kMarineUpgradesSprite);
+	}
+	else
+	{
+		char theBaseName[128];
+		sprintf(theBaseName, "%s", kAlienUpgradeSprite);
+		theSpriteName = UINameToSprite(theBaseName, theScreenWidth);
+		this->mAlienUIUpgrades = SPR_Load(theSpriteName.c_str());
+
+		// Load alien energy sprite
+		theSpriteName = UINameToSprite(kAlienEnergySprite, theScreenWidth);
+		this->mAlienUIEnergySprite = SPR_Load(theSpriteName.c_str());
+		theSpriteName = UINameToSprite(kAlienCloakSprite, theScreenWidth);
+		this->mAlienUICloakSprite = SPR_Load(theSpriteName.c_str());
+
+		// Load background for topdown mode
+		this->mBackgroundSprite = SPR_Load(kTopDownBGSprite);
+
+		// Load HUD
+		this->mTopDownTopSprite = SPR_Load(kTopDownTopHUDSprite);
+		this->mTopDownBottomSprite = SPR_Load(kTopDownBottomHUDSprite);
+		this->mMarineTopSprite = SPR_Load(kMarineTopHUDSprite);
+
+		this->mLogoutSprite = SPR_Load(kLogoutSprite);
+		this->mCommandButtonSprite = SPR_Load(kCommandButtonSprite);
+		this->mCommandStatusSprite = SPR_Load(kCommandStatusSprite);
+		this->mSelectAllSprite = SPR_Load(kSelectAllSprite);
+
+		// Load order sprite
+		theSpriteName = UINameToSprite(kOrdersSprite, theScreenWidth);
+		this->mOrderSprite = SPR_Load(theSpriteName.c_str());
+		this->mHiveInfoSprite = SPR_Load(kHiveInfoSprite);
+		this->mHiveHealthSprite = SPR_Load(kHiveHealthSprite);
+
+		this->mMarineOrderIndicator = SPR_Load(kMarineOrderSprite);
+		this->mMarineUpgradesSprite = SPR_Load(kMarineUpgradesSprite);
+	}
 	
 	char theBaseName[128];
-	sprintf(theBaseName, "%s", kAlienUpgradeSprite);
-	theSpriteName = UINameToSprite(theBaseName, theScreenWidth);
-	this->mAlienUIUpgrades = SPR_Load(theSpriteName.c_str());
-	
 	sprintf(theBaseName, "%s", kAlienUpgradeCategory);
 	theSpriteName = UINameToSprite(theBaseName, theScreenWidth);
 	this->mAlienUIUpgradeCategories = SPR_Load(theSpriteName.c_str());
@@ -4384,25 +4458,6 @@ void AvHHud::VidInit(void)
 	// Load jetpack sprite
 	theSpriteName = UINameToSprite(kJetpackSprite, theScreenWidth);
 	this->mMarineUIJetpackSprite = SPR_Load(theSpriteName.c_str());
-
-	// Load alien energy sprite
-	theSpriteName = UINameToSprite(kAlienEnergySprite, theScreenWidth);
-	this->mAlienUIEnergySprite = SPR_Load(theSpriteName.c_str());
-	theSpriteName = UINameToSprite(kAlienCloakSprite, theScreenWidth);
-	this->mAlienUICloakSprite = SPR_Load(theSpriteName.c_str());
-
-	// Load background for topdown mode
-	this->mBackgroundSprite = SPR_Load(kTopDownBGSprite);
-
-	// Load HUD
-	this->mTopDownTopSprite = SPR_Load(kTopDownTopHUDSprite);
-	this->mTopDownBottomSprite = SPR_Load(kTopDownBottomHUDSprite);
-	this->mMarineTopSprite = SPR_Load(kMarineTopHUDSprite);
-
-	this->mLogoutSprite = SPR_Load(kLogoutSprite);
-	this->mCommandButtonSprite = SPR_Load(kCommandButtonSprite);
-	this->mCommandStatusSprite = SPR_Load(kCommandStatusSprite);
-	this->mSelectAllSprite = SPR_Load(kSelectAllSprite);
 
 	//this->mTopDownBottomSprite = SPR_Load("sprites/distorttest.spr");
 	//this->mTopDownBottomSprite = SPR_Load("sprites/ns.spr");
@@ -4412,17 +4467,9 @@ void AvHHud::VidInit(void)
 	this->mMembraneSprite = SPR_Load(kMembraneSprite);
 	this->mDigestingSprite = SPR_Load(kDigestingSprite);
 	
-	// Load order sprite
-	theSpriteName = UINameToSprite(kOrdersSprite, theScreenWidth);
-	this->mOrderSprite = SPR_Load(theSpriteName.c_str());
-	this->mHiveInfoSprite = SPR_Load(kHiveInfoSprite);
-	this->mHiveHealthSprite = SPR_Load(kHiveHealthSprite);
-
 	// Load cursor sprite
 	this->mMarineCursor = SPR_Load(kCursorsSprite);
 	this->mAlienCursor = SPR_Load(kAlienCursorSprite);
-	this->mMarineOrderIndicator = SPR_Load(kMarineOrderSprite);
-	this->mMarineUpgradesSprite = SPR_Load(kMarineUpgradesSprite);
 	//this->mMappingTechSprite = SPR_Load("sprites/ns.spr");
 
 	this->mAlienBuildSprite = SPR_Load(kAlienBuildSprite);

@@ -203,15 +203,15 @@ void CHud :: Init( void )
 	g_bDuckToggled = false;
 	// :
 
-	CVAR_CREATE( "zoom_sensitivity_ratio", "1.2", 0 );
+	CVAR_CREATE( "zoom_sensitivity_ratio", "1", 0 );
 	default_fov = CVAR_CREATE( "default_fov", "90", 0 );
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	cl_lw = gEngfuncs.pfnGetCvarPointer( "cl_lw" );
 
     CVAR_CREATE( "cl_showspeed", "0", 0);
-	CVAR_CREATE( kvLabelMaps, "1", FCVAR_ARCHIVE);
-	CVAR_CREATE( kvGammaRamp, "1", FCVAR_ARCHIVE);
+	CVAR_CREATE( kvLabelMaps, "3", FCVAR_ARCHIVE);
+	CVAR_CREATE( kvGammaRamp, "0", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvCustomCrosshair, "1", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvHudMapZoom, "3", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvLabelHivesight, "1", FCVAR_ARCHIVE);
@@ -316,8 +316,16 @@ void CHud :: VidInit( void )
 
 	gHUD.SetViewport(theViewPort);
 
-    mFont.Load("sprites/font_arial");
-    mSmallFont.Load("sprites/font_arialsmall");
+	if (CVAR_GET_FLOAT("hud_style") == 2.0f)
+	{
+		mFont.Load("sprites/nl/font_arial");
+		mSmallFont.Load("sprites/nl/font_arialsmall");
+	}
+	else
+	{
+		mFont.Load("sprites/font_arial");
+		mSmallFont.Load("sprites/font_arialsmall");
+	}
 
 	// ----------
 	// Load Sprites
@@ -336,6 +344,9 @@ void CHud :: VidInit( void )
 	if ( !m_pSpriteList )
 	{
 		// we need to load the hud.txt, and all sprites within
+		if (CVAR_GET_FLOAT("hud_style") == 2.0f)
+		m_pSpriteList = SPR_GetList("sprites/hudnl.txt", &m_iSpriteCountAllRes);
+		else
 		m_pSpriteList = SPR_GetList("sprites/hud.txt", &m_iSpriteCountAllRes);
 
 		if (m_pSpriteList)
