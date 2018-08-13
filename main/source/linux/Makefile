@@ -52,16 +52,16 @@ ifeq ($(OS),Darwin)
 	SDKROOT ?= $(SDK_DIR)/MacOSX10.8.sdk
 
 	ARCH_FLAGS ?= -arch i386 -m32 -march=prescott -gdwarf-2 -g2  -Wno-typedef-redefinition -momit-leaf-frame-pointer -mtune=core2
-	CPP_LIB=-stdlib=libc++ -lpthread
+	CPP_LIB=-lstdc++ -lpthread
 
 	ifeq ($(origin AR), default)
 		AR = libtool -static -o
 	endif
 	ifeq ($(origin CC), default)
-		CC ="$(COMPILER_BIN_DIR)/clang -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.7 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
+		CC ="$(COMPILER_BIN_DIR)/clang -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.5 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
 	endif
 	ifeq ($(origin CPLUS), default)
-		CPLUS ="$(COMPILER_BIN_DIR)/clang++ -std=c++11 -stdlib=libc++ -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.7 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
+		CPLUS ="$(COMPILER_BIN_DIR)/clang++ -Qunused-arguments -isysroot $(SDKROOT) -mmacosx-version-min=10.5 -fasm-blocks -I$(SDKROOT)/usr/include/malloc $(ARCH_FLAGS)"
 	endif
 	LINK ?= $(CPLUS)
 endif
@@ -109,7 +109,7 @@ DEDICATED_CFLAGS="-DDEDICATED -DSWDS"
 ifeq ($(OS),Darwin)
 SHLIBEXT=dylib
 SHLIBCFLAGS=
-SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -mmacosx-version-min=10.7 -DCMAKE_OSX_ARCHITECTURES=i386 -target i386-apple-darwin"
+SHLIBLDFLAGS="-shared -gdwarf-2 -g2 -DCMAKE_OSX_ARCHITECTURES=i386 -target i386-apple-darwin"
 else
 SHLIBEXT=so
 SHLIBCFLAGS=
