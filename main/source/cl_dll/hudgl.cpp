@@ -52,6 +52,9 @@ void HudGL::line(const Vector2D& start, const Vector2D& end) const {
 	glEnd();
 }
 
+#ifdef __APPLE__
+//Remove when OSX builds with c++11
+#else
 void HudGL::circle(const Vector2D& center, const std::vector<Vector2D>& points) const {
 	glBegin(GL_LINE_STRIP);
 
@@ -61,6 +64,7 @@ void HudGL::circle(const Vector2D& center, const std::vector<Vector2D>& points) 
 	glVertex2f(center.x + points[0].x, center.y + points[0].y);
 	glEnd();
 }
+#endif
 
 void HudGL::rectangle(const Vector2D& corner_a, const Vector2D& corner_b) const {
 	glBegin(GL_QUADS);
@@ -71,6 +75,9 @@ void HudGL::rectangle(const Vector2D& corner_a, const Vector2D& corner_b) const 
 	glEnd();
 }
 
+#ifdef __APPLE__
+//Remove when OSX builds with c++11
+#else
 std::vector<Vector2D> HudGL::compute_circle(float radius) {
 	// Maximum allowed distance between the circle and the rendered line segment.
 	const float MAX_ERROR = 0.1f;
@@ -87,3 +94,4 @@ std::vector<Vector2D> HudGL::compute_circle(float radius) {
 
 	return points;
 }
+#endif

@@ -185,6 +185,9 @@ int CHudCrosshairs::Draw(float time)
 			gl.line(Vector2D(center.x + gap + size, center.y), Vector2D(center.x + gap, center.y));
 	}
 
+#ifdef __APPLE__
+	//Remove when OSX builds with c++11
+#else
 	// Draw the circle.
 	if (cl_cross_circle_radius->value > 0.0f) {
 		gl.line_width(1.0f);
@@ -198,6 +201,7 @@ int CHudCrosshairs::Draw(float time)
 
 		gl.circle(center, circle_points);
 	}
+#endif
 
 	// Draw the dot.
 	if (cl_cross_dot_size->value > 0.0f) {
