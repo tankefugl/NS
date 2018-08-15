@@ -5341,6 +5341,7 @@ void PM_Jump (void)
     
     if (pmove->dead || GetHasUpgrade(pmove->iuser4, MASK_ENSNARED))
     {
+		//pmove->oldbuttons |= IN_JUMP;  // don't jump again until released
 		pmove->flags |= FL_JUMPHELD;
         return;
     }
