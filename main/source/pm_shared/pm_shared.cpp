@@ -132,7 +132,6 @@ bool AvHSHUGetCenterPositionForGroup(int inGroupNumber, float* inPlayerOrigin, f
 float PM_GetDesiredTopDownCameraHeight(qboolean& outFoundEntity);
 qboolean PM_CanWalljump();
 qboolean PM_CanFlap();
-qboolean jumpheld;
 void PM_Overwatch();
 bool PM_TopDown();
 void PM_Jump(void);
@@ -5342,8 +5341,7 @@ void PM_Jump (void)
     
     if (pmove->dead || GetHasUpgrade(pmove->iuser4, MASK_ENSNARED))
     {
-        //pmove->oldbuttons |= IN_JUMP ;  // don't jump again until released
-		jumpheld = true;
+		pmove->flags |= FL_JUMPHELD;
         return;
     }
     
@@ -5474,7 +5472,7 @@ void PM_Jump (void)
 
 	if (queuedjump)
 	{
-		if (jumpheld)
+		if (pmove->flags & FL_JUMPHELD)
 			return;
 	}
 
@@ -5530,7 +5528,7 @@ void PM_Jump (void)
     
     // Flag that we jumped.
     //pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
-	jumpheld = true;
+	pmove->flags |= FL_JUMPHELD;
 }
 
 /*
@@ -6701,7 +6699,7 @@ void PM_PlayerMove ( qboolean server )
             else
             {
                 pmove->oldbuttons &= ~IN_JUMP;
-				jumpheld = false;
+				pmove->flags &= ~FL_JUMPHELD;
             }
 
             // Fricion is handled before we add in any base velocity. That way, if we are on a conveyor, 
