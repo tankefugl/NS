@@ -4,6 +4,7 @@
 #include "chudmisc.h"
 #include "hud_spectator.h"
 #include "AvHFont.h"
+#include "hud_crosshairs.h"
 
 
 class CHud
@@ -82,7 +83,8 @@ public:
 	CHudAmmoSecondary	m_AmmoSecondary;
 	CHudTextMessage m_TextMessage;
 	CHudStatusIcons m_StatusIcons;
-    
+	CHudCrosshairs	m_Crosshairs;
+
     AvHFont mFont;
     AvHFont mSmallFont;
 

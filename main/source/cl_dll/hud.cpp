@@ -203,15 +203,15 @@ void CHud :: Init( void )
 	g_bDuckToggled = false;
 	// :
 
-	CVAR_CREATE( "zoom_sensitivity_ratio", "1.2", 0 );
+	CVAR_CREATE( "zoom_sensitivity_ratio", "1", 0 );
 	default_fov = CVAR_CREATE( "default_fov", "90", 0 );
 	m_pCvarStealMouse = CVAR_CREATE( "hud_capturemouse", "1", FCVAR_ARCHIVE );
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	cl_lw = gEngfuncs.pfnGetCvarPointer( "cl_lw" );
 
     CVAR_CREATE( "cl_showspeed", "0", 0);
-	CVAR_CREATE( kvLabelMaps, "1", FCVAR_ARCHIVE);
-	CVAR_CREATE( kvGammaRamp, "1", FCVAR_ARCHIVE);
+	CVAR_CREATE( kvLabelMaps, "3", FCVAR_ARCHIVE);
+	CVAR_CREATE( kvGammaRamp, "0", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvCustomCrosshair, "1", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvHudMapZoom, "3", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvLabelHivesight, "1", FCVAR_ARCHIVE);
@@ -251,6 +251,7 @@ void CHud :: Init( void )
 	m_AmmoSecondary.Init();
 	m_TextMessage.Init();
 	m_StatusIcons.Init();
+	m_Crosshairs.Init();
 	
     m_Spectator.m_chatEnabled = (m_SayText.m_HUD_saytext->value!=0);
     
@@ -315,8 +316,16 @@ void CHud :: VidInit( void )
 
 	gHUD.SetViewport(theViewPort);
 
-    mFont.Load("sprites/font_arial");
-    mSmallFont.Load("sprites/font_arialsmall");
+	if (CVAR_GET_FLOAT("hud_style") == 2.0f)
+	{
+		mFont.Load("sprites/nl/font_arial");
+		mSmallFont.Load("sprites/nl/font_arialsmall");
+	}
+	else
+	{
+		mFont.Load("sprites/font_arial");
+		mSmallFont.Load("sprites/font_arialsmall");
+	}
 
 	// ----------
 	// Load Sprites
@@ -335,6 +344,9 @@ void CHud :: VidInit( void )
 	if ( !m_pSpriteList )
 	{
 		// we need to load the hud.txt, and all sprites within
+		if (CVAR_GET_FLOAT("hud_style") == 2.0f)
+		m_pSpriteList = SPR_GetList("sprites/hudnl.txt", &m_iSpriteCountAllRes);
+		else
 		m_pSpriteList = SPR_GetList("sprites/hud.txt", &m_iSpriteCountAllRes);
 
 		if (m_pSpriteList)
@@ -414,6 +426,7 @@ void CHud :: VidInit( void )
 	m_AmmoSecondary.VidInit();
 	m_TextMessage.VidInit();
 	m_StatusIcons.VidInit();
+	m_Crosshairs.VidInit();
 	GetClientVoiceMgr()->VidInit();
 }
 
@@ -535,7 +548,7 @@ int CHud::MsgFunc_SetFOV(const char *pszName,  int iSize, void *pbuf)
 	// the clients fov is actually set in the client data update section of the hud
 
 	// Set a new sensitivity
-	if ( m_iFOV == def_fov )
+	if ( m_iFOV == def_fov || CVAR_GET_FLOAT("senslock") == 1.0f)
 	{  
 		// reset to saved sensitivity
 		m_flMouseSensitivity = 0;

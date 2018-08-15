@@ -240,8 +240,17 @@ void CAmbientGeneric :: Precache( void )
 	}
 	if ( m_fActive )
 	{
-		UTIL_EmitAmbientSound ( ENT(pev), pev->origin, szSoundFile, 
+		
+		if (CVAR_GET_FLOAT("cl_ambientsound") == 0.0f)
+		{
+			UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile,
+				0, m_flAttenuation, SND_SPAWNING, m_dpv.pitch);
+		}
+		else if (CVAR_GET_FLOAT("cl_ambientsound") == 2.0f)
+		{
+			UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile,
 				(m_dpv.vol * 0.01), m_flAttenuation, SND_SPAWNING, m_dpv.pitch);
+		}
 
 		pev->nextthink = gpGlobals->time + 0.1;
 	}
@@ -433,8 +442,18 @@ void CAmbientGeneric :: RampThink( void )
 		if (pitch == PITCH_NORM)
 			pitch = PITCH_NORM + 1; // don't send 'no pitch' !
 
-		UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile, 
+		//bool ambtoggle = CVAR_GET_FLOAT("cl_ambientsound") == 0.0f;
+		if (CVAR_GET_FLOAT("cl_ambientsound") == 0.0f)
+		{
+			UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile,
+				0, m_flAttenuation, flags, pitch);
+		}
+		else if (CVAR_GET_FLOAT("cl_ambientsound") == 2.0f)
+		{
+			UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile,
 				(vol * 0.01), m_flAttenuation, flags, pitch);
+		}
+
 	}
 
 	// update ramps at 5hz
@@ -631,8 +650,17 @@ void CAmbientGeneric :: ToggleUse ( CBaseEntity *pActivator, CBaseEntity *pCalle
 
 		InitModulationParms();
 
-		UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile, 
+		//bool ambtoggle = CVAR_GET_FLOAT("cl_ambientsound") == 0.0f;
+		if (CVAR_GET_FLOAT("cl_ambientsound") == 0.0f)
+		{
+			UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile,
+				0, m_flAttenuation, 0, m_dpv.pitch);
+		}
+		else if (CVAR_GET_FLOAT("cl_ambientsound") == 2.0f)
+		{
+			UTIL_EmitAmbientSound(ENT(pev), pev->origin, szSoundFile,
 				(m_dpv.vol * 0.01), m_flAttenuation, 0, m_dpv.pitch);
+		}
 		
 		pev->nextthink = gpGlobals->time + 0.1;
 

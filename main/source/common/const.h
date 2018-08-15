@@ -40,7 +40,8 @@
 
 // UNDONE: Do we need these?
 #define FL_IMMUNE_WATER			(1<<17)
-#define	FL_IMMUNE_SLIME			(1<<18)
+//#define	FL_IMMUNE_SLIME			(1<<18)
+#define	FL_JUMPHELD				(1<<18) // Tracks if player is still holding +jump from a previous jump in sv_jumpmode 1
 #define FL_IMMUNE_LAVA			(1<<19)
 
 #define FL_PROXY				(1<<20)	// This is a spectator proxy
@@ -67,7 +68,7 @@
 // edict->movetype values
 #define	MOVETYPE_NONE			0		// never moves
 //#define	MOVETYPE_ANGLENOCLIP	1
-//#define	MOVETYPE_ANGLECLIP		2
+//#define	MOVETYPE_JUMPHELD		2
 #define	MOVETYPE_WALK			3		// Player only - moving on the ground
 #define	MOVETYPE_STEP			4		// gravity, special edge handling -- monsters use this
 #define	MOVETYPE_FLY			5		// No gravity, but still collides with stuff

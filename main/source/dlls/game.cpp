@@ -121,6 +121,7 @@ cvar_t	avh_autoconcede				= {kvAutoConcede, "4", FCVAR_SERVER};
 cvar_t	avh_combattime				= {kvCombatTime, "10", FCVAR_SERVER};
 cvar_t  avh_mapvoteratio            = {kvMapVoteRatio, ".6", FCVAR_SERVER};
 cvar_t  avh_blockscripts            = {kvBlockScripts, "1", FCVAR_SERVER};
+cvar_t  avh_jumpmode				= {kvJumpMode, "1", FCVAR_SERVER};
 #ifdef DEBUG
 	cvar_t  avh_testing            = {kvTesting, "0", FCVAR_SERVER};
 #endif
@@ -230,6 +231,7 @@ void GameDLLInit( void )
 	CVAR_REGISTER (&avh_combattime);
     CVAR_REGISTER (&avh_mapvoteratio);
     CVAR_REGISTER (&avh_blockscripts);
+	CVAR_REGISTER (&avh_jumpmode);
 
     // TODO: Remove
     CVAR_REGISTER (&avh_ironman);

@@ -31,7 +31,7 @@ ELF-GC-DYNSTR=./elf-gc-dynstr
 
 ifeq ($(OS),Linux)
 	CC="gcc -m32"
-	CPLUS="g++ -m32"
+	CPLUS="g++ -m32 -std=c++11"
 	CPP_LIB:=-L$(shell g++ -m32 -print-file-name=libstdc++.so | xargs dirname) -lstdc++ -ldl -lpthread
 endif
 

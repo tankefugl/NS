@@ -9329,8 +9329,8 @@ void AvHPlayer::UpdateAmbientSounds()
                 int theBaseSpeed, theMaxSpeed;
                 this->GetSpeeds(theBaseSpeed, theMaxSpeed);
                 
-                float theAlienSoundFreq = 0.003f;
-                float theChanceOfPlayingSound = theAlienSoundFreq*(theVelocity/((float)theMaxSpeed));
+                float theAlienSoundFreq = 0.3f;
+                float theChanceOfPlayingSound = gpGlobals->frametime*theAlienSoundFreq*(theVelocity/((float)theMaxSpeed));
                 if(RANDOM_FLOAT(0, 1) < theChanceOfPlayingSound)
                 {
                     float theVolume = RANDOM_FLOAT(.5, 1.0)*theSilenceVolumeFactor;

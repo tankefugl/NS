@@ -594,6 +594,12 @@
     <ClCompile Include="cdll_int.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="hud_crosshairs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hudgl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\mod\AvHAlienAbilities.h">
@@ -1039,6 +1045,12 @@
     </ClInclude>
     <ClInclude Include="..\textrep\TRTagValuePair.h">
       <Filter>textrep</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_crosshairs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hudgl.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

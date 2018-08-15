@@ -1913,16 +1913,16 @@ void V_CalcSpectatorRefdef ( struct ref_params_s * pparams )
 		}
         */
 
-        if (g_iUser1)
-        {
+      //  if (g_iUser1)
+      //  {
 		
-            // Adjust the viewport so that the letterbox spectator mode
-            // doesn't cut anything off.
-            
-            pparams->viewport[1] += YRES(32);
-		    pparams->viewport[3] -= YRES(32 * 2);
-        
-        }
+      //      // Adjust the viewport so that the letterbox spectator mode
+      //      // doesn't cut anything off.
+      //      
+      //      pparams->viewport[1] += YRES(32);
+		    //pparams->viewport[3] -= YRES(32 * 2);
+      //  
+      //  }
 
 		if ( gHUD.m_Spectator.IsInOverviewMode())
         {
