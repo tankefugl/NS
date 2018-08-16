@@ -1,51 +1,63 @@
-# Natural Selection v3.2.1a
+# Natural Selection v3.2.2
 
 [![Build Status](https://travis-ci.org/ENSL/NS.svg?branch=develop)](https://travis-ci.org/ENSL/NS)
 
-This is a complete rebuild of the game [Natural Selection] for Windows and Linux. It includes fixes by fmoraw, Bacsu, puzl and others mostly just to make this source code build and run on all platforms.
+This is a complete rebuild of the game [Natural Selection] for Windows, Linux, and OS X. It includes updates and fixes by pierow, Prefix, fmoraw, Bacsu, puzl, and others.
 
 ## Downloads
 
-First you need NS 3.2 full installation. Download from UWE website or from here [here](https://www.ensl.org/files/client/ns_install_v32.exe)
+The recommended way to install the game or update an existing installation is through the Natural Selection Launcher available [here](REPLACE WITH URL)(Thanks Khelby)
 
-You can find releases [here](https://github.com/ENSL/NS/releases).
+As the game is a Half-Life mod, Steam and Half-Life installations are required to play the game.
 
-Download latest: [ns_v321b_patch.zip](https://github.com/ENSL/NS/releases/download/v3.2.1b/ns_v321b_patch.zip)
+A fresh install on the launcher comes with updated config files containing everything you need to get playing on the standard settings most players prefer.  There are also official marine and alien config files that can be uncommented so your binds change when joining the respective teams, but they are off by default as to not override any binds users wish to change within the game menus.  Those that wish to use the Nine Legends competitive pack can do so through the settings in advanced options without having to download or install it.
 
-Remember to extract them to your Half-Life/ns directory. It should replace the existing files.
+If you wish to experience the game's default settings and binds from NS 3.2 you can type `exec olddefaults.cfg` in console before loading a map. A file named `backupb4old.cfg` will be saved with your previous settings if you wish to return to those after.  Note that gamma ramp is no longer a working feature, so brightness will be a slightly different than it originally was, but the game was always very dark by default and still is with that config.
+
+Users that wish to patch the game manually can find releases [here](https://github.com/ENSL/NS/releases).
 
 ## Changes
 
-In order to make this game work for linux the old half-life engine files were replaced with the newer ones. In addtion some changes are accounted for the use of an acient glibc library. Some changes to the game itself have been made and these include:
+Updates include:
 
-- The ChatPanel has been replaced in favor of the old hl chat.
+- Linux and OS X support
+- Natural Selection Launcher for installing and updating the game
+- Widescreen support (now expands FOV up to 16:9 aspect instead of cutting it off)
+- Many FPS dependencies fixed, including jetpack acceleration, so the game can now be fairly played at 200+ FPS
+- Perfect jump timing no longer required for bunnyhopping (server adjustable via sv_jumpmode)
+- New minimal HUD (work in progress) and the Nine Legends HUD can be selected through advanced options or hud_style and hud_mapstyle
+- New crosshair system that can be adjusted through the advanced options and cl_cross commands (Thanks [OpenAG](https://github.com/YaLTeR/OpenAG))
+- Ambient sounds can be changed in advanced options or via cl_ambientsound
+- Raw input and sensitivity scaling options now available
+- Spectator overlay is now transparent and shows health/armor
+- Numerous bug fixes for things that broke from recent updates to Half-Life
 - The observatory has now a spherical detection like the sensory chamber
-- Removed special NS gamma since it is windows only
-
-The plan is to bring the chat and the gamma back when a cross-platfrom solution can be achieved.
 
 ## Bugs
-
-- Chat input is not visible while spectating
-- [sg reload bug] 
-- [FPS_Effects] FPS dependant fire rates and player physics 
-- gorge's view rotates when he drops a structure from the popup menu?
-- The background of text in the menu or in popups does not look nice possible realted to the `special ns gamma`.
+- Process hangs on exit sometimes
+- Arrow keys don't work for the commander
+- Chatbox eats inputs occasionally
+- Some mice experience issues with a previous fix for centering the cursor when the popupmenu is open
+- Trying to shoot the shotgun while reloading is very fickle and has poor syncronization with the server. A balance-conscientious rework is planned, but yet to be made.  
+- HUD elements are stretched and/or poorly placed in widescreen. User options/commands for hud element placement are planned.
+- [FPS_Effects] FPS dependant fire rates and player physics.  These have significantly improved with the Half-Life update and are also a non-issue now that other FPS dependency fixes are in the game and the game can be played at high frame rates, where fire rates don't vary. Very high framerates cause collision issues and other engine limitations, so an fps of 200 or 250 is recommended unless fixed.
+- Clicking on the scoreboard can cause +attack to be stuck after closing the scoreboard until firing again.
 - Flashing available alien upgrade icons (defense, movement and sensory) tend to disappear when a player dies and respawns. The icons won't appear until the alien chooses an upgrade.
 - func_train and func_tracktrain entities don't reset to their original positions when a round has ended
-- windows server works only with the hlds tool
 
 If you find more please report them!
 
 ## Compiling
 
-First. you need some libraries. On Ubuntu it is:
+For Windows, compilation should be working if you have VS2017 installed.
+
+For Linux:
+
+First you need some libraries. On Ubuntu it is:
 
 ```sh
 apt-get install build-essential git gdb gcc-multilib g++-multilib libc6-i386 libcurl4-openssl-dev:i386 libpng12-dev:i386
 ``` 
-
-For windows compilation should be working if you have VS2010 installed.
 
 Then you will need to get the files:
 ```sh
@@ -108,17 +120,14 @@ There is an updated version of metamod called [metamodp](http://metamod-p.source
 
 ### Usefull links
 
-* [Usefull collection of ns files server addons, maps and erverything ](http://www.brywright.co.uk/downloads/files/index.php?dir=natural-selection/)
+* [Usefull collection of ns files server addons, maps and everything ](http://www.brywright.co.uk/downloads/files/index.php?dir=natural-selection/)
 * [Great collection of ns guides/tutorials](http://www.naturalns.clanservers.com/forums/index.php?topic=5.0)
 *  [rcbot downloads](http://filebase.bots-united.com/index.php?act=category&id=19)
 *  [dillinger.io markdown editor](http://dillinger.io/)
 
    [Natural Selection]: <http://unknownworlds.com/ns/>
    [Unknownworlds Entertainment]:<https://github.com/unknownworlds/NS>
-   [ns_patch_v321a.7z]:<https://github.com/fmoraw/NS/blob/linux/ns_patch_v321a.7z?raw=true>
-   [FPS_Effects]:<http://wiki.sourceruns.org/wiki/FPS_Effects>
    [Steam]: <http://store.steampowered.com/about/>
-   [sg reload bug]:<https://github.com/unknownworlds/NS/issues/5>
    [hlds]:<https://developer.valvesoftware.com/wiki/Half-Life_Dedicated_Server>
    [rcbot]:<http://filebase.bots-united.com/index.php?act=category&id=19>
 
