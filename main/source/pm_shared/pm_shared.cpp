@@ -5464,8 +5464,9 @@ void PM_Jump (void)
 
 	autojump = atoi(pmove->PM_Info_ValueForKey(pmove->physinfo, "jm2"));
 	queuedjump = atoi(pmove->PM_Info_ValueForKey(pmove->physinfo, "jm1"));
+	bool theHasJetpackUpgrade = GetHasUpgrade(pmove->iuser4, MASK_UPGRADE_7) && (pmove->iuser3 == AVH_USER3_MARINE_PLAYER);
 
-	if ((!autojump && !queuedjump) || pmove->iuser3 == AVH_USER3_ALIEN_PLAYER3)
+	if ((!autojump && !queuedjump) || pmove->iuser3 == AVH_USER3_ALIEN_PLAYER3 || theHasJetpackUpgrade)
 	{
 		if (pmove->oldbuttons & IN_JUMP)
 		return;     // don't pogo stick
