@@ -262,8 +262,12 @@ void CHudSayText :: SayTextPrint( const char *pszBuf, int iBufSize, int clientIn
 	}
 
 	m_iFlags |= HUD_ACTIVE;
-	//PlaySound( "misc/talk.wav", 1 );
-	gHUD.PlayHUDSound("misc/talk.wav", 1);
+
+	if (CVAR_GET_FLOAT("cl_chatbeep") != 0.0f)
+	{
+		//PlaySound( "misc/talk.wav", 1 );
+		gHUD.PlayHUDSound("misc/talk.wav", 1);
+	}
 
     Y_START = ScreenHeight()*.7f;
     
