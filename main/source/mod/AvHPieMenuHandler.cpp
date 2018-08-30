@@ -44,6 +44,7 @@
 #include "AvHCommandConstants.h"
 #include "../engine/cdll_int.h"
 #include "../types.h"
+#include <SDL2/SDL_mouse.h>
 #include <string>
 using std::string;
 
@@ -118,7 +119,7 @@ void AvHPieMenuHandler::ClosePieMenu(void)
 
     // Reset the mouse cursor to the center of the screen so
     // that the view doesn't jog once the pie menu is closed.
-	
+
 	IN_ResetMouse();
     gHUD.ShowCrosshair();
 	
@@ -136,6 +137,10 @@ void AvHPieMenuHandler::InternalClosePieMenu(void)
 		if(!gHUD.GetInTopDownMode())
 		{
 			gHUD.GetManager().SetMouseVisibility(false);
+			//attempt at fixing OS cursor appearing over game's cursor
+			#ifdef WIN32
+			ShowCursor(TRUE);
+			#endif
 		}
 
         theMarineMenu->SetFadeState(false);
@@ -144,6 +149,11 @@ void AvHPieMenuHandler::InternalClosePieMenu(void)
             sLastNodeHighlighted->SetDrawSelected(false);
         }
         sLastNodeHighlighted = NULL;
+
+		if (CVAR_GET_FLOAT("m_rawinput") != 0)
+		{
+			SDL_SetRelativeMouseMode(SDL_TRUE);
+		}
 
 //        if(sTheDebugBool)
 //        {
@@ -175,10 +185,23 @@ void AvHPieMenuHandler::OpenPieMenu(void)
 				if(!gHUD.GetInTopDownMode())
 				{
 					gHUD.GetManager().SetMouseVisibility(true);
+					//attempt at fixing OS cursor appearing over game's cursor
+					#ifdef WIN32
+					ShowCursor(FALSE);
+					#endif
 				}
 
                 gHUD.HideCrosshair();
-                
+
+				if (CVAR_GET_FLOAT("m_rawinput") != 0)
+				{
+					SDL_SetRelativeMouseMode(SDL_FALSE);
+					gEngfuncs.pfnSetMousePos(gEngfuncs.GetWindowCenterX(), gEngfuncs.GetWindowCenterY());
+				}
+				//App::getInstance()->setCursorOveride(App::getInstance()->getScheme()->getCursor(Scheme::scu_none));
+				//App::getInstance()->setCursorOveride(gHUD.GetManager().mBlankCursor);
+
+
 				// Only do this when in full screen
 				//App::getInstance()->setCursorPos(ScreenWidth/2, ScreenHeight/2);
 	
@@ -189,7 +212,7 @@ void AvHPieMenuHandler::OpenPieMenu(void)
 				sTimeLastNodeHighlighted = sTimeMenuOpened;
                 sPieMenuOpen = true;
 
-				
+
 				//        if(sTheDebugBool)
 				//        {
 				//            AvHTeamHierarchy* theHierarchyComponent = NULL;

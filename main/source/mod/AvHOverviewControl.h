@@ -25,7 +25,7 @@ protected:
 
 private:
 
-    HSPRITE m_hsprWhite;
+	AVHHSPRITE m_hsprWhite;
 
 };
 

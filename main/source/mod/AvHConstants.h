@@ -428,6 +428,7 @@ extern const char* getModName(void);
 #define kSpriteDirectory			"sprites"
 #define kMiniMapSpritesDirectory	"sprites/minimaps"
 #define	kTechTreeSpriteDirectory	"sprites/techtree"
+#define	kTechTreeSpriteDirectoryNL	"sprites/nl/techtree"
 #define kTechTreeSpritePrefix		"tech"
 #define kScriptsDirectory			"scripts"
 #define kSoundDirectory				"sound"

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Playtest|Win32">
       <Configuration>Playtest</Configuration>
@@ -14,7 +14,7 @@
     <SccLocalPath />
     <SccProvider />
     <ProjectGuid>{665C1DAF-9248-E06F-4E5C-A664BAFDE9D8}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'" Label="Configuration">
@@ -22,7 +22,7 @@
     <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -39,13 +39,17 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">false</LinkIncremental>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">client</TargetName>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">
+    <IncludePath>.;zlib-1.2.8;includes\zlib-1.2.8;source\includes\zlib-1.2.8;main\source\includes\zlib-1.2.8;$(IncludePath)</IncludePath>
+    <CustomBuildAfterTargets />
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\particles;$(SolutionDir)\includes\lpng1251;$(SolutionDir)\includes\zlib-1.2.8;$(SolutionDir)\includes\fmod\inc;$(SolutionDir)\includes\vgui\include;../public;../common;../external;../pm_shared;../game_shared;../mod;../util;../ui;../engine;../cl_dll;../dlls</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;AVH_CLIENT;USE_OLDAUTH</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;AVH_CLIENT;USE_OLDAUTH;_X86_</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>
@@ -63,13 +67,14 @@
       <BrowseInformation>true</BrowseInformation>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <BufferSecurityCheck>true</BufferSecurityCheck>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>particles.lib;vgui.lib;zlib.lib;libpng.lib;wsock32.lib;sdl2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>particles.lib;vgui.lib;zlib.lib;libpng.lib;wsock32.lib;sdl2.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\particles\WIN32_Release;$(SolutionDir)\includes\lpng1251;$(SolutionDir)\includes\zlib-1.2.8;$(SolutionDir)\includes\vgui\lib\win32_vc6;$(SolutionDir)\lib\public;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\particles\Release;$(SolutionDir)\includes\lpng1251;$(SolutionDir)\includes\zlib-1.2.8;$(SolutionDir)\includes\vgui\lib\win32_vc6;$(SolutionDir)\lib\public;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>
@@ -84,6 +89,7 @@
       <TreatLinkerWarningAsErrors>
       </TreatLinkerWarningAsErrors>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
+      <OutputFile>$(SolutionDir)..\cl_dlls\client.dll</OutputFile>
     </Link>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -164,6 +170,10 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="hud_crosshairs.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <ClCompile Include="hud_msg.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -181,6 +191,10 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="hud_update.cpp">
+      <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="hudgl.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">MaxSpeed</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Playtest|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -799,6 +813,8 @@
     <ClInclude Include="GameStudioModelRenderer.h" />
     <ClInclude Include="health.h" />
     <ClInclude Include="hud.h" />
+    <ClInclude Include="hudgl.h" />
+    <ClInclude Include="hud_crosshairs.h" />
     <ClInclude Include="hud_iface.h" />
     <ClInclude Include="hud_servers.h" />
     <ClInclude Include="hud_servers_priv.h" />

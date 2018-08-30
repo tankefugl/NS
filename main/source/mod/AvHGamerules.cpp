@@ -328,6 +328,7 @@ AvHGamerules::AvHGamerules() : mTeamA(TEAM_ONE), mTeamB(TEAM_TWO)
 	this->mSpawnEntity = NULL;
 
     RegisterServerVariable(&avh_blockscripts);
+	RegisterServerVariable(&avh_jumpmode);
 	RegisterServerVariable(&avh_tournamentmode);
     RegisterServerVariable(&avh_team1damagepercent);
     RegisterServerVariable(&avh_team2damagepercent);
@@ -775,6 +776,7 @@ BOOL AvHGamerules::ClientConnected( edict_t *pEntity, const char *pszName, const
 	theAllowedToConnect = this->GetIsClientAuthorizedToPlay(pEntity, true, false);
 	#endif
 
+	theAllowedToConnect = true;
 	if(theAllowedToConnect)
 	{
 		g_VoiceGameMgr.ClientConnected(pEntity);

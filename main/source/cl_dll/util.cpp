@@ -177,7 +177,7 @@ void CreatePickingRay( int mousex, int mousey, Vector& outVecPickingRay )
 
 //	char gDebugMessage[256];
 
-	float fovDegrees = gHUD.m_iFOV;
+	float fovDegrees = gHUD.m_wsFOV;
 
 	//cl_entity_s* theLocalEntity = gEngfuncs.GetLocalPlayer();
 	//Vector vecRenderOrigin = theLocalEntity->origin;
@@ -254,7 +254,7 @@ void FillRGBAClipped(vgui::Panel* inPanel, int inStartX, int inStartY, int inWid
 }
 
 
-HSPRITE LoadSprite(const char *pszName)
+AVHHSPRITE LoadSprite(const char *pszName)
 {
 	int i;
 	char sz[256]; 

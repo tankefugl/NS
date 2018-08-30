@@ -224,23 +224,28 @@ string AvHMiniMap::GetSpriteNameFromMap(int inSpriteWidth, const string& inMapNa
 	sprintf(theWidthString, "%d", inSpriteWidth);
 	// : 1064
 	// insert _labelled into the filename before ".spr"
-	string extraname="";
-	switch ( useLabels ) {
-		case 1:
-			extraname="_1";
-			break;
-		case 2:
-			extraname="_2";
-			break;
-		case 3:
-			extraname="_3";
-			break;
-		default:
-			break;
+	string extraname = "";
+	switch (useLabels) {
+	case 1:
+		extraname = "_1";
+		break;
+	case 2:
+		extraname = "_2";
+		break;
+	case 3:
+		extraname = "_3";
+		break;
+	case 4:
+		extraname = "_4";
+		break;
+	case 5:
+		extraname = "_5";
+		break;
+	default:
+		break;
 	}
-	string theMiniMapName = kMiniMapSpritesDirectory + string("/") /*+ string(theWidthString)*/ + inMapName + extraname + string(".spr");
-	// :
-	return theMiniMapName;
+		string theMiniMapName = kMiniMapSpritesDirectory + string("/") /*+ string(theWidthString)*/ + inMapName + extraname + string(".spr");
+		return theMiniMapName;
 }
 
 void AvHMiniMap::InitializePalette()

@@ -40,7 +40,8 @@
 
 // UNDONE: Do we need these?
 #define FL_IMMUNE_WATER			(1<<17)
-#define	FL_IMMUNE_SLIME			(1<<18)
+//#define	FL_IMMUNE_SLIME			(1<<18)
+#define	FL_JUMPHELD				(1<<18) // Tracks if player is still holding +jump from a previous jump in sv_jumpmode 1
 #define FL_IMMUNE_LAVA			(1<<19)
 
 #define FL_PROXY				(1<<20)	// This is a spectator proxy

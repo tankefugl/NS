@@ -7482,16 +7482,10 @@ void AvHPlayer::GetViewForUser3(AvHUser3 inUser3, bool inIsDucking, float& outFO
     {
     case AVH_USER3_NONE:
     case AVH_USER3_MARINE_PLAYER:
-	//case AVH_USER3_COMMANDER_PLAYER:
+	case AVH_USER3_COMMANDER_PLAYER:
 	case AVH_USER3_ALIEN_PLAYER4:
 	default:
 		outFOV = 90;
-		outOffset = inIsDucking ? kDuckingViewHeightPercentage * HULL1_MAXZ : kStandingViewHeightPercentage * HULL0_MAXZ;
-		break;
-
-	//commander fov upped from 90 to prevent borders of black map background not drawing, compensated in hud_update
-	case AVH_USER3_COMMANDER_PLAYER:
-		outFOV = 106;
 		outOffset = inIsDucking ? kDuckingViewHeightPercentage * HULL1_MAXZ : kStandingViewHeightPercentage * HULL0_MAXZ;
 		break;
 
@@ -9335,8 +9329,8 @@ void AvHPlayer::UpdateAmbientSounds()
                 int theBaseSpeed, theMaxSpeed;
                 this->GetSpeeds(theBaseSpeed, theMaxSpeed);
                 
-                float theAlienSoundFreq = 0.003f;
-                float theChanceOfPlayingSound = theAlienSoundFreq*(theVelocity/((float)theMaxSpeed));
+                float theAlienSoundFreq = 0.3f;
+                float theChanceOfPlayingSound = gpGlobals->frametime*theAlienSoundFreq*(theVelocity/((float)theMaxSpeed));
                 if(RANDOM_FLOAT(0, 1) < theChanceOfPlayingSound)
                 {
                     float theVolume = RANDOM_FLOAT(.5, 1.0)*theSilenceVolumeFactor;

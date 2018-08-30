@@ -159,6 +159,7 @@ extern int gBlinkEffectSuccessEventID;
 #include "../mod/AvHSelectionHelper.h"
 
 int gHeightLevel = 0;
+int JpEventTimer = 0;
 
 const float kMarineBackpedalSpeedScalar = .4f;
 const float kMarineSidestepSpeedScalar = 1.0f;
@@ -5334,12 +5335,14 @@ void PM_Jump (void)
 {
     int i;
     qboolean tfc = false;
-    
+	qboolean autojump = false;
+	qboolean queuedjump = false;
     qboolean cansuperjump = false;
     
     if (pmove->dead || GetHasUpgrade(pmove->iuser4, MASK_ENSNARED))
     {
-        pmove->oldbuttons |= IN_JUMP ;  // don't jump again until released
+		//pmove->oldbuttons |= IN_JUMP;  // don't jump again until released
+		pmove->flags |= FL_JUMPHELD;
         return;
     }
     
@@ -5449,7 +5452,7 @@ void PM_Jump (void)
         // Flag that we jumped.
         // HACK HACK HACK
         // Remove this when the game .dll no longer does physics code!!!!
-        pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
+        //pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
         return;     // in air, so no effect
     }
 
@@ -5459,8 +5462,21 @@ void PM_Jump (void)
 //	if ( pmove->oldbuttons & IN_JUMP && (pmove->velocity[0] == 0 || !theIsAlien  || pmove->iuser3 == AVH_USER3_ALIEN_PLAYER3) )
 		//return;     // don't pogo stick
 
-	if ( pmove->oldbuttons & IN_JUMP )
+	autojump = atoi(pmove->PM_Info_ValueForKey(pmove->physinfo, "jm2"));
+	queuedjump = atoi(pmove->PM_Info_ValueForKey(pmove->physinfo, "jm1"));
+	bool theHasJetpackUpgrade = GetHasUpgrade(pmove->iuser4, MASK_UPGRADE_7) && (pmove->iuser3 == AVH_USER3_MARINE_PLAYER);
+
+	if ((!autojump && !queuedjump) || pmove->iuser3 == AVH_USER3_ALIEN_PLAYER3 || theHasJetpackUpgrade)
+	{
+		if (pmove->oldbuttons & IN_JUMP)
 		return;     // don't pogo stick
+	}
+
+	if (queuedjump)
+	{
+		if (pmove->flags & FL_JUMPHELD)
+			return;
+	}
 
 	// In the air now.
     pmove->onground = -1;
@@ -5513,7 +5529,8 @@ void PM_Jump (void)
     PM_FixupGravityVelocity();
     
     // Flag that we jumped.
-    pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
+    //pmove->oldbuttons |= IN_JUMP;   // don't jump again until released
+	pmove->flags |= FL_JUMPHELD;
 }
 
 /*
@@ -6364,11 +6381,17 @@ void PM_Jetpack()
 			pmove->velocity[1] += (theWishVelocity[1] / pmove->clientmaxspeed) * (theTimePassed * theWeightScalar*kJetpackForce);
             pmove->velocity[2] += theTimePassed*theWeightScalar*kJetpackForce;
 
-            // Play an event every so often
-            if(pmove->runfuncs /*&& (pmove->RandomLong(0, 2) == 0)*/)
-            {
-                pmove->PM_PlaybackEventFull(0, pmove->player_index, gJetpackEventID, 0, (float *)pmove->origin, (float *)pmove->origin, 0.0, 0.0, /*theWeaponIndex*/ 0, 0, 0, 0 );
-            }
+			//FPS independent jetpack event. Scales with FPS without timer.
+			JpEventTimer += pmove->cmd.msec;
+			if (JpEventTimer > 7)
+			{
+				// Play an event every so often
+				if (pmove->runfuncs /*&& (pmove->RandomLong(0, 2) == 0)*/)
+				{
+					pmove->PM_PlaybackEventFull(0, pmove->player_index, gJetpackEventID, 0, (float *)pmove->origin, (float *)pmove->origin, 0.0, 0.0, /*theWeaponIndex*/ 0, 0, 0, 0);
+				}
+				JpEventTimer = 0;
+			}
         }
 
         float theJetpackEnergy = pmove->fuser3/kNormalizationNetworkFactor;
@@ -6678,6 +6701,7 @@ void PM_PlayerMove ( qboolean server )
             else
             {
                 pmove->oldbuttons &= ~IN_JUMP;
+				pmove->flags &= ~FL_JUMPHELD;
             }
 
             // Fricion is handled before we add in any base velocity. That way, if we are on a conveyor, 
