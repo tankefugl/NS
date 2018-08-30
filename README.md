@@ -6,7 +6,7 @@ This is a complete rebuild of the game [Natural Selection] for Windows, Linux, a
 
 ## Downloads
 
-The recommended way to install the game or update an existing installation is through the Natural Selection Launcher available [here](REPLACE WITH URL)(Thanks Khelby)
+The recommended way to install the game or update an existing installation is through the Natural Selection Launcher available [here](https://github.com/ENSL/NaturalLauncher/releases/)(Thanks Khelben)
 
 As the game is a Half-Life mod, Steam and Half-Life installations are required to play the game.
 
@@ -14,7 +14,7 @@ A fresh install on the launcher comes with updated config files containing every
 
 If you wish to experience the game's default settings and binds from NS 3.2 you can type `exec olddefaults.cfg` in console before loading a map. A file named `backupb4old.cfg` will be saved with your previous settings if you wish to return to those after.  Note that gamma ramp is no longer a working feature, so brightness will be a slightly different than it originally was, but the game was always very dark by default and still is with that config.
 
-Users that wish to patch the game manually can find releases [here](https://github.com/ENSL/NS/releases).
+Users that wish to patch the game manually can find releases [here](https://github.com/ENSL/NS/releases) and update an NS 3.2 or later installation using those files.
 
 ## Changes
 
