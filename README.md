@@ -6,11 +6,15 @@ This is a complete rebuild of the game [Natural Selection] for Windows, Linux, a
 
 ## Downloads
 
-The recommended way to install the game or update an existing installation for Windows users is through the [Natural Selection Launcher](https://github.com/ENSL/NaturalLauncher/releases/) (Thanks Khelben). Simply download the installation exe or portable zip from there and run the launcher. Linux and OS X users, as well as those that want to install or patch the game manually, can find releases [here](https://github.com/ENSL/NS/releases).
+Install the game using one of the following methods:
+
+**[Natural Selection Launcher](https://github.com/ENSL/NaturalLauncher/releases/)** (recommended for Windows) The launcher can install, update, or repair the game.
+
+**[Manual installation](https://github.com/ENSL/NS/releases)** (Linux / OSX / Windows)
 
 As the game is a Half-Life mod, Steam and Half-Life installations are required to play the game.
 
-A fresh install of NS from the launcher comes with updated config files containing everything you need to get playing on the standard settings most players prefer.  There are also official marine and alien config files that can be uncommented so your binds change when joining the respective teams, but they are off by default as to not override any binds users wish to change within the game menus.  Those that wish to use the Nine Legends competitive pack can do so through the settings in advanced options without having to download or install it.
+A fresh install of NS comes with updated config files containing everything you need to get playing on the standard settings most players prefer.  There are also official marine and alien config files that can be uncommented so your binds change when joining the respective teams, but they are off by default as to not override any binds users wish to change within the game menus.  Those that wish to use the Nine Legends competitive pack can do so through the settings in advanced options without having to download or install it.
 
 If you wish to experience the game's default settings and binds from NS 3.2 you can type `exec olddefaults.cfg` in console before loading a map. A file named `backupb4old.cfg` will be saved with your previous settings if you wish to return to those after.  Note that gamma ramp is no longer a working feature, so brightness will be a slightly different than it originally was, but the game was always very dark by default and still is with that config.
 
