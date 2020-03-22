@@ -1217,7 +1217,7 @@ void ScorePanel::FillGrid()
 								if(pIcon)
 									m_CustomIconList.push_back( make_pair(pIcon, theCustomIcon) );
 							}
-							/* //@2014 to do 
+							 //@2014 to do 
 							if(pIcon)
 							{
 								pLabel->setImage(pIcon);
@@ -1234,7 +1234,7 @@ void ScorePanel::FillGrid()
 
 
 								pIcon->setColor(BuildColor(theRed, theGreen, theBlue, gHUD.GetGammaSlope()));
-							}*/
+							}
 						}
 					}
 					/* @2014 
