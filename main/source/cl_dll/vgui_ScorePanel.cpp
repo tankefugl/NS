@@ -81,6 +81,12 @@
 #include "mod/AvHServerVariables.h"
 #include "util/STLUtil.h"
 #include "ui/ScoreboardIcon.h"
+#include <string>
+#include <array>
+#include<algorithm>
+#include "AvHServerVariables.h"
+
+using namespace std;
 /* @2014 
 #include "common/itrackeruser.h"
 extern ITrackerUser *g_pTrackerUser;
@@ -100,6 +106,17 @@ int EV_TFC_IsAllyTeam( int iTeam1, int iTeam2 );
 
 void LoadData(void* inBuffer, const unsigned char* inData, int inSizeToCopy, int& inSizeVariable);
 void SaveData(unsigned char* inBuffer, const void* inData, int inSizeToCopy, int& inSizeVariable);
+
+void Output(const char* szFormat, ...)
+{
+	char szBuff[1024];
+	va_list arg;
+	va_start(arg, szFormat);
+	_vsnprintf(szBuff, sizeof(szBuff), szFormat, arg);
+	va_end(arg);
+
+	OutputDebugString(szBuff);
+}
 
 int	ScorePanel_InitializeDemoPlayback(int inSize, unsigned char* inBuffer)
 {
@@ -187,16 +204,16 @@ vgui::Color BuildColor( int R, int G, int B, float gamma )
 //-----------------------------------------------------------------------------
 // Purpose: Create the ScoreBoard panel
 //-----------------------------------------------------------------------------
-ScorePanel::ScorePanel(int x,int y,int wide,int tall) : Panel(x,y,wide,tall)
+ScorePanel::ScorePanel(int x, int y, int wide, int tall) : Panel(x, y, wide, tall)
 {
-	CSchemeManager *pSchemes = gViewPort->GetSchemeManager();
+	CSchemeManager* pSchemes = gViewPort->GetSchemeManager();
 	SchemeHandle_t hTitleScheme = pSchemes->getSchemeHandle("Scoreboard Title Text");
 	SchemeHandle_t hSmallScheme = pSchemes->getSchemeHandle("Scoreboard Small Text");
 	SchemeHandle_t hTinyScheme = pSchemes->getSchemeHandle("Scoreboard Tiny Text");
-	Font *tfont = pSchemes->getFont(hTitleScheme);
-	Font *smallfont = pSchemes->getFont(hSmallScheme);
-	Font *tinyfont = pSchemes->getFont(hTinyScheme);
-	
+	Font* tfont = pSchemes->getFont(hTitleScheme);
+	Font* smallfont = pSchemes->getFont(hSmallScheme);
+	Font* tinyfont = pSchemes->getFont(hTinyScheme);
+
 	setBgColor(0, 0, 0, 96);
 	m_pCurrentHighlightLabel = NULL;
 	m_iHighlightRow = -1;
@@ -209,7 +226,7 @@ ScorePanel::ScorePanel(int x,int y,int wide,int tall) : Panel(x,y,wide,tall)
 	m_pContribIcon = NULL;
 	m_pCheatingDeathIcon = NULL;
 	m_pVeteranIcon = NULL;
-	
+
 	m_pHMG = NULL;
 	m_pMine = NULL;
 	m_pWeld = NULL;
@@ -226,7 +243,6 @@ ScorePanel::ScorePanel(int x,int y,int wide,int tall) : Panel(x,y,wide,tall)
 	m_pCheatingDeathIcon = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_scoreboardcd.tga");
 	m_pVeteranIcon = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_scoreboardveteran.tga");
 
-	
 
 	m_pHMG = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_scoreboardhmg.tga");
 	m_pMine = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_scoreboardmine.tga");
@@ -236,6 +252,18 @@ ScorePanel::ScorePanel(int x,int y,int wide,int tall) : Panel(x,y,wide,tall)
 
 	m_iIconFrame = 0;
 	m_iLastFrameIncrementTime = gHUD.GetTimeOfLastUpdate();
+
+	// Player Colors indicators
+	m_pCYellow = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_yellow.tga");
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		m_pColorIcons[i] = vgui_LoadTGANoInvertAlpha("gfx/vgui/640_scoreboardtracker.tga");
+	}
+
+	
+
+
+
+		
 	
 	// Initialize the top title.
 	m_TitleLabel.setFont(tfont);
@@ -811,6 +839,7 @@ void ScorePanel::FillGrid()
 		hud_player_info_t* pl_info = &g_PlayerInfoList[theSortedRow];
 		extra_player_info_t* theExtraPlayerInfo = &g_PlayerExtraInfo[theSortedRow];
 		int thePlayerClass = theExtraPlayerInfo->playerclass;
+		int thePlayerId = theExtraPlayerInfo->player_index;
 		short theTeamNumber = theExtraPlayerInfo->teamnumber;
 		string theCustomIcon = (string)theExtraPlayerInfo->customicon;
 // : 0001073
@@ -1070,10 +1099,83 @@ void ScorePanel::FillGrid()
 						}
 					}
 					*/
+					// set Player Color
+					//Output((to_string(thePlayerId)+ string("\n")).c_str());
+					//ConsolePrint((to_string(thePlayerId)+ string("\n")).c_str());
+					
+					
+				
+					switch (theTeamNumber) {
+					case 1:
+						if (std::find(std::begin(players_marine_team), std::end(players_marine_team), thePlayerId) == std::end(players_marine_team)){
+							players_marine_team.push_back(thePlayerId);
+							players_marine_team.sort();
+						}
+						else if (std::find(std::begin(players_alien_team), std::end(players_alien_team), thePlayerId) != std::end(players_alien_team)) {
+							players_alien_team.erase(std::find(std::begin(players_alien_team), std::end(players_alien_team), thePlayerId));
+							players_alien_team.sort();
+						}
+						break;
+					case 2:
+						if (std::find(std::begin(players_alien_team), std::end(players_alien_team), thePlayerId) == std::end(players_alien_team)) {
+							players_alien_team.push_back(thePlayerId);
+							players_alien_team.sort();
+						}
+						else if (std::find(std::begin(players_marine_team), std::end(players_marine_team), thePlayerId) != std::end(players_marine_team)) {
+							players_marine_team.erase(std::find(std::begin(players_marine_team), std::end(players_marine_team), thePlayerId));
+							players_marine_team.sort();
+							
+						}
+						break;
+					default:
+						if (std::find(std::begin(players_alien_team), std::end(players_alien_team), thePlayerId) != std::end(players_alien_team)) {
+							players_alien_team.erase(std::find(std::begin(players_alien_team), std::end(players_alien_team), thePlayerId));
+							players_alien_team.sort();
+						}
+						else if (std::find(std::begin(players_marine_team), std::end(players_marine_team), thePlayerId) != std::end(players_marine_team)) {
+							players_marine_team.erase(std::find(std::begin(players_marine_team), std::end(players_marine_team), thePlayerId));
+							players_marine_team.sort();
+						}
+						break;
+					
+					}
+
+
+				
+
 					if(pl_info)
 					{
-						sprintf(sz, "%s  ", pl_info->name);
+						
+						if (gHUD.GetServerVariableFloat(kvTournamentMode)) {
+							sprintf(sz, "   %s  ", pl_info->name);
+							pLabel->setImage(m_pColorIcons[thePlayerId]);
+							pLabel->setFgColorAsImageColor(false);
+
+							switch (theTeamNumber) {
+							case 1:
+								m_pColorIndex = std::distance(std::begin(players_marine_team), std::find(std::begin(players_marine_team), std::end(players_marine_team), thePlayerId));
+								m_pColorIndex = m_pColorIndex % player_colors.size();
+								m_pColorIcons[thePlayerId]->setColor(BuildColor(player_colors[m_pColorIndex][0],
+									player_colors[m_pColorIndex][1],
+									player_colors[m_pColorIndex][2], gHUD.GetGammaSlope()));
+								break;
+							case 2:
+								m_pColorIndex = std::distance(std::begin(players_alien_team), std::find(std::begin(players_alien_team), std::end(players_alien_team), thePlayerId));
+								m_pColorIndex = m_pColorIndex % player_colors.size();
+								m_pColorIcons[thePlayerId]->setColor(BuildColor(player_colors[m_pColorIndex][0],
+									player_colors[m_pColorIndex][1],
+									player_colors[m_pColorIndex][2], gHUD.GetGammaSlope()));
+								break;
+							default:
+								m_pColorIcons[thePlayerId]->setColor(BuildColor(255, 255, 255, gHUD.GetGammaSlope()));
+								break;
+							}
+						}
+						else {
+							sprintf(sz, "%s  ", pl_info->name);
+						}
 					}
+				
 					break;
 				case COLUMN_VOICE:
 					sz[0] = 0;
@@ -1198,7 +1300,8 @@ void ScorePanel::FillGrid()
 						pLabel->setFgColorAsImageColor(false);
 						m_pServerOpIcon->setColor(BuildColor(0, 255, 0, gHUD.GetGammaSlope()));
 					}
-
+					
+					
 					// Allow custom icons to override other general icons
 					if(thePlayerAuthentication & PLAYERAUTH_CUSTOM)
 					{
@@ -1237,6 +1340,9 @@ void ScorePanel::FillGrid()
 							}
 						}
 					}
+					// Set Colors for Players
+				
+						
 					/* @2014 
 					if(g_pTrackerUser)
 					{
@@ -1258,6 +1364,12 @@ void ScorePanel::FillGrid()
 					}
 #endif
 					break;
+					/* case COLUMN_PLAYER_COLOR:
+					Preparation for Player Color in own column
+					pLabel->setImage(m_pCYellow);
+					pLabel->setFgColorAsImageColor(false);
+					m_pCYellow->setColor(BuildColor(255, 255, 255, gHUD.GetGammaSlope()));
+					break;*/
                 case COLUMN_SCORE:
                     if(!theIsForEnemy && theLocalPlayerTeam != TEAM_IND || (gHUD.GetPlayMode() == PLAYMODE_OBSERVER))
                     {
