@@ -135,6 +135,7 @@ cvar_t	*cl_highdetail;
 cvar_t	*cl_cmhotkeys;
 cvar_t	*cl_forcedefaultfov;
 cvar_t	*cl_dynamiclights;
+cvar_t	*r_dynamic;
 cvar_t	*cl_buildmessages;
 cvar_t	*cl_particleinfo;
 cvar_t	*cl_widescreen;
@@ -779,7 +780,7 @@ void IN_AttackUp(void)
 {
 	KeyUp( &in_attack );
 	in_cancel = 0;
-	IN_Attack2Up();
+	//IN_Attack2Up();
 }
 
 void IN_AttackDownForced(void)
