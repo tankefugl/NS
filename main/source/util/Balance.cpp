@@ -33,11 +33,11 @@ using std::vector;
 
 struct BalanceListenerSort
 {
-	bool operator()(const BalanceChangeListener* lhs, const BalanceChangeListener* rhs)
+	bool operator()(const BalanceChangeListener* lhs, const BalanceChangeListener* rhs) const
 	{ return lhs->getBalanceChangeListenerID() < rhs->getBalanceChangeListenerID(); }
-	bool operator()(const BalanceChangeListener* lhs, const unsigned int rhs)
+	bool operator()(const BalanceChangeListener* lhs, const unsigned int rhs) const
 	{ return lhs->getBalanceChangeListenerID() < rhs; }
-	bool operator()(const unsigned int lhs, const BalanceChangeListener* rhs)
+	bool operator()(const unsigned int lhs, const BalanceChangeListener* rhs) const
 	{ return lhs < rhs->getBalanceChangeListenerID(); }
 };
 
