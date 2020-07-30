@@ -201,7 +201,7 @@ void AvHSonicGun::FireProjectiles(void)
 	Vector vecSrc	 = m_pPlayer->GetGunPosition( );
 	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 	
-	ASSERT(this->m_iPrimaryAmmoType >= 0);
+	//ASSERT(this->m_iPrimaryAmmoType >= 0);
 	//int theNumBullets = min(kSGBulletsPerShot, this->m_iClientClip);
 
 	float theDamageMultiplier;

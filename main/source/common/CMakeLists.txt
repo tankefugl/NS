@@ -1,0 +1,56 @@
+project(common)
+
+add_library(common
+    interface.cpp
+    beamdef.h
+    bullettypes.h
+    cl_entity.h
+    com_model.h
+    con_nprint.h
+    const.h
+    crc.h
+    cvardef.h
+    damagetypes.h
+    demo_api.h
+    director_cmds.h
+    dlight.h
+    dll_state.h
+    engine_launcher_api.h
+    entity_state.h
+    entity_types.h
+    enums.h
+    event_api.h
+    event_args.h
+    event_flags.h
+    exefuncs.h
+    hldm.h
+    hltv.h
+    in_buttons.h
+    interface.h
+    itrackeruser.h
+    ivoicetweak.h
+    mathlib.h
+    net_api.h
+    netadr.h
+    nowin.h
+    particledef.h
+    pmtrace.h
+    port.h
+    qfont.h
+    r_efx.h
+    ref_params.h
+    renderingconst.h
+    screenfade.h
+    Sequence.h
+    studio_event.h
+    triangleapi.h
+    usercmd.h
+    vec_op.h
+    vector_util.h
+    vectorclasses.h
+    weaponinfo.h
+    winsani_in.h
+    winsani_out.h
+)
+
+target_include_directories(common PUBLIC .)
