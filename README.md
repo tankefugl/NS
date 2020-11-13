@@ -14,6 +14,16 @@ A fresh install of NS from the launcher comes with updated config files containi
 
 If you wish to experience the game's default settings and binds from NS 3.2 you can type `exec olddefaults.cfg` in console before loading a map. A file named `backupb4old.cfg` will be saved with your previous settings if you wish to return to those after.  Note that gamma ramp is no longer a working feature, so brightness will be a slightly different than it originally was, but the game was always very dark by default and still is with that config.
 
+## Game not working? Troubleshooting tips.
+
+If the game doesn't load, check the following:
+1. Make sure you have verified Half-Life integrity. Click [here](https://support.steampowered.com/kb_article.php?ref=2037-QEUH-3335) for detailed instructions.
+1. Make sure you have **clean** install. Go to half-life directory (eg. `c:\Program Files\Steam\steamapps\common\Half-Life`) and remove or rename ``ns`` folder.
+1. Check if Half-Life or any other half-ife mods (eg. team fortress classic) works for you.
+1. Update your graphics card drivers.
+1. Make sure you have not any additional command line options for NS.
+1. For more help, ask on #help in [our discord](https://discord.gg/ZUSSBUA)
+
 ## Changes
 
 Updates include:
