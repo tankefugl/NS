@@ -34,7 +34,7 @@ Updates include:
 - Widescreen support (now expands FOV up to 16:9 aspect instead of cutting it off)
 - AI upscaled model textures can be turned on with the "Use High Definition models" video option 
 - Many FPS dependencies fixed, including jetpack acceleration, so the game can now be fairly played at 200+ FPS
-- Perfect jump timing no longer required for bunnyhopping (server adjustable via sv_jumpmode)
+- Quake style queued jumping to make bunnyhopping more accessible (server adjustable via sv_jumpmode)
 - Shotgun and grenade launcher have been reworked to fix reload bugs
 - Weapon reloads are now predicted on the client
 - New minimal HUD and the Nine Legends HUD can be selected through advanced options or hud_style and hud_mapstyle
