@@ -1,8 +1,8 @@
-# Natural Selection v3.2.2
+# Natural Selection v3.3
 
 [![Build Status](https://travis-ci.org/ENSL/NS.svg?branch=develop)](https://travis-ci.org/ENSL/NS)
 
-This is a complete rebuild of the game [Natural Selection] for Windows, Linux, and OS X. It includes updates and fixes by pierow, Prefix, fmoraw, Bacsu, puzl, and others.
+This is a rebuild of the game [Natural Selection] for Windows and Linux.
 
 ## Downloads
 
@@ -14,9 +14,7 @@ Install the game using one of the following methods:
 
 As the game is a Half-Life mod, Steam and Half-Life installations are required to play the game.
 
-A fresh install of NS comes with updated config files containing everything you need to get playing on the standard settings most players prefer.  There are also official marine and alien config files that can be uncommented so your binds change when joining the respective teams, but they are off by default as to not override any binds users wish to change within the game menus.  Those that wish to use the Nine Legends competitive pack can do so through the settings in advanced options without having to download or install it.
-
-If you wish to experience the game's default settings and binds from NS 3.2 you can type `exec olddefaults.cfg` in console before loading a map. A file named `backupb4old.cfg` will be saved with your previous settings if you wish to return to those after.  Note that gamma ramp is no longer a working feature, so brightness will be a slightly different than it originally was, but the game was always very dark by default and still is with that config.
+A fresh install of NS comes with updated config files containing everything you need to get playing on the standard settings most players prefer. Customization options are also built in like the Nine Legends competitve UI option as well as team and weapon specific config files that can be edited.
 
 ## Game not working? Troubleshooting tips.
 
@@ -32,33 +30,20 @@ If the game doesn't load, check the following:
 
 Updates include:
 
-- Linux and OS X support
 - Natural Selection Launcher for installing and updating the game
 - Widescreen support (now expands FOV up to 16:9 aspect instead of cutting it off)
+- AI upscaled model textures can be turned on with the "Use High Definition models" video option 
 - Many FPS dependencies fixed, including jetpack acceleration, so the game can now be fairly played at 200+ FPS
 - Perfect jump timing no longer required for bunnyhopping (server adjustable via sv_jumpmode)
-- New minimal HUD (work in progress) and the Nine Legends HUD can be selected through advanced options or hud_style and hud_mapstyle
+- Shotgun and grenade launcher have been reworked to fix reload bugs
+- Weapon reloads are now predicted on the client
+- New minimal HUD and the Nine Legends HUD can be selected through advanced options or hud_style and hud_mapstyle
 - New crosshair system that can be adjusted through the advanced options and cl_cross commands (Thanks [OpenAG](https://github.com/YaLTeR/OpenAG))
 - Ambient sounds can be changed in advanced options or via cl_ambientsound
+- Marine HUD now tracks research progress
 - Raw input and sensitivity scaling options now available
-- Spectator overlay is now transparent and shows health/armor
-- Numerous bug fixes for things that broke from recent updates to Half-Life
-- The observatory has now a spherical detection like the sensory chamber
 
-## Bugs
-- Process hangs on exit sometimes
-- Arrow keys don't work for the commander
-- Chatbox eats inputs occasionally
-- Some mice experience issues with a previous fix for centering the cursor when the popupmenu is open
-- Trying to shoot the shotgun while reloading is very fickle and has poor syncronization with the server. A balance-conscientious rework is planned, but yet to be made.  
-- HUD elements are stretched and/or poorly placed in widescreen. User options/commands for hud element placement are planned.
-- Clicking on the scoreboard can cause +attack to be stuck after closing the scoreboard until firing again.
-- FPS dependant fire rates and player physics.  These have significantly improved with the Half-Life update and are also a non-issue now that other FPS dependency fixes are in the game and the game can be played at high frame rates, where fire rates don't vary. Very high framerates cause collision issues and other engine limitations, so an fps of 200 or 250 is recommended unless fixed.
-- Flashing available alien upgrade icons (defense, movement and sensory) tend to disappear when a player dies and respawns. The icons won't appear until the alien chooses an upgrade.
-- func_train and func_tracktrain entities don't reset to their original positions when a round has ended
-- If parts of map have negative Z coordinates, clicking a structure can deselect it or select antoher structure. Make sure all parts of the map have positive Z coordinate.
-
-If you find more please report them!
+- Numerous bug fixes
 
 ## Compiling
 
@@ -69,22 +54,23 @@ For Linux:
 First you need some libraries. On Ubuntu it is:
 
 ```sh
-apt-get install build-essential git gdb gcc-multilib g++-multilib libc6-i386 libcurl4-openssl-dev:i386 libpng12-dev:i386
+apt-get install build-essential git gdb gcc-multilib g++-multilib libc6-i386
 ``` 
 
 Then you will need to get the files:
 ```sh
 git clone https://github.com/fmoraw/NS.git
 ``` 
-
-Then to build `` and use `make hl_cll` for the client and `make ns` for the server.
-
+Then cd to the linux directory:
 ```sh
 cd NS/main/source/linux
 ```
 
-For client use `make hl_cll` and for server use `make ns`
-
+Then build
+```sh
+make
+```
+or `make ns` to build the server binary and `make cl_dll` for the client binary. `make clean` to clean.
 
 If you get the this error when running the app: `Fatal Error - could not load library (client.so)`, With a high chance it is because of some `UNDEFINED SYMBOLS` in the shared library. But you can check this with this command:
 
@@ -92,9 +78,11 @@ If you get the this error when running the app: `Fatal Error - could not load li
 ldd -r -d client.so
 ``` 
 
-Make sure you have vgui.so copied to cl_dll folder too on Linux.
+Make sure you have vgui.so copied to the cl_dll folder too on Linux.
 
 ## Debugging
+
+Windows debug builds are currently broken.
 
 If you want to debug:
 ```sh
