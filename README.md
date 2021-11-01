@@ -47,7 +47,7 @@ Updates include:
 
 ## Compiling
 
-For Windows, compilation should be working if you have VS2017 installed.
+For Windows, compilation should be working if you have VS2019 installed.
 
 For Linux:
 
