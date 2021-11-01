@@ -1,14 +1,12 @@
 # Natural Selection v3.3
 
-This is an updated build of the game [Natural Selection] for Windows and Linux focused on quality of life improvements and bug fixes.
+An updated build of the game [Natural Selection] for Windows and Linux focused on quality of life improvements and bug fixes.
 
 ## Downloads
 
-Install the game using one of the following methods:
+**The [Natural Selection Launcher](https://github.com/ENSL/NaturalLauncher/releases/)** (Windows) can install, update, or repair the game.
 
-**[Natural Selection Launcher](https://github.com/ENSL/NaturalLauncher/releases/)** (recommended for Windows) The launcher can install, update, or repair the game.
-
-**[Manual installation](https://github.com/ENSL/NS/releases)** (Linux / OSX / Windows)
+**[Manual installation](https://github.com/ENSL/NS/releases)** (Windows / Linux)
 
 As the game is a Half-Life mod, Steam and Half-Life installations are required to play the game.
 
