@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/ENSL/NS.svg?branch=develop)](https://travis-ci.org/ENSL/NS)
 
-This is a rebuild of the game [Natural Selection] for Windows and Linux.
+This is an updated build of the game [Natural Selection] for Windows and Linux. It is focused on quality of life improvements and bug fixes.
 
 ## Downloads
 
