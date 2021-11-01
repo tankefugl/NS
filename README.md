@@ -19,9 +19,8 @@ A fresh install of NS comes with updated config files containing everything you 
 If the game doesn't load, check the following:
 1. Make sure you have verified Half-Life integrity. Click [here](https://support.steampowered.com/kb_article.php?ref=2037-QEUH-3335) for detailed instructions.
 1. Make sure you have **clean** install. Go to half-life directory (eg. `c:\Program Files\Steam\steamapps\common\Half-Life`) and remove or rename ``ns`` folder.
-1. Check if Half-Life or any other half-ife mods (eg. team fortress classic) works for you.
-1. Update your graphics card drivers.
-1. Make sure you have not any additional command line options for NS.
+1. Check if Half-Life works for you.
+1. Make sure you don't have any additional command line options for NS.
 1. For more help, ask on #help in [our discord](https://discord.gg/ZUSSBUA)
 
 ## Changes
