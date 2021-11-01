@@ -1,7 +1,5 @@
 # Natural Selection v3.3
 
-[![Build Status](https://travis-ci.org/ENSL/NS.svg?branch=develop)](https://travis-ci.org/ENSL/NS)
-
 This is an updated build of the game [Natural Selection] for Windows and Linux focused on quality of life improvements and bug fixes.
 
 ## Downloads
