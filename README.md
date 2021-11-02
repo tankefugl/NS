@@ -4,7 +4,7 @@ An updated build of the game [Natural Selection] for Windows and Linux focused o
 
 ## Downloads
 
-**The [Natural Selection Launcher](https://github.com/ENSL/NaturalLauncher/releases/)** (Windows) can install, update, or repair the game.
+The **[Natural Selection Launcher](https://github.com/ENSL/NaturalLauncher/releases/)** (Windows) can install, update, or repair the game.
 
 **[Manual installation](https://github.com/ENSL/NS/releases)** (Windows / Linux)
 
@@ -15,11 +15,15 @@ A fresh install of NS comes with updated config files containing everything you 
 ## Game not working? Troubleshooting tips.
 
 If the game doesn't load, check the following:
-1. Make sure you have verified Half-Life integrity. Click [here](https://support.steampowered.com/kb_article.php?ref=2037-QEUH-3335) for detailed instructions.
-1. Make sure you have **clean** install. Go to half-life directory (eg. `c:\Program Files\Steam\steamapps\common\Half-Life`) and remove or rename ``ns`` folder.
+1. Make sure you have verified Half-Life's integrity. Click [here](https://support.steampowered.com/kb_article.php?ref=2037-QEUH-3335) for detailed instructions.
+1. Make sure you have a clean install. Go to the half-life directory (eg. `c:\Program Files\Steam\steamapps\common\Half-Life`) and remove or rename the ``ns`` folder.
 1. Check if Half-Life works for you.
 1. Make sure you don't have any additional command line options for NS.
 1. For more help, ask on #help in [our discord](https://discord.gg/ZUSSBUA)
+
+For Linux:
+- Remove or rename the `libstdc++so.6` provided by steam or steamcmd so the linux distro's can be used instead. The one steam provides is outdated.
+- 32 bit C libraries might need to be installed. Try `apt-get install libc6-i386` if on debian or ubuntu.
 
 ## Changes
 
