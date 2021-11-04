@@ -53,7 +53,7 @@ For Linux:
 First you need some libraries. On Ubuntu it is:
 
 ```sh
-apt-get install build-essential git gdb gcc-multilib g++-multilib libc6-i386
+apt-get install build-essential git gdb gcc-multilib g++-multilib libc6-i386 mesa-common-dev
 ``` 
 
 Then you will need to get the files:
