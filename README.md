@@ -58,7 +58,7 @@ apt-get install build-essential git gdb gcc-multilib g++-multilib libc6-i386 mes
 
 Then you will need to get the files:
 ```sh
-git clone https://github.com/fmoraw/NS.git
+git clone https://github.com/ENSL/NS.git
 ``` 
 Then cd to the linux directory:
 ```sh
