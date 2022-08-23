@@ -15,6 +15,7 @@ A fresh install of NS comes with updated config files containing everything you 
 ## Game not working? Troubleshooting tips.
 
 If the game doesn't load, check the following:
+1. If you recieve a "could not load library" error for the client.dll, please install the **[latest Microsoft Visual C++ Redistributable package](https://aka.ms/vs/17/release/vc_redist.x86.exe)**
 1. Make sure you have verified Half-Life's integrity. Click [here](https://support.steampowered.com/kb_article.php?ref=2037-QEUH-3335) for detailed instructions.
 1. Make sure you have a clean install. Go to the half-life directory (eg. `c:\Program Files\Steam\steamapps\common\Half-Life`) and remove or rename the ``ns`` folder.
 1. Check if Half-Life works for you.
