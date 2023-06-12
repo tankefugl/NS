@@ -102,11 +102,12 @@ Have to use XCode's lldb to get around https://stackoverflow.com/a/33589760 (Lac
 
 Since servers are really rare at this point in time here is a tutorial how to set up an [Natural Selection] server with [hlds]. 
 
-1. Follow these steps: https://developer.valvesoftware.com/wiki/SteamCMD
-2. Copy the `ns` directory into the `hlds` directory after installing HLDS from steamcmd
-3. Run the game : 
+1. Follow these steps to get steamCMD installed and HLDS updated in it: https://developer.valvesoftware.com/wiki/SteamCMD
+2. You'll want to run `app_update 90 validate` multiple times in steamCMD to install HLDS and fully update it, as it won't completely do it the first time.
+3. Copy the `ns` directory into the `hlds` directory after installing HLDS from steamcmd
+4. Run the game : 
 ```sh
-./hlds_run -game ns -autoupdate +map ns_eclipse + sv_secure 1 + port 27015 + ip 127.0.0.1 +hostname "Natural Selection" +maxplayers 32
+./hlds_run -game ns -autoupdate +map ns_eclipse + sv_secure 1 + port 27015 +hostname "Natural Selection" +maxplayers 32
 ``` 
 If you are behind a NAT(Router) make sure to open at least those ports: 
 - 27015 UDP (game transmission, pings) 
