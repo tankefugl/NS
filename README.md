@@ -23,7 +23,7 @@ If the game doesn't load, check the following:
 1. For more help, ask on #help in [the community discord](https://discord.gg/ZUSSBUA)
 
 For Linux:
-- Remove or rename the `libstdc++so.6` provided by steam or steamcmd so the linux distro's can be used instead. The one steam provides is outdated.
+- Remove or rename the `libstdc++so.6` in the `hlds` directory so the linux distro's can be used instead. The one steam provides is outdated. You may need to rename the `libgcc.so.1` file in the same directory as well.
 - 32 bit C libraries might need to be installed. Try `apt-get install libc6-i386` if on debian or ubuntu. The libm.so.6 from it may need to be placed in your half-life or HLDS folder if you cannot install that package.
 
 ## Changes
