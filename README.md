@@ -43,6 +43,37 @@ Updates include:
 - Raw input and sensitivity scaling options are now available and non-accelerated mouse input is now default
 - The many other improvements, customization options, and bug fixes can be found in the [release notes](https://github.com/ENSL/NS/releases)
 
+## Hosting a server
+
+How to set up a dedicated [Natural Selection] server with [HLDS]:
+
+1. Follow these steps to get steamCMD installed and HLDS updated in it: https://developer.valvesoftware.com/wiki/SteamCMD
+2. You'll want to run `app_update 90 validate` multiple times in steamCMD to install HLDS and fully update it, as it won't completely do it the first time.
+3. Copy the `ns` directory into the `hlds` directory after installing HLDS from steamcmd
+4. For Linux servers:
+   - Remove or rename the `libstdc++so.6` in the `hlds` directory so the linux distro's can be used instead. The one steam provides is outdated. You may need to rename the `libgcc.so.1` file in the same directory as well.
+   - 32 bit C libraries might need to be installed. Try `apt-get install libc6-i386` if on debian or ubuntu. The libm.so.6 from it may need to be placed in your HLDS folder if you cannot install that package.
+5. Run the game : 
+```sh
+./hlds_run -game ns +map ns_eclipse + sv_secure 1 + port 27015 +hostname "Natural Selection" +maxplayers 32
+``` 
+
+If you are behind a NAT(Router) make sure to open at least those ports: 
+- 27015 UDP (game transmission, pings) 
+- 26900 UDP (VAC service) -- automatically increments if used in case of additional server processes
+
+For more information see the [HLDS valve wiki](https://developer.valvesoftware.com/wiki/Half-Life_Dedicated_Server).
+
+In order to check if your server is connected to the steam servers copy the following url in your browser and replace `<your IP address>` with your external ip:
+`http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr=<your IP address>&format=json`
+
+There is an updated version of metamod called [metamod-p](https://github.com/APGRoboCop/metamod-p/).
+
+There are a few different bots for Natural Selection, with Evobot being the newest and most comprehensive:
+* [Evobot]
+* [RCbot](http://rcbot.bots-united.com/)
+* [Whichbot](https://whichbot.sourceforge.net/)
+
 ## Compiling
 
 For Windows, compilation should be working if you have VS2019 installed.
@@ -95,38 +126,7 @@ DYLD_LIBRARY_PATH=".:$DYLD_LIBRARY_PATH" /Applications/Xcode.app/Contents/Develo
 ```
 Have to use XCode's lldb to get around https://stackoverflow.com/a/33589760 (Lack of environment variables). `-windowed` as windowed mode makes it easier to deal with crashes on MacOS.
 
-### Hosting a server
-
-How to set up a [Natural Selection] server with [HLDS]. 
-
-1. Follow these steps to get steamCMD installed and HLDS updated in it: https://developer.valvesoftware.com/wiki/SteamCMD
-2. You'll want to run `app_update 90 validate` multiple times in steamCMD to install HLDS and fully update it, as it won't completely do it the first time.
-3. Copy the `ns` directory into the `hlds` directory after installing HLDS from steamcmd
-4. For Linux servers:
-   - Remove or rename the `libstdc++so.6` in the `hlds` directory so the linux distro's can be used instead. The one steam provides is outdated. You may need to rename the `libgcc.so.1` file in the same directory as well.
-   - 32 bit C libraries might need to be installed. Try `apt-get install libc6-i386` if on debian or ubuntu. The libm.so.6 from it may need to be placed in your HLDS folder if you cannot install that package.
-5. Run the game : 
-```sh
-./hlds_run -game ns -autoupdate +map ns_eclipse + sv_secure 1 + port 27015 +hostname "Natural Selection" +maxplayers 32
-``` 
-
-If you are behind a NAT(Router) make sure to open at least those ports: 
-- 27015 UDP (game transmission, pings) 
-- 26900 UDP (VAC service) -- automatically increments if used in case of additional server processes
-
-For more information see the [HLDS valve wiki](https://developer.valvesoftware.com/wiki/Half-Life_Dedicated_Server).
-
-In order to check if your server is connected to the steam servers copy the following url in your browser and replace `<your IP address>` with your external ip:
-`http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr=<your IP address>&format=json`
-
-There is an updated version of metamod called [metamod-p](https://github.com/APGRoboCop/metamod-p/).
-
-There are a few different bots for Natural Selection, with Evobot being the newest and most comprehensive:
-* [Evobot]
-* [RCbot](http://rcbot.bots-united.com/)
-* [Whichbot](https://whichbot.sourceforge.net/)
-
-### Useful links
+## Useful links
 * [Game manual (some outdated info)](https://www.unknownworlds.com/oldwebsite/manuals/comm_manual/basic/index.htm)
 * Useful collections of ns files: server addons, maps and more:
     * [Brywright](http://www.brywright.co.uk/downloads/files/index.php?dir=natural-selection/)
