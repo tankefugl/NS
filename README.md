@@ -8,13 +8,14 @@ The **[Natural Selection Launcher](https://github.com/ENSL/NaturalLauncher/relea
 
 **[Manual installation](https://github.com/ENSL/NS/releases)** (Windows / Linux)
 
-As the game is a Half-Life mod, Steam and Half-Life installations are required to play the game.
+As the game is a Half-Life mod, Steam and Half-Life installations are required to play the game. After installing, restart steam.
 
 A fresh install of NS comes with updated config files containing everything you need to get playing on the standard settings most players prefer. Customization options are built into the advanced options menu, like the Nine Legends competitive UI option. For further customization, team and weapon specific config files are also now available.
 
 ## Game not working? Troubleshooting tips
 
 If the game doesn't load, check the following:
+1. Restart steam after installation to be able to play the game.
 1. If you recieve a "could not load library" error for the client.dll, please install the **[latest Microsoft Visual C++ Redistributable package](https://aka.ms/vs/17/release/vc_redist.x86.exe)**.
 1. Make sure you have verified Half-Life's integrity. Click [here](https://support.steampowered.com/kb_article.php?ref=2037-QEUH-3335) for detailed instructions.
 1. Check if Half-Life works for you.
