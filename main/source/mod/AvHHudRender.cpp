@@ -2533,7 +2533,7 @@ void AvHHud::DrawBuildHealthEffectsForEntity(int inEntityIndex, float inAlpha)
 		{
 			const int kDrawEnemyBuildingDistance = 200;
 			bool healthLowEnough = theHealthPercentage < (CVAR_GET_FLOAT("hud_teamhealthalert") * 0.01f);
-			bool isSpectating = this->GetPlayMode() == PLAYMODE_AWAITINGREINFORCEMENT || this->GetPlayMode() == PLAYMODE_OBSERVER;
+			bool isSpectating = (this->GetPlayMode() == PLAYMODE_AWAITINGREINFORCEMENT || this->GetPlayMode() == PLAYMODE_REINFORCING || this->GetPlayMode() == PLAYMODE_OBSERVER);
 			bool theEntityIsSpecTarget = inEntityIndex == theLocalPlayer->curstate.iuser2;
 
 			// Draw effects if we are in top-down mode OR
