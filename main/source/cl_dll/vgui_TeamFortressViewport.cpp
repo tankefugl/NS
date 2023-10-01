@@ -1524,8 +1524,14 @@ void TeamFortressViewport::HideOptionsMenu()
 
 		gHUD.GetManager().SetMouseVisibility(false);
 
-		//gEngfuncs.pfnSetMousePos(gEngfuncs.GetWindowCenterX(), gEngfuncs.GetWindowCenterY());
-		gEngfuncs.pfnSetMousePos(ScreenWidth() / 2, ScreenHeight() / 2);
+		if (gHUD.m_bWindowed)
+		{
+			gEngfuncs.pfnSetMousePos(ScreenWidth() / 2, ScreenHeight() / 2);
+		}
+		else
+		{
+			gEngfuncs.pfnSetMousePos(gEngfuncs.GetWindowCenterX(), gEngfuncs.GetWindowCenterY());
+		}
 	}
 }
 

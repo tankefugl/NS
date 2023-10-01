@@ -185,9 +185,16 @@ void ScorePanel::HitTestPanel::internalMousePressed(MouseCode code)
 			if (SDL_GetRelativeMouseMode() == SDL_TRUE)
 			{
 				SDL_SetRelativeMouseMode(SDL_FALSE);
-				//gEngfuncs.pfnSetMousePos(gEngfuncs.GetWindowCenterX(), gEngfuncs.GetWindowCenterY());
+
 				//Fix for windowed mode centering being incorrect.
-				gEngfuncs.pfnSetMousePos(ScreenWidth() / 2, ScreenHeight() / 2);
+				if (gHUD.m_bWindowed)
+				{
+					gEngfuncs.pfnSetMousePos(ScreenWidth() / 2, ScreenHeight() / 2);
+				}
+				else
+				{
+					gEngfuncs.pfnSetMousePos(gEngfuncs.GetWindowCenterX(), gEngfuncs.GetWindowCenterY());
+				}
 
 				//#ifdef WIN32
 				//ShowCursor(FALSE);

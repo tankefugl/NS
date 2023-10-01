@@ -326,6 +326,21 @@ void CHud :: VidInit( void )
 
 	gHUD.SetViewport(theViewPort);
 
+	//Determine if we're playing in windowed mode so we can do mouse centering correctly later.
+	for (Uint32 id = 0; id < UINT32_MAX; ++id)
+	{
+		SDL_Window* theWindow = SDL_GetWindowFromID(id);
+		if (theWindow)
+		{
+			if (!(SDL_GetWindowFlags(theWindow) & SDL_WINDOW_FULLSCREEN))
+			{
+				m_bWindowed = true;
+			}
+
+			break;
+		}
+	}
+
 	if (CVAR_GET_FLOAT("hud_style") == 2.0f)
 	{
 		mFont.Load("sprites/nl/font_arial");
