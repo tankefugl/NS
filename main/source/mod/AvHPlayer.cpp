@@ -3887,12 +3887,20 @@ void AvHPlayer::ValidateClientMoveEvents()
         case ORDER_ACK:
             // If cheats
 			if(GetGameRules()->GetCheatsEnabled() 
-            // OR It's less than the min saying interval, with less than 2 recent sayings, and they're not trying to say the same thing twice
+            // OR It's been longer than the min saying interval, with less than 2 recent sayings, and they're not trying to say the same thing twice
             || (gpGlobals->time > (this->mTimeOfLastSaying + kMinSayingInterval) && this->mRecentSayingCounter < 2
             && !(gpGlobals->time < (this->mTimeOfLastSaying + kRepeatSayingInterval) && theMessageID == this->GetLastSaying())))
             {
                 theIsValid = true;
                 this->mRecentSayingCounter += 1;
+            }
+            // Check if repeat saying counter isn't getting decremented for some reason, like plugins intercepting the impulse.
+            else if (gpGlobals->time > (this->mTimeOfLastSaying + kSpeakingTime + 0.05f))
+            {
+                ALERT(at_console, "Saying counter fallback triggered: %d\n", this->mRecentSayingCounter);
+                theIsValid = true;
+                this->mRecentSayingCounter = 1;
+                
             }
             else
             {
