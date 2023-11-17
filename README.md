@@ -4,6 +4,8 @@ An updated build of the game [Natural Selection] for Windows and Linux focused o
 
 ## Downloads
 
+#### <ins>NOTICE</ins>: The recent HL 25th aniversary update broke the NS mod. To run NS you need to go to the Steam Library -> Half-Life -> right click -> Properties -> Betas -> steam_legacy. This will be necessary until valve releases their HL SDK update and we then manage to fix all of the issues introduced.
+
 The **[Natural Selection Launcher](https://github.com/ENSL/NaturalLauncher/releases/)** (Windows) can install, update, or repair the game.
 
 **[Manual installation](https://github.com/ENSL/NS/releases)** (Windows / Linux)
