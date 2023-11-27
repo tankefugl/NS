@@ -876,6 +876,9 @@ private:
 
     static bool             sShowMap;
 
+	bool					mWideScreen;
+	bool					mWideScreenChanged;
+
 };
 
 #endif

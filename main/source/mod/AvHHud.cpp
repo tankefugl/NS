@@ -4883,6 +4883,8 @@ cvar_t *lightgamma = NULL;
 cvar_t *texgamma = NULL;
 cvar_t *r_detailtextures = NULL;
 cvar_t *gl_max_size = NULL;
+cvar_t *gl_widescreen_yfov = NULL;
+cvar_t *sv_widescreenclamp = NULL;
 
 void AvHHud::InitExploitPrevention() {
 	gl_monolights = gEngfuncs.pfnGetCvarPointer("gl_monolights");
@@ -4897,6 +4899,7 @@ void AvHHud::InitExploitPrevention() {
 	texgamma = gEngfuncs.pfnGetCvarPointer("texgamma");
 	r_detailtextures = gEngfuncs.pfnGetCvarPointer("r_detailtextures");
 	gl_max_size = gEngfuncs.pfnGetCvarPointer("gl_max_size");
+	gl_widescreen_yfov = gEngfuncs.pfnGetCvarPointer("gl_widescreen_yfov");
 
 	ForceCvar("gl_monolights", gl_monolights, 0.0f);
 	ForceCvar("gl_overbright", gl_overbright, 0.0f);
@@ -4921,6 +4924,11 @@ void AvHHud::InitExploitPrevention() {
 	}
 	if(texgamma && texgamma->value > 5.0) {
 		ForceCvar("texgamma", texgamma, 5.0f);
+	}
+	RemoveAlias("gl_widescreen_yfov");
+	if (gl_widescreen_yfov)
+	{
+		mWideScreen = gl_widescreen_yfov->value;
 	}
 }
 
@@ -4952,6 +4960,48 @@ void AvHHud::UpdateExploitPrevention()
 	if(texgamma && texgamma->value > 5.0) {
 		ForceCvar("texgamma", texgamma, 5.0f);
 	}
+	//Widescreen exploit prevention
+	if (gViewPort)
+	{
+		if (gHUD.GetIsAlive(false))
+		{
+			if (gl_widescreen_yfov && gl_widescreen_yfov->value == 0 && mWideScreen) {
+				ForceCvar("gl_widescreen_yfov", gl_widescreen_yfov, 1.0f);
+				mWideScreenChanged = true;
+				gEngfuncs.pfnCenterPrint("The Widescreen FOV\n will change after death\n");
+			}
+			if (gl_widescreen_yfov && gl_widescreen_yfov->value != 0 && !mWideScreen) {
+				ForceCvar("gl_widescreen_yfov", gl_widescreen_yfov, 0);
+				mWideScreenChanged = true;
+				gEngfuncs.pfnCenterPrint("The Widescreen FOV\n will change after death\n");
+			}
+		}
+		else if (mWideScreenChanged)
+		{
+			mWideScreen = !mWideScreen;
+			ForceCvar("gl_widescreen_yfov", gl_widescreen_yfov, (float)mWideScreen);
+			mWideScreenChanged = false;
+		}
+		else
+		{
+			mWideScreen = gl_widescreen_yfov->value;
+		}
+
+		//sv_widescreenclamp is to prevent abuse of ultra-widescreen FOVs in competitive play.
+		if ((ScreenWidth() / ScreenHeight()) > 1.8f)
+		{
+			if (this->GetServerVariableFloat(kvWidescreenClamp) != 0 && gl_widescreen_yfov && gl_widescreen_yfov->value != 0)
+			{
+				ForceCvar("gl_widescreen_yfov", gl_widescreen_yfov, 0);
+				gEngfuncs.pfnCenterPrint("This aspect ratio is not allowed\n on this server\n");
+			}
+		}
+	}
+	//else if (gl_widescreen_yfov)
+	//{
+	//	mWideScreen = gl_widescreen_yfov->value;
+	//	gEngfuncs.Con_Printf("init mwidescreen from update %d\n", mWideScreen);
+	//}
 }
 
 void AvHHud::UpdateAlienUI(float inCurrentTime)

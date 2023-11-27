@@ -123,6 +123,7 @@ cvar_t  avh_mapvoteratio            = {kvMapVoteRatio, ".6", FCVAR_SERVER};
 cvar_t  avh_blockscripts            = {kvBlockScripts, "1", FCVAR_SERVER};
 cvar_t  avh_jumpmode				= {kvJumpMode, "1", FCVAR_SERVER};
 cvar_t  avh_version					= {kvVersion, "330", FCVAR_SERVER};
+cvar_t  avh_widescreenclamp			= {kvWidescreenClamp, "0", FCVAR_SERVER};
 //playtest cvars
 cvar_t  avh_fastjp					= {kvfastjp, "0", FCVAR_SERVER};
 cvar_t  avh_randomrfk				= {kvRandomRfk, "1", FCVAR_SERVER};
@@ -239,6 +240,7 @@ void GameDLLInit( void )
     CVAR_REGISTER (&avh_blockscripts);
 	CVAR_REGISTER (&avh_jumpmode);
 	CVAR_REGISTER (&avh_version);
+	CVAR_REGISTER (&avh_widescreenclamp);
 	//playtest cvars
 	CVAR_REGISTER (&avh_fastjp);
 	CVAR_REGISTER (&avh_randomrfk);
@@ -269,6 +271,9 @@ void GameDLLInit( void )
 	CVAR_REGISTER (&avh_eastereggchance);
 	CVAR_REGISTER (&avh_uplink);
 	CVAR_REGISTER (&avh_killdelay);
+
+	//Remove HL25 addition of roll angle in code so servers don't need to update configs.
+	CVAR_SET_FLOAT("sv_rollangle", 0.0f);
 
 }
 

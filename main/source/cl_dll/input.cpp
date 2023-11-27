@@ -138,7 +138,7 @@ cvar_t	*cl_dynamiclights;
 cvar_t	*r_dynamic;
 cvar_t	*cl_buildmessages;
 cvar_t	*cl_particleinfo;
-cvar_t	*cl_widescreen;
+//cvar_t	*cl_widescreen;
 cvar_t	*cl_ambientsound;
 cvar_t	*senslock;
 cvar_t	*hud_style;
@@ -1638,7 +1638,7 @@ void InitInput (void)
 	cl_cmhotkeys		= gEngfuncs.pfnRegisterVariable ( kvCMHotkeys, "qwerasdfzxcv", FCVAR_ARCHIVE );
 	//cl_forcedefaultfov	= gEngfuncs.pfnRegisterVariable ( kvForceDefaultFOV, "0", FCVAR_ARCHIVE );
 	cl_particleinfo		= gEngfuncs.pfnRegisterVariable ( kvParticleInfo, "0", FCVAR_ARCHIVE );
-	cl_widescreen		= gEngfuncs.pfnRegisterVariable	( kvWidescreen, "1", FCVAR_ARCHIVE );
+	//cl_widescreen		= gEngfuncs.pfnRegisterVariable	( kvWidescreen, "1", FCVAR_ARCHIVE );
 	cl_ambientsound		= gEngfuncs.pfnRegisterVariable	( kvAmbientSound, "0", FCVAR_ARCHIVE);
 	senslock			= gEngfuncs.pfnRegisterVariable	("senslock", "0", FCVAR_ARCHIVE);
 	hud_style			= gEngfuncs.pfnRegisterVariable	("hud_style", "1", FCVAR_ARCHIVE);

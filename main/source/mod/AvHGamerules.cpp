@@ -338,6 +338,8 @@ AvHGamerules::AvHGamerules() : mTeamA(TEAM_ONE), mTeamB(TEAM_TWO)
     RegisterServerVariable(avh_cheats);
     RegisterServerVariable(&avh_structurelimit);
 	RegisterServerVariable(&avh_version);
+	RegisterServerVariable(&avh_widescreenclamp);
+
 	//playtest cvars
 	RegisterServerVariable(&avh_fastjp);
 	RegisterServerVariable(&avh_randomrfk);
