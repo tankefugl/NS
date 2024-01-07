@@ -52,14 +52,20 @@ How to set up a dedicated [Natural Selection] server with [HLDS]:
 
 1. Follow these steps to get steamCMD installed and HLDS updated in it: https://developer.valvesoftware.com/wiki/SteamCMD
 2. You'll want to run `app_update 90 validate` multiple times in steamCMD to install HLDS and fully update it, as it won't completely do it the first time.
-3. Copy the `ns` directory into the `hlds` directory after installing HLDS from steamcmd
-4. For Linux servers:
+   - **NOTE:** Please use `app_update 90 -beta steam_legacy validate` until the mod is updated for the HL 25th aniversary release.
+4. Copy the `ns` directory into the `hlds` directory after installing HLDS from steamcmd
+5. For Linux servers:
    - Remove or rename the `libstdc++so.6` in the `hlds` directory so the linux distro's can be used instead. The one steam provides is outdated. You may need to rename the `libgcc.so.1` file in the same directory as well.
    - 32 bit C libraries might need to be installed. Try `apt-get install libc6-i386` if on debian or ubuntu. The libm.so.6 from it may need to be placed in your HLDS folder if you cannot install that package.
-5. Run the game : 
-```sh
-./hlds_run -game ns +map ns_eclipse + sv_secure 1 + port 27015 +hostname "Natural Selection" +maxplayers 32
-``` 
+6. Run the game:
+   - Linux:
+      ```sh
+      ./hlds_run -game ns +map ns_eclipse +sv_secure 1 +port 27015 +hostname "Natural Selection" +maxplayers 32
+      ```
+   - Windows:
+      ```cmd
+     hlds.exe -console -game ns +map ns_eclipse +sv_secure 1 +port 27015 +hostname "Natural Selection" +maxplayers 32
+      ```
 
 If you are behind a NAT(Router) make sure to open at least those ports: 
 - 27015 UDP (game transmission, pings) 
