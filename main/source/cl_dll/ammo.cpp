@@ -380,13 +380,18 @@ void WeaponsResource::UserCmd_MovementOn()
 	// Find out which weapon we want to trigger
 	AvHUser3 theUser3 = gHUD.GetHUDUser3();
 	int wID = -1;
+	bool lerkFlap = false;
 	switch(theUser3)
 	{
 	case AVH_USER3_ALIEN_PLAYER1:
 		wID = AVH_ABILITY_LEAP;
 		break;
+	//TODO: Make healspray work with attack2
+	//case AVH_USER3_ALIEN_PLAYER2:
+	//	wID = AVH_WEAPON_HEALINGSPRAY;
+	//	break;
 	case AVH_USER3_ALIEN_PLAYER3:
-		// TODO: Add flap
+		lerkFlap = true;
 		break;
 	case AVH_USER3_ALIEN_PLAYER4:
 		wID = AVH_WEAPON_BLINK;
@@ -408,6 +413,10 @@ void WeaponsResource::UserCmd_MovementOn()
 			// Send activation of ability asap
 			IN_Attack2Down();
 		}
+	}
+	else if (lerkFlap)
+	{
+		IN_Attack2Down();
 	}
 }
 
