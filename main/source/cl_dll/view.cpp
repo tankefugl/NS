@@ -77,6 +77,7 @@ when crossing a water boudnary.
 extern cvar_t	*chase_active;
 extern cvar_t	*scr_ofsx, *scr_ofsy, *scr_ofsz;
 extern cvar_t	*cl_vsmoothing;
+extern cvar_t	*cl_bobview;
 
 #define	CAM_MODE_RELAX		1
 #define CAM_MODE_FOCUS		2
@@ -621,8 +622,11 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 
 	// refresh position
 	VectorCopy ( pparams->simorg, pparams->vieworg );
+	
+	if (cl_bobview && cl_bobview->value != 0)
+	{
 	pparams->vieworg[2] += ( bob );
-	VectorAdd( pparams->vieworg, pparams->viewheight, pparams->vieworg );
+	}
 
 	VectorCopy ( pparams->cl_viewangles, pparams->viewangles );
 
@@ -754,7 +758,10 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	{
 		view->origin[ i ] += bob * 0.4 * pparams->forward[ i ];
 	}
+	if (cl_bobview && cl_bobview->value != 0)
+	{
 	view->origin[2] += bob;
+	}
 
 	// throw in a little tilt.
 	view->angles[YAW]   -= bob * 0.5;

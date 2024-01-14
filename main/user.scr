@@ -94,6 +94,20 @@ DESCRIPTION INFO_OPTIONS
 		}
 		{ "3.000000" }
 	}
+
+	"cl_bob"
+	{
+		"Weapon bobbing (0.01 default)"
+		{ NUMBER 0.000000 0.010000 }
+		{ "0.01" }
+	}
+
+	"cl_bobview"
+	{
+		"View bobbing (requires weapon bobbing)"
+		{ BOOL }
+		{ "0" }
+	}
 	
 	"cl_weaponswap"
 	{
