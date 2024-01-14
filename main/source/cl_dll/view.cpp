@@ -625,8 +625,9 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	
 	if (cl_bobview && cl_bobview->value != 0)
 	{
-	pparams->vieworg[2] += ( bob );
+		pparams->vieworg[2] += ( bob );
 	}
+	VectorAdd(pparams->vieworg, pparams->viewheight, pparams->vieworg);
 
 	VectorCopy ( pparams->cl_viewangles, pparams->viewangles );
 
@@ -760,7 +761,7 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	}
 	if (cl_bobview && cl_bobview->value != 0)
 	{
-	view->origin[2] += bob;
+		view->origin[2] += bob;
 	}
 
 	// throw in a little tilt.
