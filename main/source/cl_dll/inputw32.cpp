@@ -105,6 +105,9 @@ int			mouseinitialized;
 static int	mouseparmsvalid;
 static int	mouseshowtoggle = 1;
 
+////2024 - Added to fix view spin when disabling the cursor.
+static bool cursorDisabledThisFrame = false;
+
 // joystick defines and variables
 // where should defines be moved?
 #define JOY_ABSOLUTE_AXIS	0x00000000		// control like a joystick
@@ -312,7 +315,21 @@ void IN_SetVisibleMouse(bool visible)
 
 	g_iVisibleMouse = visible;
 
-	IN_SetMouseMode(!visible);
+	////2024 - Disabled this as SDL mouse mode is handled per use of UIManager::SetMouseVisibility to fix edge case bugs with centering and showing/not showing cursor in game and in the escape menu.
+	//IN_SetMouseMode(!visible);
+
+	//2024 - Added to fix view spin when disabling the cursor. Reassess after new SDK is released.
+	cursorDisabledThisFrame = (!visible);
+
+	////2024 - Move centering here?
+	//if (visible && gHUD.m_bWindowed)
+	//{
+	//	gEngfuncs.pfnSetMousePos(ScreenWidth() / 2, ScreenHeight() / 2);
+	//}
+	//else
+	//{
+	//	gEngfuncs.pfnSetMousePos(gEngfuncs.GetWindowCenterX(), gEngfuncs.GetWindowCenterY());
+	//}
 
 #ifdef _WIN32
 	UpdateMouseThreadActive();
@@ -642,6 +659,14 @@ void IN_GetMouseDelta( int *pOutX, int *pOutY)
 			mx = deltaX + mx_accum;
 			my = deltaY + my_accum;
 		}
+		//2024 - Added to fix view spin when disabling the cursor.
+		if (cursorDisabledThisFrame)
+		{
+			mx = 0;
+			my = 0;
+
+			cursorDisabledThisFrame = false;
+		}
 		
 		mx_accum = 0;
 		my_accum = 0;
@@ -756,7 +781,7 @@ void IN_MouseMove ( float frametime, usercmd_t *cmd)
 			}
 		}
 	}
-
+	
 	gEngfuncs.SetViewAngles( (float *)viewangles );
 
 /*
@@ -801,7 +826,7 @@ void CL_DLLEXPORT IN_Accumulate (void)
 				int deltaX, deltaY;
 				SDL_GetRelativeMouseState( &deltaX, &deltaY );
 				mx_accum += deltaX;
-				my_accum += deltaY;	
+				my_accum += deltaY;
 			}
 
 			// force the mouse to the center, so there's room to move
