@@ -1395,6 +1395,12 @@ bool AvHHud::Update(float inCurrentTime, string& outErrorString)
 
         this->mTimeOfCurrentUpdate = inCurrentTime;
 
+		if (CVAR_GET_FLOAT("hud_style") != this->mLastHudStyle)
+		{
+			this->mReInitHUD = true;
+			gHUD.VidInit();
+		}
+
 		// Predict game time
 		if(this->GetGameStarted())
 		{
@@ -3846,6 +3852,9 @@ void AvHHud::Init(void)
 
 	this->mDrawCombatUpgradeMenu = false;
 	this->mDrawOrderOverlay = true;
+
+	this->mReInitHUD = false;
+	this->mLastHudStyle = 0;
 
 	// Initialize viewport
 	this->mViewport[0] = this->mViewport[1] = this->mViewport[2] = this->mViewport[3] = 0;
@@ -7358,6 +7367,15 @@ void AvHHud::SetDrawOrderOverlay(bool drawOverlay)
 	mDrawOrderOverlay = drawOverlay;
 }
 
+bool AvHHud::GetReInitHUD() const
+{
+	return this->mReInitHUD;
+}
+
+void AvHHud::SetReInitHUD(bool setInit)
+{
+	mReInitHUD = setInit;
+}
 
 /**
  * Prints the call stack when an unhandled exception occurs.

@@ -2309,6 +2309,10 @@ void V_Init (void)
 	cl_waterdist		= gEngfuncs.pfnRegisterVariable( "cl_waterdist","4", 0 );
 	cl_hudcam			= gEngfuncs.pfnRegisterVariable( "cl_hudcam", "1", 0 );
 	cl_chasedist		= gEngfuncs.pfnRegisterVariable( "cl_chasedist", "200", 0 );
+
+	// lightgamma doesn't save to config.cfg otherwise.
+	cvar_t* lightgamma = gEngfuncs.pfnGetCvarPointer("lightgamma");
+	lightgamma->flags |= FCVAR_ARCHIVE;
 }
 
 

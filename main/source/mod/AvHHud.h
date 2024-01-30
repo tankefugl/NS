@@ -451,6 +451,9 @@ public:
 	bool			GetDrawOrderOverlay() const;
 	void			SetDrawOrderOverlay(bool drawOverlay);
 
+	bool			GetReInitHUD() const;
+	void			SetReInitHUD(bool setInit);
+
 private:
 
 	// :
@@ -875,6 +878,9 @@ private:
 	bool					mDrawOrderOverlay;
 
     static bool             sShowMap;
+
+	bool					mReInitHUD;
+	float					mLastHudStyle;
 
 };
 

@@ -142,7 +142,6 @@ cvar_t	*cl_particleinfo;
 cvar_t	*cl_widescreen;
 cvar_t	*cl_ambientsound;
 cvar_t	*senslock;
-cvar_t	*hud_style;
 cvar_t	*cl_chatbeep;
 cvar_t	*cl_mutemenu;
 cvar_t	*cl_weaponcfgs;
@@ -1531,6 +1530,47 @@ void EchoDev(void)
 	gEngfuncs.Con_Printf("%s\n", gEngfuncs.Cmd_Argv(1));
 }
 
+void NsPreset(void)
+{
+	int presetChoice = atoi(gEngfuncs.Cmd_Argv(1));
+	int printMethod = gViewPort ? HUD_PRINTTALK : HUD_PRINTCONSOLE;
+	const char* inGameAdditional = (printMethod == HUD_PRINTTALK) ? " See console for details." : "";
+	char execText[1024];
+	//char localizedText[1024];
+
+	inGameAdditional = gViewPort ? " See console for details." : "";
+
+	switch (presetChoice)
+	{
+	case 1:
+		ClientCmd("exec 32av.cfg");
+		//Localize later.
+		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset1"));
+		snprintf(execText, 1024, "%c** %s%s\n", printMethod, "Classic NS audio/visual presets applied.", inGameAdditional);
+		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+
+		break;
+	case 2:
+		ClientCmd("exec 33av.cfg");
+		//Localize later.
+		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset2"));
+		sprintf(execText, "%c** %s%s\n", printMethod, "NS 3.3 audio/visual presets applied. See console for details.", inGameAdditional);
+		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+
+		break;
+	case 3:
+		ClientCmd("exec compav.cfg");
+		//Localize later.
+		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset3"));
+		sprintf(execText, "%c** %s%s\n", printMethod, "Competive audio/visual presets applied. See console for details.", inGameAdditional);
+		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+
+		break;
+	default:
+		gEngfuncs.Con_Printf("NS configuration preset selector. Useage:\n1: apply NS 3.2 settings\n2: apply NS 3.3 settings\n3: apply competitive settings\n");
+	}
+}
+
 /*
 ============
 InitInput
@@ -1605,6 +1645,7 @@ void InitInput (void)
 
 	gEngfuncs.pfnAddCommand("nsversion", NsVersion);
 	gEngfuncs.pfnAddCommand("echodev", EchoDev);
+	gEngfuncs.pfnAddCommand("nspreset", NsPreset);
 
 	lookstrafe			= gEngfuncs.pfnRegisterVariable ( "lookstrafe", "0", FCVAR_ARCHIVE );
 	lookspring			= gEngfuncs.pfnRegisterVariable ( "lookspring", "0", FCVAR_ARCHIVE );
@@ -1629,8 +1670,8 @@ void InitInput (void)
 
 	cl_autohelp			= gEngfuncs.pfnRegisterVariable ( kvAutoHelp, "1.0", FCVAR_ARCHIVE );
 	cl_centerentityid	= gEngfuncs.pfnRegisterVariable ( kvCenterEntityID, "0.0", FCVAR_ARCHIVE );
-	cl_musicenabled		= gEngfuncs.pfnRegisterVariable ( kvMusicEnabled, "0", FCVAR_ARCHIVE );
-	cl_musicvolume		= gEngfuncs.pfnRegisterVariable ( kvMusicVolume, "1", FCVAR_ARCHIVE );
+	cl_musicenabled		= gEngfuncs.pfnRegisterVariable ( kvMusicEnabled, "1", FCVAR_ARCHIVE );
+	cl_musicvolume		= gEngfuncs.pfnRegisterVariable ( kvMusicVolume, "0.6", FCVAR_ARCHIVE );
 	cl_musicdir			= gEngfuncs.pfnRegisterVariable ( kvMusicDirectory, "", FCVAR_ARCHIVE);
 	cl_musicdelay		= gEngfuncs.pfnRegisterVariable ( kvMusicDelay, "90", FCVAR_ARCHIVE);
 	cl_dynamiclights	= gEngfuncs.pfnRegisterVariable ( kvDynamicLights, "1", FCVAR_ARCHIVE );
@@ -1641,9 +1682,8 @@ void InitInput (void)
 	//cl_forcedefaultfov	= gEngfuncs.pfnRegisterVariable ( kvForceDefaultFOV, "0", FCVAR_ARCHIVE );
 	cl_particleinfo		= gEngfuncs.pfnRegisterVariable ( kvParticleInfo, "0", FCVAR_ARCHIVE );
 	cl_widescreen		= gEngfuncs.pfnRegisterVariable	( kvWidescreen, "1", FCVAR_ARCHIVE );
-	cl_ambientsound		= gEngfuncs.pfnRegisterVariable	( kvAmbientSound, "0", FCVAR_ARCHIVE);
+	cl_ambientsound		= gEngfuncs.pfnRegisterVariable	( kvAmbientSound, "0.6", FCVAR_ARCHIVE);
 	senslock			= gEngfuncs.pfnRegisterVariable	("senslock", "0", FCVAR_ARCHIVE);
-	hud_style			= gEngfuncs.pfnRegisterVariable	("hud_style", "1", FCVAR_ARCHIVE);
 	cl_chatbeep			= gEngfuncs.pfnRegisterVariable	("cl_chatbeep", "1", FCVAR_ARCHIVE);
 	cl_mutemenu			= gEngfuncs.pfnRegisterVariable ("cl_mutemenu", "3", FCVAR_ARCHIVE);
 	cl_weaponcfgs		= gEngfuncs.pfnRegisterVariable ("cl_weaponcfgs", "1", FCVAR_ARCHIVE);

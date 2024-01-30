@@ -4455,7 +4455,15 @@ void AvHHud::VidInit(void)
 {
 	UIHud::VidInit();
 
-    mOverviewMap.VidInit();
+	// Don't reinitialize the minimap when swapping hud styles.
+	if (!this->mReInitHUD)
+	{
+		mOverviewMap.VidInit();
+	}
+
+	float hudStyle = CVAR_GET_FLOAT("hud_style");
+	this->mLastHudStyle = hudStyle;
+	this->mReInitHUD = false;
 
 	int theScreenWidth = ScreenWidth();
 	string theSpriteName;
@@ -4466,7 +4474,7 @@ void AvHHud::VidInit(void)
 	//	theSpriteName = UINameToSprite(kHiveSprite, theScreenWidth);
 	//	this->mAlienUIHiveSprite = SPR_Load(theSpriteName.c_str());
 	
-	int i = 0;
+	// int i = 0;
 	//	for(i = 0; i < kNumAlienLifeforms; i++)
 	//	{
 	//		char theBaseName[128];
@@ -4475,7 +4483,7 @@ void AvHHud::VidInit(void)
 	//		this->mAlienUILifeforms[i] = SPR_Load(theSpriteName.c_str());
 	//	}
 
-	if (CVAR_GET_FLOAT("hud_style") == 2.0f)
+	if (hudStyle == 2.0f)
 	{
 		this->mAlienUIUpgrades = SPR_Load(kAlienUpgradeSpriteNL);
 		this->mAlienUIEnergySprite = SPR_Load(kAlienEnergySpriteNL);
@@ -4494,7 +4502,7 @@ void AvHHud::VidInit(void)
 		this->mMarineOrderIndicator = SPR_Load(kMarineOrderSpriteNL);
 		this->mMarineUpgradesSprite = SPR_Load(kMarineUpgradesSpriteNL);
 	}
-	else if (CVAR_GET_FLOAT("hud_style") == 1.0f)
+	else if (hudStyle == 1.0f)
 	{
 		char theBaseName[128];
 		sprintf(theBaseName, "%s", kAlienUpgradeSprite);

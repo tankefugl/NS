@@ -219,6 +219,7 @@ void CHud :: Init( void )
 	CVAR_CREATE( "cl_icong", "149", FCVAR_ARCHIVE);
 	CVAR_CREATE( "cl_iconb", "221", FCVAR_ARCHIVE);
 
+	CVAR_CREATE("hud_style", "1", FCVAR_ARCHIVE);
 	CVAR_CREATE("cl_weaponswap", "2", FCVAR_ARCHIVE | FCVAR_USERINFO);
 	CVAR_CREATE("hud_teamhealthalert", "95", FCVAR_ARCHIVE);
 	CVAR_CREATE("hud_mapnames", "5", FCVAR_ARCHIVE);
@@ -366,7 +367,7 @@ void CHud :: VidInit( void )
 		m_iRes = 640;
 
 	// Only load this once
-	if ( !m_pSpriteList )
+	if ( !m_pSpriteList || gHUD.GetReInitHUD())
 	{
 		// we need to load the hud.txt, and all sprites within
 		if (CVAR_GET_FLOAT("hud_style") == 2.0f)
