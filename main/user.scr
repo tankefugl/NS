@@ -32,7 +32,7 @@
 
 
 // Half-Life User Info Configuration Layout Script (stores last settings chosen, too)
-// File generated:  Sun Aug 12 07:21:40 AM
+// File generated:  Mon Jan 29 21:27:07 AM
 //
 //
 // Cvar	-	Setting
@@ -48,11 +48,32 @@ DESCRIPTION INFO_OPTIONS
 		{ "0" }
 	}
 
+		"cl_pistoltrigger"
+	{
+		"Pistol binary trigger (pistol script)"
+		{ BOOL }
+		{ "1" }
+	}
+
+		"cl_musicenabled"
+	{
+		"Music enabled"
+		{ BOOL }
+		{ "1" }
+	}
+
+	"cl_musicvolume"
+	{
+		"Music volume (0-2)"
+		{ NUMBER 0.000000 2.000000 }
+		{ "0.600000" }
+	}
+
 	"cl_ambientsound"
 	{
 		"Ambient sound volume (0 to 1)"
 		{ NUMBER 0.000000 1.000000 }
-		{ "0.000000" }
+		{ "0.600000" }
 	}
 
 	"hud_style"
@@ -120,7 +141,7 @@ DESCRIPTION INFO_OPTIONS
 		}
 		{ "2.000000" }
 	}
-	
+
 	"hud_drawwaypoints"
 	{
 		"Show waypoints on HUD"
@@ -145,21 +166,21 @@ DESCRIPTION INFO_OPTIONS
 		}
 		{ "1.000000" }
 	}
-	
+
 	"hud_mapnames"
 	{
 		"Length of minimap names 1=unlim"
 		{ NUMBER 0.000000 30.000000 }
 		{ "5.000000" }
 	}
-	
+
 	"hud_mapnamesComm"
 	{
 		"Show names on minimap when commander"
 		{ BOOL }
 		{ "1" }
 	}
-		
+
 	"cl_mutemenu"
 	{
 		"Scoreboard mute menu hotkey"
@@ -207,21 +228,21 @@ DESCRIPTION INFO_OPTIONS
 		{ BOOL }
 		{ "0" }
 	}
-	
+
 	"hud_fastswitch"
 	{
 		"Weapon fast-switch"
 		{ BOOL }
 		{ "1" }
 	}
-	
+
 	"cl_cmhotkeys"
 	{
 		"Commander hotkeys"
 		{ STRING }
 		{ "qwerasdfzxcv" }
 	}
-	
+
 	"hud_teamhealthalert"
 	{
 		"Show health/armor of team when <"
@@ -292,7 +313,7 @@ DESCRIPTION INFO_OPTIONS
 		{ "0" }
 	}
 
-		"cl_cross_line_top"
+	"cl_cross_line_top"
 	{
 		"Cross top line"
 		{ BOOL }
@@ -306,14 +327,14 @@ DESCRIPTION INFO_OPTIONS
 		{ "1" }
 	}
 
-		"cl_cross_line_left"
+	"cl_cross_line_left"
 	{
 		"Cross left line"
 		{ BOOL }
 		{ "1" }
 	}
 
-		"cl_cross_line_right"
+	"cl_cross_line_right"
 	{
 		"Cross right line"
 		{ BOOL }
@@ -370,7 +391,7 @@ DESCRIPTION INFO_OPTIONS
 	}
 
 	"cl_cross_circle_color"
-		{
+	{
 		"Circle color (R G B)"
 		{ STRING }
 		{ "" }
@@ -451,20 +472,6 @@ DESCRIPTION INFO_OPTIONS
 		"Show alien hivesight text"
 		{ BOOL }
 		{ "1" }
-	}
-
-	"cl_musicenabled"
-	{
-		"Music enabled"
-		{ BOOL }
-		{ "1" }
-	}
-
-	"cl_musicvolume"
-	{
-		"Music volume (0-2)"
-		{ NUMBER 0.000000 2.000000 }
-		{ "1.000000" }
 	}
 
 	"cl_musicdirectory"

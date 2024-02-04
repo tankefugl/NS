@@ -1561,8 +1561,7 @@ void EchoDev(void)
 void NsPreset(void)
 {
 	int presetChoice = atoi(gEngfuncs.Cmd_Argv(1));
-	int printMethod = gViewPort ? HUD_PRINTTALK : HUD_PRINTCONSOLE;
-	const char* inGameAdditional = (printMethod == HUD_PRINTTALK) ? " See console for details." : "";
+	bool printToChat = gViewPort;
 	char execText[1024];
 	//char localizedText[1024];
 
@@ -1572,27 +1571,48 @@ void NsPreset(void)
 	{
 	case 1:
 		ClientCmd("exec 32av.cfg");
-		//Localize later.
-		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset1"));
-		snprintf(execText, 1024, "%c** %s%s\n", printMethod, "Classic NS audio/visual presets applied.", inGameAdditional);
-		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
 
+		if (printToChat)
+		{
+			// Localize later.
+		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset1"));
+			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "Classic NS audio/visual presets applied. See console for details.");
+		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+		}
+		else
+		{
+			ClientCmd("toggleconsole");
+		}
 		break;
 	case 2:
 		ClientCmd("exec 33av.cfg");
-		//Localize later.
-		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset2"));
-		sprintf(execText, "%c** %s%s\n", printMethod, "NS 3.3 audio/visual presets applied. See console for details.", inGameAdditional);
-		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
 
+		if (printToChat)
+		{
+			// Localize later.
+		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset2"));
+			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "NS 3.3 audio/visual presets applied. See console for details.");
+		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+		}
+		else
+		{
+			ClientCmd("toggleconsole");
+		}
 		break;
 	case 3:
 		ClientCmd("exec compav.cfg");
-		//Localize later.
-		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset3"));
-		sprintf(execText, "%c** %s%s\n", printMethod, "Competive audio/visual presets applied. See console for details.", inGameAdditional);
-		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
 
+		if (printToChat)
+		{
+			// Localize later.
+		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset3"));
+			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "Competive audio/visual presets applied. See console for details.");
+		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+		}
+		else
+		{
+			ClientCmd("toggleconsole");
+		}
 		break;
 	default:
 		gEngfuncs.Con_Printf("NS configuration preset selector. Useage:\n1: apply NS 3.2 settings\n2: apply NS 3.3 settings\n3: apply competitive settings\n");
