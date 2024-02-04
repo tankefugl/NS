@@ -387,9 +387,9 @@ void WeaponsResource::UserCmd_MovementOn()
 		wID = AVH_ABILITY_LEAP;
 		break;
 	//TODO: Make healspray work with attack2
-	//case AVH_USER3_ALIEN_PLAYER2:
-	//	wID = AVH_WEAPON_HEALINGSPRAY;
-	//	break;
+	case AVH_USER3_ALIEN_PLAYER2:
+		wID = AVH_WEAPON_HEALINGSPRAY;
+		break;
 	case AVH_USER3_ALIEN_PLAYER3:
 		lerkFlap = true;
 		break;
@@ -404,7 +404,24 @@ void WeaponsResource::UserCmd_MovementOn()
 		return;
 	}	
 
-	if (wID > -1)
+	if (wID == AVH_WEAPON_HEALINGSPRAY)
+	{
+		WEAPON* healWeapon = this->GetWeapon(AVH_WEAPON_HEALINGSPRAY);
+		WEAPON* currentWeapon = this->GetWeapon(gHUD.GetCurrentWeaponID());
+
+		if (healWeapon != NULL && currentWeapon != NULL)
+		{
+			//if (healWeapon != currentWeapon)
+			//{
+				healSprayLastWeapon = currentWeapon;
+			//}
+			ServerCmd(healWeapon->szName);
+			g_weaponselect = healWeapon->iId;
+
+			IN_Attack2Down();
+		}
+	}
+	else if (wID > -1)
 	{
 		// Fetch the needed movement weapon
 		WEAPON *p = this->GetWeapon(wID);
@@ -427,6 +444,22 @@ void WeaponsResource::UserCmd_MovementOff()
 	// Ensure that we're not activating any weapons when selected
 	IN_Attack2Up();
 	IN_ReloadUp();
+
+	if (gViewPort)
+	{ 
+		if (gHUD.GetHUDUser3() == AVH_USER3_ALIEN_PLAYER2)
+		{
+			WEAPON* healWeapon = this->GetWeapon(AVH_WEAPON_HEALINGSPRAY);
+			if (healWeapon != NULL && healSprayLastWeapon != NULL)
+			{
+				//if (healsprayLastWeapon != healWeapon)
+				//{
+					ServerCmd(healSprayLastWeapon->szName);
+					g_weaponselect = healSprayLastWeapon->iId;
+				//}
+			}
+		}
+	}
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

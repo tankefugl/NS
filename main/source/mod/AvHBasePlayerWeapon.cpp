@@ -675,6 +675,8 @@ void AvHBasePlayerWeapon::Holster( int skiplocal)
 	#ifdef AVH_SERVER
 	this->mInOverwatch = false;
 	#endif
+
+	this->m_bAttackQueued = false;
 }
 
 float AvHBasePlayerWeapon::GetTimePassedThisTick() const

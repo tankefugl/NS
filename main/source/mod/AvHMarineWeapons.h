@@ -228,10 +228,14 @@ public:
 	virtual int		GetReloadAnimation() const;
 
 	virtual int		GetShootAnimation() const;
-		
-	virtual int		iItemSlot(void);
 	
+	virtual int		iItemSlot(void);
+
 	virtual void	Precache(void);
+
+	virtual void	PrimaryAttack();
+
+	virtual void	QueueAttack(void);
 	
 	virtual void	Spawn();
 	
