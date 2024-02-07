@@ -643,9 +643,7 @@ BOOL AvHGamerules::CanHavePlayerItem(CBasePlayer *pPlayer, CBasePlayerItem *pWea
 			int playerAutoSwapWeapon = 1;
 			bool newWeaponCanFire = true;
 
-			AvHPlayer* thePlayer = dynamic_cast<AvHPlayer*>(pPlayer);
-			if(thePlayer)
-				playerAutoSwapWeapon = thePlayer->GetAutoWeapSwapValue();
+			playerAutoSwapWeapon = pPlayer->m_iAutoWeaponSwap;
 
 			AvHBasePlayerWeapon* theNewWeapon = dynamic_cast<AvHBasePlayerWeapon*>(pWeapon);
 			if (theNewWeapon)
@@ -866,13 +864,15 @@ void AvHGamerules::ClientUserInfoChanged(CBasePlayer *pPlayer, char *infobuffer)
 	// NOTE: Not currently calling down to parent CHalfLifeTeamplay 
 
 	const char* theAutoWeapSwapValue = g_engfuncs.pfnInfoKeyValue(infobuffer, "cl_weaponswap");
+	if (theAutoWeapSwapValue) 
+	{
+		pPlayer->m_iAutoWeaponSwap = atoi(theAutoWeapSwapValue);
+	}
 
-	if (theAutoWeapSwapValue) {
-
-		AvHPlayer* thePlayer = dynamic_cast<AvHPlayer*>(pPlayer);
-		if (thePlayer) {
-			thePlayer->SetAutoWeapSwapValue(atoi(theAutoWeapSwapValue));
-		}
+	const char* thePistolTriggerValue = g_engfuncs.pfnInfoKeyValue(infobuffer, "cl_pistoltrigger");
+	if (thePistolTriggerValue) 
+	{
+		pPlayer->m_iPistolTrigger = atoi(thePistolTriggerValue);
 	}
 }
 

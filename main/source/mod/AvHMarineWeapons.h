@@ -233,9 +233,9 @@ public:
 
 	virtual void	Precache(void);
 
-	virtual void	PrimaryAttack();
+	virtual void	PrimaryAttack(bool fireOnAttackUp = false);
 
-	virtual void	QueueAttack(void);
+	virtual void	QueueAttack(bool fireOnAttackUp);
 	
 	virtual void	Spawn();
 	
@@ -624,7 +624,7 @@ public:
 
     virtual void    WeaponIdle();
 
-    virtual void    PrimaryAttack(void);
+    virtual void    PrimaryAttack(bool fireOnAttackUp = false);
     
 protected: 
 

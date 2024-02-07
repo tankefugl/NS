@@ -525,7 +525,9 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		}
 	}
 
-	if ((m_pPlayer->pev->button & IN_ATTACK || this->m_bAttackQueued) && (!(m_pPlayer->pev->button & IN_ATTACK2) || gHUD.GetHUDUser3() == AVH_USER3_ALIEN_PLAYER3))
+	bool pistolAttackUp = ((CVAR_GET_FLOAT("cl_pistoltrigger") != 0) && m_pPlayer->m_afButtonLast & IN_ATTACK && m_pPlayer->m_afButtonReleased & IN_ATTACK && ii.iId == AVH_WEAPON_PISTOL);
+
+	if ((m_pPlayer->pev->button & IN_ATTACK || this->m_bAttackQueued || pistolAttackUp) && (!(m_pPlayer->pev->button & IN_ATTACK2) || gHUD.GetHUDUser3() == AVH_USER3_ALIEN_PLAYER3))
 	{
         if (GetCanUseWeapon())
         {
@@ -574,12 +576,12 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 				//#ifdef AVH_CLIENT
 				//if((m_iClip == 0) && ?
 				//#endif
-				PrimaryAttack();
+				PrimaryAttack(pistolAttackUp);
 				//return;
 			}
 			else
 			{
-				QueueAttack();
+				QueueAttack(pistolAttackUp);
 			}
 		}
 	}

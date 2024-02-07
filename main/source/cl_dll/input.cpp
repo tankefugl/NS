@@ -826,32 +826,6 @@ void IN_AttackUpForced(void)
 	KeyUpForced( &in_attack );
 }
 
-void IN_AttackHandlerDown(void)
-{
-	if (gHUD.GetCurrentWeaponID() == AVH_WEAPON_PISTOL && cl_pistoltrigger && cl_pistoltrigger->value)
-	{
-		IN_AttackDown();
-		IN_AttackUp();
-	}
-	else
-	{
-		IN_AttackDown();
-	}
-}
-
-void IN_AttackHandlerUp(void)
-{
-	if (gHUD.GetCurrentWeaponID() == AVH_WEAPON_PISTOL && cl_pistoltrigger && cl_pistoltrigger->value)
-	{
-		IN_AttackDown();
-		IN_AttackUp();
-	}
-	else
-	{
-		IN_AttackUp();
-	}
-}
-
 // Special handling
 void IN_Cancel(void)
 {
@@ -1565,8 +1539,6 @@ void NsPreset(void)
 	char execText[1024];
 	//char localizedText[1024];
 
-	inGameAdditional = gViewPort ? " See console for details." : "";
-
 	switch (presetChoice)
 	{
 	case 1:
@@ -1650,8 +1622,8 @@ void InitInput (void)
 	gEngfuncs.pfnAddCommand ("-moveright", IN_MoverightUp);
 	gEngfuncs.pfnAddCommand ("+speed", IN_SpeedDown);
 	gEngfuncs.pfnAddCommand ("-speed", IN_SpeedUp);
-	gEngfuncs.pfnAddCommand ("+attack", IN_AttackHandlerDown);
-	gEngfuncs.pfnAddCommand ("-attack", IN_AttackHandlerUp);
+	gEngfuncs.pfnAddCommand ("+attack", IN_AttackDown);
+	gEngfuncs.pfnAddCommand ("-attack", IN_AttackUp);
 	//gEngfuncs.pfnAddCommand ("+movement", IN_Attack2Down);
 	//gEngfuncs.pfnAddCommand ("-movement", IN_Attack2Up);
 	gEngfuncs.pfnAddCommand ("+use", IN_UseDown);
@@ -1735,7 +1707,7 @@ void InitInput (void)
 	cl_chatbeep			= gEngfuncs.pfnRegisterVariable	("cl_chatbeep", "1", FCVAR_ARCHIVE);
 	cl_mutemenu			= gEngfuncs.pfnRegisterVariable ("cl_mutemenu", "3", FCVAR_ARCHIVE);
 	cl_weaponcfgs		= gEngfuncs.pfnRegisterVariable ("cl_weaponcfgs", "1", FCVAR_ARCHIVE);
-	cl_pistoltrigger	= gEngfuncs.pfnRegisterVariable ("cl_pistoltrigger", "1", FCVAR_ARCHIVE);
+	cl_pistoltrigger	= gEngfuncs.pfnRegisterVariable ("cl_pistoltrigger", "1", FCVAR_ARCHIVE | FCVAR_USERINFO);
 
 	// Initialize third person camera controls.
 	CAM_Init();
