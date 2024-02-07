@@ -2,17 +2,17 @@
 {
 	"1"
 	{
-		"label" "Apply NS 3.2 config"
+		"label" "Apply classic NS preset"
 		"command" "engine nspreset 1"
 	}
 	"2"
 	{
-		"label" "Apply NS 3.3 config"
+		"label" "Apply NS 3.3 preset"
 		"command" "engine nspreset 2"
 	}
 	"3"
 	{
-		"label" "Apply competitive config"
+		"label" "Apply competitive preset"
 		"command" "engine nspreset 3"
 	}
 	"4"
