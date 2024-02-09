@@ -2218,6 +2218,8 @@ void CL_DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 {
 //	RecClCalcRefdef(pparams);
 
+	g_PostProcessShader.ClearFrameBuffer();
+
 	// intermission / finale rendering
 	if ( pparams->intermission )
 	{	

@@ -11,7 +11,7 @@
 #include "VGUI_TextPanel.h"
 #include "VGUI_Label.h"
 #include "cl_dll/vgui_TeamFortressViewport.h"
-#include "ui/GammaAwareComponent.h"
+//#include "ui/GammaAwareComponent.h"
 #include "ui/ReloadableComponent.h"
 
 //using vgui::Label;
@@ -41,7 +41,7 @@ UIManager::UIManager(UIFactory* inFactory)
 	this->mBlankCursor = NULL;
 
     this->mFactory = inFactory;
-	this->mGammaSlope = 1.0f;
+	//this->mGammaSlope = 1.0f;
 }
 
 UIManager::~UIManager(void)
@@ -221,12 +221,12 @@ bool UIManager::Initialize(const TRDescriptionList& inDesc, CSchemeManager* inSc
 				this->TranslateComponent(theCurrentComponent->GetComponentPointer(), true);
 			}
 			
-			// If gamma aware, tell it immediately
-			GammaAwareComponent* theGammaAwareComponent = dynamic_cast<GammaAwareComponent*>(theCurrentComponent->GetComponentPointer());
-			if(theGammaAwareComponent)
-			{
-				theGammaAwareComponent->NotifyGammaChange(this->mGammaSlope);
-			}
+			//// If gamma aware, tell it immediately
+			//GammaAwareComponent* theGammaAwareComponent = dynamic_cast<GammaAwareComponent*>(theCurrentComponent->GetComponentPointer());
+			//if(theGammaAwareComponent)
+			//{
+			//	theGammaAwareComponent->NotifyGammaChange(this->mGammaSlope);
+			//}
 
             // Save it. It is now part of the world.
 			this->mComponentList.push_back(theCurrentComponent);
@@ -250,20 +250,20 @@ bool UIManager::InMouseMode(void) const
     return (g_iVisibleMouse ? true : false);
 }
 
-void UIManager::NotifyGammaChange(float inGammaSlope)
-{
-	UIComponentListType::iterator theCompIter;
-	for(theCompIter = this->mComponentList.begin(); theCompIter != this->mComponentList.end(); theCompIter++)
-    {
-		GammaAwareComponent* theGammaAwareComponent = dynamic_cast<GammaAwareComponent*>((*theCompIter)->GetComponentPointer());
-		if(theGammaAwareComponent)
-		{
-			theGammaAwareComponent->NotifyGammaChange(inGammaSlope);
-		}
-    }
-
-	this->mGammaSlope = inGammaSlope;
-}
+//void UIManager::NotifyGammaChange(float inGammaSlope)
+//{
+//	UIComponentListType::iterator theCompIter;
+//	for(theCompIter = this->mComponentList.begin(); theCompIter != this->mComponentList.end(); theCompIter++)
+//    {
+//		GammaAwareComponent* theGammaAwareComponent = dynamic_cast<GammaAwareComponent*>((*theCompIter)->GetComponentPointer());
+//		if(theGammaAwareComponent)
+//		{
+//			theGammaAwareComponent->NotifyGammaChange(inGammaSlope);
+//		}
+//    }
+//
+//	this->mGammaSlope = inGammaSlope;
+//}
 
 bool UIManager::Save(const string& outFilename, const string& outHeader)
 {

@@ -1565,8 +1565,6 @@ void NsPreset(void)
 	char execText[1024];
 	//char localizedText[1024];
 
-	inGameAdditional = gViewPort ? " See console for details." : "";
-
 	switch (presetChoice)
 	{
 	case 1:

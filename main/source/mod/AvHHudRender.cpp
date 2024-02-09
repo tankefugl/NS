@@ -511,8 +511,8 @@ void DrawScaledHUDSprite(AVHHSPRITE inSpriteHandle, int inMode, int inRowsInSpri
 				}
 	
 				// Compensate for gamma
-				float theGammaSlope = gHUD.GetGammaSlope();
-				float theColorComponent = 1.0f/theGammaSlope;
+				//float theGammaSlope = gHUD.GetGammaSlope();
+				float theColorComponent = 1.0f/* / theGammaSlope*/;
 				gEngfuncs.pTriAPI->Color4f(theColorComponent, theColorComponent, theColorComponent, 1.0f);
 				
 				Vector thePoint;
@@ -627,9 +627,9 @@ void DrawSpriteOnGroundAtPoint(vec3_t inOrigin, int inRadius, AVHHSPRITE inSprit
 		// Draw one quad
 		vec3_t thePoint = inOrigin;
 		
-		float theGammaSlope = gHUD.GetGammaSlope();
-		ASSERT(theGammaSlope > 0.0f);
-		float theColorComponent = 1.0f/theGammaSlope;
+		//float theGammaSlope = gHUD.GetGammaSlope();
+		//ASSERT(theGammaSlope > 0.0f);
+		float theColorComponent = 1.0f/* / theGammaSlope*/;
 		
 		gEngfuncs.pTriAPI->Color4f(theColorComponent, theColorComponent, theColorComponent, inAlpha);
 		gEngfuncs.pTriAPI->Brightness(1.6f);
@@ -1707,8 +1707,8 @@ void AvHHud::DrawMouseCursor(int inBaseX, int inBaseY)
 
 		if (theCursorSprite > 0)
 		{
-			float theGammaSlope = this->GetGammaSlope();
-			ASSERT(theGammaSlope > 0.0f);
+			//float theGammaSlope = this->GetGammaSlope();
+			//ASSERT(theGammaSlope > 0.0f);
 
             /*
 			int theColorComponent = 255/theGammaSlope;
@@ -2025,15 +2025,15 @@ void AvHHud::GetPrimaryHudColor(int& outR, int& outG, int& outB, bool inIgnoreUp
 			UnpackRGB(outR, outG, outB, RGB_YELLOWISH);
 		//}
 	}
-
-    if (gammaCorrect)
-    {
-	    // Take into account current gamma?
-	    float theGammaSlope = this->GetGammaSlope();
-	    outR /= theGammaSlope;
-	    outG /= theGammaSlope;
-	    outB /= theGammaSlope;
-    }
+	// 2024 - Remove old gamma ramp correction.
+    //if (gammaCorrect)
+    //{
+	   // // Take into account current gamma?
+	   // float theGammaSlope = this->GetGammaSlope();
+	   // outR /= theGammaSlope;
+	   // outG /= theGammaSlope;
+	   // outB /= theGammaSlope;
+    //}
 
 }
 
@@ -2638,10 +2638,10 @@ void AvHHud::DrawHUDNumber(int inX, int inY, int inFlags, int inNumber)
 	int theR, theG, theB;
 	this->GetPrimaryHudColor(theR, theG, theB, false, false);
 
-	int theGammaSlope = this->GetGammaSlope();
-	theR /= theGammaSlope;
-	theG /= theGammaSlope;
-	theB /= theGammaSlope;
+	//int theGammaSlope = this->GetGammaSlope();
+	//theR /= theGammaSlope;
+	//theG /= theGammaSlope;
+	//theB /= theGammaSlope;
 
 	this->DrawHudNumber(inX, inY, inFlags, inNumber, theR, theG, theB);
 }
@@ -2740,7 +2740,7 @@ void AvHHud::Render()
         int theWidth;
         int theHeight;
 
-	    float gammaScale = 1.0f / GetGammaSlope();
+	    float gammaScale = 1.0f/* / GetGammaSlope()*/;
 
         gEngfuncs.pfnDrawSetTextColor(0, gammaScale, 0);    
         gEngfuncs.pfnDrawConsoleStringLen(theMessage, &theWidth, &theHeight);
@@ -2876,11 +2876,11 @@ void AvHHud::RenderShowSpeed()
 
 			float theGroundSpeed = sqrtf(pmove->velocity[0] * pmove->velocity[0] + pmove->velocity[1] * pmove->velocity[1]);
 			maxGroundSpeed = max(theGroundSpeed, maxGroundSpeed);
-			sprintf(buffer, "Ground speed = %d (%d)", (int)theGroundSpeed, maxGroundSpeed);
-			mFont.DrawString(10, 12 + mFont.GetStringHeight(), buffer, theR, theG, theB);
+			//sprintf(buffer, "Ground speed = %d (%d)", (int)theGroundSpeed, maxGroundSpeed);
+			//mFont.DrawString(10, 12 + mFont.GetStringHeight(), buffer, theR, theG, theB);
 
-			//sprintf(buffer, "vangle0= %f vangle1= %f vangle2= %f)", pmove->angles[0], pmove->angles[1], pmove->angles[2]);
-			//mFont.DrawString(10, 12 + mFont.GetStringHeight() * 2, buffer, theR, theG, theB);
+			sprintf(buffer, "vangle0= %f vangle1= %f vangle2= %f)", pmove->angles[0], pmove->angles[1], pmove->angles[2]);
+			mFont.DrawString(10, 12 + mFont.GetStringHeight() * 2, buffer, theR, theG, theB);
 			speedMeasured = true;
 		}
 		else if (speedMeasured == true) {
