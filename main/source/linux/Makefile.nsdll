@@ -203,7 +203,7 @@ GAME_SHARED_OBJS = \
 UTIL_OBJS = \
 	$(UTIL_OBJ_DIR)/Balance.o \
 	$(UTIL_OBJ_DIR)/Checksum.o \
-	$(UTIL_OBJ_DIR)/GammaTable.o \
+	#$(UTIL_OBJ_DIR)/GammaTable.o \
 	$(UTIL_OBJ_DIR)/LinuxSupport.o \
 	$(UTIL_OBJ_DIR)/Mat3.o \
 	$(UTIL_OBJ_DIR)/MathUtil.o \

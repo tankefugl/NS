@@ -212,8 +212,11 @@ void ScorePanel::HitTestPanel::internalMousePressed(MouseCode code)
 
 vgui::Color BuildColor( int R, int G, int B, float gamma )
 {
-	ASSERT( gamma != 0 );
-	return vgui::Color( R/gamma, G/gamma, B/gamma, 0 );
+	// 2024 - remove old gamma ramp compensation
+	//ASSERT( gamma != 0 );
+	//return vgui::Color( R/gamma, G/gamma, B/gamma, 0 );
+
+	return vgui::Color(R, G, B, 0);
 }
 
 //-----------------------------------------------------------------------------

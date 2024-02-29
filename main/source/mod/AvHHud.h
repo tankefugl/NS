@@ -128,7 +128,7 @@
 #include "AvHVisibleBlipList.h"
 #include "AvHMapExtents.h"
 #include "AvHSpecials.h"
-#include "GammaTable.h"
+//#include "GammaTable.h"
 #include "AvHBaseInfoLocation.h"
 #include "AvHTooltip.h"
 #include "AvHTechSlotManager.h"
@@ -430,9 +430,9 @@ public:
     // This function should be used instead of the global SetCrosshair.
     void            SetCurrentCrosshair(AVHHSPRITE hspr, wrect_t rc, int r, int g, int b);
 
-	static void		ResetGammaAtExit();
-	static int		ResetGammaAtExitForOnExit();
-	static void		ResetGammaAtExit(int inSig);
+	//static void		ResetGammaAtExit();
+	//static int		ResetGammaAtExitForOnExit();
+	//static void		ResetGammaAtExit(int inSig);
  
     void            SetViewport(const int inViewport[4]);
     void            GetViewport(int outViewport[4]) const;
@@ -679,9 +679,9 @@ private:
 	int						mFramesSinceEnteredTopdownMode;
 	int						mNumLocalSelectEvents;
 	AvHMapMode				mMapMode;
-	//@2014 make this work for linux
-	static GammaTable		sPregameGammaTable;
-	static GammaTable		sGameGammaTable;
+	//// 2024 - Replaced gamma ramp with shader.
+	//static GammaTable		sPregameGammaTable;
+	//static GammaTable		sGameGammaTable;
 	
 	
 	float					mDesiredGammaSlope;
@@ -882,6 +882,16 @@ private:
 	bool					mReInitHUD;
 	float					mLastHudStyle;
 
+	float					mShaderGamma;
+
+};
+
+class CPostProcessShader
+{
+public:
+	void	Init();
+	void	ClearFrameBuffer();
+	void	DrawShader();
 };
 
 #endif
