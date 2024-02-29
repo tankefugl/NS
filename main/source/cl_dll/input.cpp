@@ -1547,9 +1547,10 @@ void NsPreset(void)
 		if (printToChat)
 		{
 			// Localize later.
-		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset1"));
-			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "Classic NS audio/visual presets applied. See console for details.");
-		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+			//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset1"));
+			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "Classic NS audio/visual presets applied. Left click once to fix bug. See console for details.");
+			gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+			ClientCmd("echo \"NOTE: Left click once after applying these settings, or your next left click won't register. It's an HL engine bug.\""); // Use echo or it's out of order.
 		}
 		else
 		{
@@ -1562,9 +1563,10 @@ void NsPreset(void)
 		if (printToChat)
 		{
 			// Localize later.
-		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset2"));
-			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "NS 3.3 audio/visual presets applied. See console for details.");
-		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+			//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset2"));
+			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "NS 3.3 audio/visual presets applied. Left click once to fix bug. See console for details. ");
+			gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+			ClientCmd("echo \"NOTE: Left click once after applying these settings, or your next left click won't register. It's an HL engine bug.\""); // Use echo or it's out of order.
 		}
 		else
 		{
@@ -1577,9 +1579,10 @@ void NsPreset(void)
 		if (printToChat)
 		{
 			// Localize later.
-		//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset3"));
-			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "Competive audio/visual presets applied. See console for details.");
-		gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+			//sprintf(localizedText, CHudTextMessage::BufferedLocaliseTextString("#Preset3"));
+			snprintf(execText, 1024, "%c** %s\n", HUD_PRINTTALK, "Competive audio/visual presets applied. Left click once to fix bug. See console for details.");
+			gHUD.m_TextMessage.MsgFunc_TextMsg(NULL, (int)strlen(execText) + 1, execText);
+			ClientCmd("echo \"NOTE: Left click once after applying these settings, or your next left click won't register. It's an HL engine bug.\""); // Use echo or it's out of order.
 		}
 		else
 		{

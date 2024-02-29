@@ -2876,11 +2876,11 @@ void AvHHud::RenderShowSpeed()
 
 			float theGroundSpeed = sqrtf(pmove->velocity[0] * pmove->velocity[0] + pmove->velocity[1] * pmove->velocity[1]);
 			maxGroundSpeed = max(theGroundSpeed, maxGroundSpeed);
-			//sprintf(buffer, "Ground speed = %d (%d)", (int)theGroundSpeed, maxGroundSpeed);
-			//mFont.DrawString(10, 12 + mFont.GetStringHeight(), buffer, theR, theG, theB);
+			sprintf(buffer, "Ground speed = %d (%d)", (int)theGroundSpeed, maxGroundSpeed);
+			mFont.DrawString(10, 12 + mFont.GetStringHeight(), buffer, theR, theG, theB);
 
-			sprintf(buffer, "vangle0= %f vangle1= %f vangle2= %f)", pmove->angles[0], pmove->angles[1], pmove->angles[2]);
-			mFont.DrawString(10, 12 + mFont.GetStringHeight() * 2, buffer, theR, theG, theB);
+			//sprintf(buffer, "vangle0= %f vangle1= %f vangle2= %f)", pmove->angles[0], pmove->angles[1], pmove->angles[2]);
+			//mFont.DrawString(10, 12 + mFont.GetStringHeight() * 2, buffer, theR, theG, theB);
 			speedMeasured = true;
 		}
 		else if (speedMeasured == true) {

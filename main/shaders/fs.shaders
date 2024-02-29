@@ -7,9 +7,8 @@ uniform sampler2D textureSampler;
 uniform float colorMultiplier; // Uniform float to multiply color by
 
 void main() {
-    // Sample the texture
-    vec4 texColor = texture(textureSampler, texCoord);
-    
-    // Multiply the color by the uniform float
-    fragColor = texColor * colorMultiplier;
+	// Sample the texture
+	vec4 texColor = texture(textureSampler, texCoord);
+	// Multiply the color
+	fragColor = vec4(texColor.rgb * colorMultiplier, 1.0f);
 }

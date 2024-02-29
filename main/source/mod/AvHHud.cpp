@@ -4929,10 +4929,11 @@ void AvHHud::InitExploitPrevention() {
 	ForceCvar("r_detailtextures", r_detailtextures, 0.0f);
 	ForceCvar("gl_max_size", gl_max_size, 512.0f);
 
+	//2024 - Lighting changes: lower min lightgamma to engine limit. Engine crashes below 1.81, so enforce the limit.
 	//RemoveAlias("lightgamma");
-	//if(lightgamma && lightgamma->value < 2.0) {
-	//	ForceCvar("lightgamma", lightgamma, 2.0f);
-	//}
+	if(lightgamma && lightgamma->value < 1.81f) {
+		ForceCvar("lightgamma", lightgamma, 1.81f);
+	}
 	//if(lightgamma && lightgamma->value > 5.0) {
 	//	ForceCvar("lightgamma", lightgamma, 5.0f);
 	//}
@@ -4964,9 +4965,9 @@ void AvHHud::UpdateExploitPrevention()
 	if(lightgamma && lightgamma->value < 1.81f) {
 		ForceCvar("lightgamma", lightgamma, 1.81f);
 	}
-	if(lightgamma && lightgamma->value > 5.0) {
-		ForceCvar("lightgamma", lightgamma, 5.0f);
-	}
+	//if(lightgamma && lightgamma->value > 5.0) {
+	//	ForceCvar("lightgamma", lightgamma, 5.0f);
+	//}
 	if(texgamma && texgamma->value < 1.0) {
 		ForceCvar("texgamma", texgamma, 1.0f);
 	}
