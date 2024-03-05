@@ -414,9 +414,9 @@ void WeaponsResource::UserCmd_MovementOn()
 			//if (healWeapon != currentWeapon)
 			//{
 				healSprayLastWeapon = currentWeapon;
+				healSprayAttack2Active = true;
+				SetCurrentWeapon(healWeapon);
 			//}
-			ServerCmd(healWeapon->szName);
-			g_weaponselect = healWeapon->iId;
 
 			IN_Attack2Down();
 		}
@@ -452,11 +452,12 @@ void WeaponsResource::UserCmd_MovementOff()
 			WEAPON* healWeapon = this->GetWeapon(AVH_WEAPON_HEALINGSPRAY);
 			if (healWeapon != NULL && healSprayLastWeapon != NULL)
 			{
-				//if (healsprayLastWeapon != healWeapon)
+				//if (healSprayLastWeapon != healWeapon)
 				//{
-					ServerCmd(healSprayLastWeapon->szName);
-					g_weaponselect = healSprayLastWeapon->iId;
+					SetCurrentWeapon(healSprayLastWeapon);
 				//}
+				
+				healSprayAttack2Active = false;
 			}
 		}
 	}
@@ -503,7 +504,35 @@ void WeaponsResource::SetCurrentWeapon(WEAPON* newWeapon)
 	if( newWeapon != NULL )
 	{ 
 		if( newWeapon != currentWeapon )
-		{ lastWeapon = currentWeapon; }
+		{ 
+			lastWeapon = currentWeapon; 
+
+			if (gHUD.GetHUDUser3() == AVH_USER3_ALIEN_PLAYER2 && !healSprayAttack2Active)
+			{
+				healSprayLastWeapon = newWeapon;
+				gEngfuncs.Con_Printf("healspray last change\n");
+			}
+
+			const float wCfgCvar = CVAR_GET_FLOAT("cl_weaponcfgs");
+			char weapCfg[128];
+
+			if (wCfgCvar == 1.0f)
+			{
+				ClientCmd("exec weaponcfgs/default.cfg");
+
+				sprintf(weapCfg, "exec weaponcfgs/%s.cfg", newWeapon->szName);
+				ClientCmd(weapCfg);
+			}
+			else if (wCfgCvar == 2.0f)
+			{
+				ClientCmd("exec weaponcfgs/nsdefaults/default.cfg");
+
+				sprintf(weapCfg, "exec weaponcfgs/nsdefaults/%s.cfg", newWeapon->szName);
+				ClientCmd(weapCfg);
+			}
+
+		}
+
 		ServerCmd(newWeapon->szName);
 		g_weaponselect = newWeapon->iId;
 	}
@@ -734,32 +763,6 @@ void CHudAmmo::Think(void)
 			}
 		}
 
-	}
-
-	if (gHUD.GetCurrentWeaponID() != gWR.lastWeaponId)
-	{
-		gWR.lastWeaponId = gHUD.GetCurrentWeaponID();
-
-		const float wCfgCvar = CVAR_GET_FLOAT("cl_weaponcfgs");
-
-		if (wCfgCvar == 1.0f)
-		{
-			ClientCmd("exec weaponcfgs/default.cfg");
-
-			WEAPON* currentWeapon = gWR.GetWeapon(gHUD.GetCurrentWeaponID());
-			char weapcfg[128];
-			sprintf(weapcfg, "exec weaponcfgs/%s.cfg", currentWeapon->szName);
-			ClientCmd(weapcfg);
-		}
-		else if (wCfgCvar == 2.0f)
-		{
-			ClientCmd("exec weaponcfgs/nsdefaults/default.cfg");
-
-			WEAPON* currentWeapon = gWR.GetWeapon(gHUD.GetCurrentWeaponID());
-			char weapcfg[128];
-			sprintf(weapcfg, "exec weaponcfgs/nsdefaults/%s.cfg", currentWeapon->szName);
-			ClientCmd(weapcfg);
-		}
 	}
 
 	if(gHUD.GetIsAlien()) //check for hive death causing loss of current weapon

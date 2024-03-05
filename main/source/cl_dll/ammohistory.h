@@ -74,6 +74,7 @@ private:
 	WEAPON*	rgSlots[MAX_WEAPON_SLOTS][MAX_WEAPON_POSITIONS];		// current weapon slot map
 	WEAPON*	lastWeapon;												// client-side lastinv
 	WEAPON* healSprayLastWeapon;
+	bool	healSprayAttack2Active;
 
 	int		riAmmo[MAX_AMMO_TYPES];									// current ammo counts
 	int		iOldWeaponBits;
