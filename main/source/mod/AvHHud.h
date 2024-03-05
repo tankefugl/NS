@@ -879,6 +879,9 @@ private:
 
     static bool             sShowMap;
 
+	bool					mWideScreen;
+	bool					mWideScreenChanged;
+
 	bool					mReInitHUD;
 	float					mLastHudStyle;
 
