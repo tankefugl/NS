@@ -32,7 +32,7 @@
 
 
 // Half-Life User Info Configuration Layout Script (stores last settings chosen, too)
-// File generated:  Mon Jan 29 21:27:07 AM
+// File generated:  Wed Jan 31 00:34:48 AM
 //
 //
 // Cvar	-	Setting
@@ -41,21 +41,21 @@ VERSION 1.0
 
 DESCRIPTION INFO_OPTIONS
 {
-	"cl_autohelp"
+	"cl_placebo"
 	{
-		"Show hints"
+		"------------------------------------------------------- AUDIO ----------------------------------------------------------------"
 		{ BOOL }
 		{ "0" }
 	}
 
-		"cl_pistoltrigger"
+	"cl_ambientsound"
 	{
-		"Pistol binary trigger (pistol script)"
-		{ BOOL }
-		{ "1" }
+		"Ambient sound volume"
+		{ NUMBER 0.000000 2.000000 }
+		{ "0.600000" }
 	}
-
-		"cl_musicenabled"
+	
+	"cl_musicenabled"
 	{
 		"Music enabled"
 		{ BOOL }
@@ -64,63 +64,30 @@ DESCRIPTION INFO_OPTIONS
 
 	"cl_musicvolume"
 	{
-		"Music volume (0-2)"
+		"Music volume"
 		{ NUMBER 0.000000 2.000000 }
 		{ "0.600000" }
 	}
 
-	"cl_ambientsound"
+	"cl_musicdelay"
 	{
-		"Ambient sound volume (0 to 1)"
-		{ NUMBER 0.000000 1.000000 }
-		{ "0.600000" }
+		"Random seconds between songs (-1 = Play once at start)"
+		{ NUMBER -1.000000 10000.000000 }
+		{ "-1" }
 	}
 
-	"hud_style"
+	"cl_placebo"
 	{
-		"HUD style (requires map reload)"
-		{
-			LIST
-			"Original" "0"
-			"Minimal" "1"
-			"Competitive - Nine Legends" "2"
-		}
-		{ "1.000000" }
-	}
-
-	"hud_mapstyle"
-	{
-		"Map style"
-		{
-			LIST
-			"Opaque Unlabeled" "0"
-			"Opaque Labeled" "1"
-			"Semi-transparent Unlabeled" "2"
-			"Semi-transparent Labeled" "3"
-			"Transparent Unlabeled" "4"
-			"Transparent Labeled" "5"
-		}
-		{ "3.000000" }
-	}
-
-	"cl_hudmapzoom"
-	{
-		"Marine minimap zoom level"
-		{
-			LIST
-			"No map" "0"
-			"No Zoom (X1)" "1"
-			"Medium Zoom (2X)" "2"
-			"Full Zoom (3X) " "3"
-		}
-		{ "3.000000" }
+		"---------------------------------------------------- GAMEPLAY --------------------------------------------------------------"
+		{ BOOL }
+		{ "0" }
 	}
 
 	"cl_bob"
 	{
 		"Weapon bobbing (0.01 default)"
 		{ NUMBER 0.000000 0.010000 }
-		{ "0.01" }
+		{ "1.000000" }
 	}
 
 	"cl_bobview"
@@ -129,7 +96,7 @@ DESCRIPTION INFO_OPTIONS
 		{ BOOL }
 		{ "0" }
 	}
-	
+
 	"cl_weaponswap"
 	{
 		"Auto drop LMG for better weapon"
@@ -141,62 +108,10 @@ DESCRIPTION INFO_OPTIONS
 		}
 		{ "2.000000" }
 	}
-
-	"hud_drawwaypoints"
-	{
-		"Show waypoints on HUD"
-		{
-			LIST
-			"Never" "0"
-			"Always" "1"
-			"Until acknowledged" "2"
-		}
-		{ "2.000000" }
-	}
-
-	"hud_nameinfo"
-	{
-		"Teammate's welder/parasite status"
-		{
-			LIST
-			"Don't show" "0"
-			"Full Length" "1"
-			"Shortened" "2"
-			"One Letter" "3"
-		}
-		{ "1.000000" }
-	}
-
-	"hud_mapnames"
-	{
-		"Length of minimap names 1=unlim"
-		{ NUMBER 0.000000 30.000000 }
-		{ "5.000000" }
-	}
-
-	"hud_mapnamesComm"
-	{
-		"Show names on minimap when commander"
-		{ BOOL }
-		{ "1" }
-	}
-
-	"cl_mutemenu"
-	{
-		"Scoreboard mute menu hotkey"
-		{
-			LIST
-			"None" "0"
-			"Left click" "1"
-			"Right click" "2"
-			"Middle mouse" "3"
-		}
-		{ "3.000000" }
-	}
-
+	
 	"zoom_sensitivity_ratio"
 	{
-		"Zoom sensitivity ratio (skulk/gorge)"
+		"Zoom sensitivity ratio (Skulk/Gorge)"
 		{ NUMBER 0.000000 5.000000 }
 		{ "1.000000" }
 	}
@@ -207,26 +122,12 @@ DESCRIPTION INFO_OPTIONS
 		{ BOOL }
 		{ "0" }
 	}
-
-	"r_dynamic"
+	
+	"cl_pistoltrigger"
 	{
-		"Dynamic lighting (non-nvidia graphics users should turn off)"
+		"Pistol binary trigger (pistol script)"
 		{ BOOL }
 		{ "1" }
-	}
-
-	"cl_dynamiclights"
-	{
-		"Dynamic lights"
-		{ BOOL }
-		{ "0" }
-	}
-
-	"cl_showspeed"
-	{
-		"Show player speed"
-		{ BOOL }
-		{ "0" }
 	}
 
 	"hud_fastswitch"
@@ -242,12 +143,223 @@ DESCRIPTION INFO_OPTIONS
 		{ STRING }
 		{ "qwerasdfzxcv" }
 	}
+	
+	"cl_placebo"
+	{
+		"------------------------------------------------------- HUD -------------------------------------------------------------------"
+		{ BOOL }
+		{ "0" }
+	}
 
+	"cl_autohelp"
+	{
+		"Show tutorial hints"
+		{ BOOL }
+		{ "1" }
+	}
+
+	"hud_style"
+	{
+		"HUD style"
+		{
+			LIST
+			"Original" "0"
+			"Minimal" "1"
+			"Competitive - Nine Legends" "2"
+		}
+		{ "1.000000" }
+	}
+
+	"hud_mapstyle"
+	{
+		"Map style"
+		{
+			LIST
+			"Opaque unlabeled" "0"
+			"Opaque labeled" "1"
+			"Semi-transparent unlabeled" "2"
+			"Semi-transparent labeled" "3"
+			"Transparent unlabeled" "4"
+			"Transparent labeled" "5"
+		}
+		{ "3.000000" }
+	}
+
+	"cl_hudmapzoom"
+	{
+		"Marine minimap zoom level"
+		{
+			LIST
+			"No map" "0"
+			"No zoom (X1)" "1"
+			"Medium zoom (2X)" "2"
+			"Full zoom (3X) " "3"
+		}
+		{ "2.000000" }
+	}
+
+	"hud_drawwaypoints"
+	{
+		"Show waypoints on HUD"
+		{
+			LIST
+			"Never" "0"
+			"Always" "1"
+			"Until acknowledged" "2"
+		}
+		{ "2.000000" }
+	}
+	
 	"hud_teamhealthalert"
 	{
-		"Show health/armor of team when <"
+		"Show health/armor of teammates when below this %"
 		{ NUMBER 0.000000 100.000000 }
 		{ "95.000000" }
+	}
+
+	"hud_nameinfo"
+	{
+		"Teammate's welder/parasite status"
+		{
+			LIST
+			"Don't show" "0"
+			"Full length" "1"
+			"Shortened" "2"
+			"One letter" "3"
+		}
+		{ "1.000000" }
+	}
+
+	"hud_mapnames"
+	{
+		"Length of minimap names (1 = unlimited)"
+		{ NUMBER 0.000000 30.000000 }
+		{ "5.000000" }
+	}
+
+	"hud_mapnamesComm"
+	{
+		"Show names on minimap when commander"
+		{ BOOL }
+		{ "1" }
+	}
+			
+	"cl_showspeed"
+	{
+		"Show player speed"
+		{ BOOL }
+		{ "0" }
+	}
+
+	"cl_mutemenu"
+	{
+		"Scoreboard mute menu hotkey"
+		{
+			LIST
+			"None" "0"
+			"Left click" "1"
+			"Right click" "2"
+			"Middle mouse" "3"
+		}
+		{ "3.000000" }
+	}
+		
+	"cl_centerentityid"
+	{
+		"Center player names"
+		{ BOOL }
+		{ "0" }
+	}
+
+	"cl_buildmessages"
+	{
+		"Show team build messages"
+		{ BOOL }
+		{ "1" }
+	}
+
+	"cl_labelhivesight"
+	{
+		"Show alien hivesight text"
+		{ BOOL }
+		{ "1" }
+	}
+	
+	"cl_placebo"
+	{
+		"------------------------------------------------------- VIDEO -----------------------------------------------------------------"
+		{ BOOL }
+		{ "0" }
+	}
+	
+	"cl_postprocess"
+	{
+		"Post-processing shaders"
+		{ BOOL }
+		{ "1" }
+	}
+	
+	"cl_intensity"
+	{
+		"Color intensity scale (requires post-processing)"
+		{ NUMBER 0.000000 2.000000 }
+		{ "1.000000" }
+	}
+
+	"r_dynamic"
+	{
+		"HL Dynamic lighting (non-nvidia graphics users should turn off if you have poor performance)"
+		{ BOOL }
+		{ "1" }
+	}
+
+	"cl_dynamiclights"
+	{
+		"NS Dynamic lights (EPILEPSY WARNING - welder flickering, bright lights from items spawning)"
+		{ BOOL }
+		{ "0" }
+	}
+	
+	"r_decals"
+	{
+		"Decal limit"
+		{ NUMBER 0.000000 4096.000000 }
+		{ "300.000000" }
+	}
+
+	"cl_highdetail"
+	{
+		"High detail particle systems"
+		{ BOOL }
+		{ "1" }
+	}
+	
+	"cl_placebo"
+	{
+		"---------------------------------------------------- CROSSHAIR -------------------------------------------------------------"
+		{ BOOL }
+		{ "0" }
+	}
+	
+		"crosshair"
+	{
+		"Legacy crosshair system"
+		{ BOOL }
+		{ "0" }
+	}
+
+	"cl_customcrosshair"
+	{
+		"Legacy crosshair selection"
+		{
+			LIST
+			"Classic crosshairs" "0"
+			"Custom 1" "1"
+			"Custom 2" "2"
+			"Custom 3" "3"
+			"Custom 4" "4"
+		}
+		{ "0.000000" }
 	}
 
 	"cl_cross"
@@ -255,6 +367,18 @@ DESCRIPTION INFO_OPTIONS
 		"New crosshair system"
 		{ BOOL }
 		{ "1" }
+	}
+
+	"cl_weaponcfgs"
+	{
+		"Per-weapon crosshairs"
+		{
+			LIST
+			"Off" "0"
+			"Config files" "1"
+			"Default crosshairs" "2"
+		}
+		{ "2" }
 	}
 
 	"cl_cross_color"
@@ -267,8 +391,8 @@ DESCRIPTION INFO_OPTIONS
 	"cl_cross_alpha"
 	{
 		"Crosshair transparency (0-255)"
-		{ NUMBER 0.000000 255.000000 }
-		{ "255.000000" }
+		{ STRING }
+		{ "255" }
 	}
 
 	"cl_cross_size"
@@ -289,7 +413,7 @@ DESCRIPTION INFO_OPTIONS
 	{
 		"Crosshair thickness"
 		{ NUMBER -1.000000 -1.000000 }
-		{ "2.000000" }
+		{ "1.000000" }
 	}
 
 	"cl_cross_outline"
@@ -345,7 +469,7 @@ DESCRIPTION INFO_OPTIONS
 	{
 		"Dot size"
 		{ NUMBER -1.000000 -1.000000 }
-		{ "0" }
+		{ "0.000000" }
 	}
 
 	"cl_cross_dot_color"
@@ -365,8 +489,8 @@ DESCRIPTION INFO_OPTIONS
 	"cl_cross_dot_outline"
 	{
 		"Dot outline thickness"
-		{ NUMBER -1.000000 -1.000000 }
-		{ "0.000000" }
+		{ STRING }
+		{ "" }
 	}
 
 	"cl_cross_dot_outline_alpha"
@@ -380,14 +504,14 @@ DESCRIPTION INFO_OPTIONS
 	{
 		"Circle size"
 		{ NUMBER 0.000000 255.000000 }
-		{ "0" }
+		{ "0.000000" }
 	}
 
 	"cl_cross_circle_thickness"
 	{
 		"Circle thickness"
 		{ NUMBER 0.000000 255.000000 }
-		{ "1" }
+		{ "1.000000" }
 	}
 
 	"cl_cross_circle_color"
@@ -422,77 +546,7 @@ DESCRIPTION INFO_OPTIONS
 	{
 		"Outline inside of the circle"
 		{ BOOL }
-		{ "" }
-	}
-
-	"crosshair"
-	{
-		"Legacy crosshair system"
-		{ BOOL }
 		{ "0" }
 	}
-
-	"cl_customcrosshair"
-	{
-		"Legacy crosshair selection"
-		{
-			LIST
-			"Classic Crosshairs" "0"
-			"Custom 1" "1"
-			"Custom 2" "2"
-			"Custom 3" "3"
-			"Custom 4" "4"
-		}
-		{ "0.000000" }
-	}
-
-	"cl_centerentityid"
-	{
-		"Center player names"
-		{ BOOL }
-		{ "0" }
-	}
-
-	"cl_highdetail"
-	{
-		"High detail particle systems"
-		{ BOOL }
-		{ "0" }
-	}
-
-	"cl_buildmessages"
-	{
-		"Show team build messages"
-		{ BOOL }
-		{ "1" }
-	}
-
-	"cl_labelhivesight"
-	{
-		"Show alien hivesight text"
-		{ BOOL }
-		{ "1" }
-	}
-
-	"cl_musicdirectory"
-	{
-		"Custom music directory"
-		{ STRING }
-		{ "" }
-	}
-
-	"cl_musicdelay"
-	{
-		"Random seconds between songs"
-		{ NUMBER 0.000000 10000.000000 }
-		{ "90.000000" }
-	}
-
-	"r_decals"
-	{
-		"Decal limit"
-		{ NUMBER 0.000000 4096.000000 }
-		{ "4096.000000" }
-	}
-
+	
 }

@@ -95,8 +95,8 @@
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\particles;$(SolutionDir)\includes\lpng1251;$(SolutionDir)\includes\zlib-1.2.8;$(SolutionDir)\includes\fmod\inc;$(SolutionDir)\includes\vgui\include;../public;../common;../external;../pm_shared;../game_shared;../mod;../util;../ui;../engine;../cl_dll;../dlls</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WIN32;_WINDOWS;AVH_CLIENT;USE_OLDAUTH;_X86_;AVH_PLAYTEST_BUILD;BALANCE_ENABLED;PLAYTEST_BUILD</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\particles;$(SolutionDir)\includes\lpng1251;$(SolutionDir)\includes\zlib-1.2.8;$(SolutionDir)\includes\fmod\inc;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\glew;../public;../common;../external;../pm_shared;../game_shared;../mod;../util;../ui;../engine;../cl_dll;../dlls</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WIN32;_WINDOWS;AVH_CLIENT;USE_OLDAUTH;_X86_;AVH_PLAYTEST_BUILD;BALANCE_ENABLED;PLAYTEST_BUILD;GLEW_STATIC</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>
@@ -221,8 +221,8 @@
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\particles;$(SolutionDir)\includes\lpng1251;$(SolutionDir)\includes\zlib-1.2.8;$(SolutionDir)\includes\fmod\inc;$(SolutionDir)\includes\vgui\include;../public;../common;../external;../pm_shared;../game_shared;../mod;../util;../ui;../engine;../cl_dll;../dlls</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_ITERATOR_DEBUG_LEVEL=2;_DEBUG;DEBUG;WIN32;_WINDOWS;AVH_CLIENT;USE_OLDAUTH;_X86_;AVH_PLAYTEST_BUILD;BALANCE_ENABLED;PLAYTEST_BUILD</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\particles;$(SolutionDir)\includes\lpng1251;$(SolutionDir)\includes\zlib-1.2.8;$(SolutionDir)\includes\fmod\inc;$(SolutionDir)\includes\vgui\include;$(SolutionDir)\includes\glew;../public;../common;../external;../pm_shared;../game_shared;../mod;../util;../ui;../engine;../cl_dll;../dlls</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_ITERATOR_DEBUG_LEVEL=2;_DEBUG;DEBUG;WIN32;_WINDOWS;AVH_CLIENT;USE_OLDAUTH;_X86_;AVH_PLAYTEST_BUILD;BALANCE_ENABLED;PLAYTEST_BUILD;GLEW_STATIC</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>

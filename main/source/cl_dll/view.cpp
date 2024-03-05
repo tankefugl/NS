@@ -77,7 +77,6 @@ when crossing a water boudnary.
 extern cvar_t	*chase_active;
 extern cvar_t	*scr_ofsx, *scr_ofsy, *scr_ofsz;
 extern cvar_t	*cl_vsmoothing;
-extern cvar_t	*cl_bobview;
 
 #define	CAM_MODE_RELAX		1
 #define CAM_MODE_FOCUS		2
@@ -105,6 +104,7 @@ cvar_t	*v_centerspeed;
 cvar_t	*cl_bobcycle;
 cvar_t	*cl_bob;
 cvar_t	*cl_bobup;
+cvar_t	*cl_bobview;
 cvar_t	*cl_waterdist;
 cvar_t	*cl_chasedist;
 cvar_t  *cl_hudcam;
@@ -759,11 +759,12 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	{
 		view->origin[ i ] += bob * 0.4 * pparams->forward[ i ];
 	}
-	if (cl_bobview && cl_bobview->value != 0)
+	if (cl_bobview && cl_bobview->value > 0.0f)
 	{
 		view->origin[2] += bob;
 	}
 
+	//// 2024 - This doesn't do what it's supposed to, and commenting it out makes the weapon model go nuts.
 	// throw in a little tilt.
 	view->angles[YAW]   -= bob * 0.5;
 	view->angles[ROLL]  -= bob * 1;
@@ -2156,10 +2157,10 @@ void V_CalcSpectatorRefdef ( struct ref_params_s * pparams )
 			gunModel->origin[ i ] += bob * 0.4 * forward[ i ];
 		}
 		
-		// throw in a little tilt.
-		gunModel->angles[YAW]   -= bob * 0.5;
-		gunModel->angles[ROLL]  -= bob * 1;
-		gunModel->angles[PITCH] -= bob * 0.3;
+		//// throw in a little tilt.
+		//gunModel->angles[YAW]   -= bob * 0.5;
+		//gunModel->angles[ROLL]  -= bob * 1;
+		//gunModel->angles[PITCH] -= bob * 0.3;
 
 		VectorCopy( gunModel->angles, gunModel->curstate.angles );
 		VectorCopy( gunModel->angles, gunModel->latched.prevangles );
@@ -2305,9 +2306,10 @@ void V_Init (void)
 	v_centermove		= gEngfuncs.pfnRegisterVariable( "v_centermove", "0.15", 0 );
 	v_centerspeed		= gEngfuncs.pfnRegisterVariable( "v_centerspeed","500", 0 );
 
-	cl_bobcycle			= gEngfuncs.pfnRegisterVariable( "cl_bobcycle","0.8", 0 );// best default for my experimental gun wag (sjb)
-	cl_bob				= gEngfuncs.pfnRegisterVariable( "cl_bob","0.01", 0 );// best default for my experimental gun wag (sjb)
-	cl_bobup			= gEngfuncs.pfnRegisterVariable( "cl_bobup","0.5", 0 );
+	cl_bobcycle			= gEngfuncs.pfnRegisterVariable( "cl_bobcycle","0.8", FCVAR_ARCHIVE);// best default for my experimental gun wag (sjb)
+	cl_bob				= gEngfuncs.pfnRegisterVariable( "cl_bob","0.01", FCVAR_ARCHIVE);// best default for my experimental gun wag (sjb)
+	cl_bobup			= gEngfuncs.pfnRegisterVariable( "cl_bobup","0.5", FCVAR_ARCHIVE);
+	cl_bobview			= gEngfuncs.pfnRegisterVariable( "cl_bobview","0", FCVAR_ARCHIVE);
 	cl_waterdist		= gEngfuncs.pfnRegisterVariable( "cl_waterdist","4", 0 );
 	cl_hudcam			= gEngfuncs.pfnRegisterVariable( "cl_hudcam", "1", 0 );
 	cl_chasedist		= gEngfuncs.pfnRegisterVariable( "cl_chasedist", "200", 0 );

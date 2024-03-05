@@ -209,9 +209,9 @@ void CHud :: Init( void )
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	cl_lw = gEngfuncs.pfnGetCvarPointer( "cl_lw" );
 
-    CVAR_CREATE( "cl_showspeed", "0", 0);
+    CVAR_CREATE( "cl_showspeed", "0", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvLabelMaps, "3", FCVAR_ARCHIVE);
-	CVAR_CREATE( kvGammaRamp, "0", FCVAR_ARCHIVE);
+	//CVAR_CREATE( kvGammaRamp, "0", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvCustomCrosshair, "1", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvHudMapZoom, "3", FCVAR_ARCHIVE);
 	CVAR_CREATE( kvLabelHivesight, "1", FCVAR_ARCHIVE);

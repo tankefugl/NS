@@ -39,7 +39,7 @@ extern cvar_t*	cl_musicdir;
 #define kvLabelMaps			"hud_mapstyle"
 // :
 // : 0001070 - enables forced gamma ramp loading
-#define kvGammaRamp			"cl_gammaramp"
+//#define kvGammaRamp			"cl_gammaramp"
 #define kvLabelHivesight	"cl_labelhivesight"
 #define kvCustomCrosshair	"cl_customcrosshair"
 #define kvHudMapZoom		"cl_hudmapzoom"

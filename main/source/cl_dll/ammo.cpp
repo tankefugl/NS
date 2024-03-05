@@ -740,9 +740,9 @@ void CHudAmmo::Think(void)
 	{
 		gWR.lastWeaponId = gHUD.GetCurrentWeaponID();
 
-		float wCfgCvar = CVAR_GET_FLOAT("cl_weaponcfgs");
+		const float wCfgCvar = CVAR_GET_FLOAT("cl_weaponcfgs");
 
-		if (wCfgCvar == 1)
+		if (wCfgCvar == 1.0f)
 		{
 			ClientCmd("exec weaponcfgs/default.cfg");
 
@@ -751,15 +751,15 @@ void CHudAmmo::Think(void)
 			sprintf(weapcfg, "exec weaponcfgs/%s.cfg", currentWeapon->szName);
 			ClientCmd(weapcfg);
 		}
-		//else if (wCfgCvar == 2.0f)
-		//{
-		//	ClientCmd("exec weaponcfgs/nsdefaults/default.cfg");
+		else if (wCfgCvar == 2.0f)
+		{
+			ClientCmd("exec weaponcfgs/nsdefaults/default.cfg");
 
-		//	WEAPON* currentWeapon = gWR.GetWeapon(gHUD.GetCurrentWeaponID());
-		//	char weapcfg[128];
-		//	sprintf(weapcfg, "exec weaponcfgs/nsdefaults/%s.cfg", currentWeapon->szName);
-		//	ClientCmd(weapcfg);
-		//}
+			WEAPON* currentWeapon = gWR.GetWeapon(gHUD.GetCurrentWeaponID());
+			char weapcfg[128];
+			sprintf(weapcfg, "exec weaponcfgs/nsdefaults/%s.cfg", currentWeapon->szName);
+			ClientCmd(weapcfg);
+		}
 	}
 
 	if(gHUD.GetIsAlien()) //check for hive death causing loss of current weapon

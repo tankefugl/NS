@@ -1174,8 +1174,8 @@ void ClientPrecache( void )
 	PRECACHE_UNMODIFIED_GENERIC("cl_dlls/client.dll");
 	PRECACHE_UNMODIFIED_GENERIC("dlls/ns.so");
 	PRECACHE_UNMODIFIED_GENERIC("cl_dlls/client.so");
-	PRECACHE_UNMODIFIED_GENERIC("gl_shaders/fs_world.frag");
-	PRECACHE_UNMODIFIED_GENERIC("gl_shaders/vs_world.vert");
+	//PRECACHE_UNMODIFIED_GENERIC("gl_shaders/fs_world.frag");
+	//PRECACHE_UNMODIFIED_GENERIC("gl_shaders/vs_world.vert");
 
 /*	PRECACHE_UNMODIFIED_GENERIC("maps/co_angst_detail.txt");
 	PRECACHE_UNMODIFIED_GENERIC("maps/co_core_detail.txt");
