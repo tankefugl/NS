@@ -136,7 +136,6 @@ cvar_t	*cl_highdetail;
 cvar_t	*cl_cmhotkeys;
 //cvar_t	*cl_forcedefaultfov;
 cvar_t	*cl_dynamiclights;
-cvar_t	*r_dynamic;
 cvar_t	*cl_buildmessages;
 cvar_t	*cl_particleinfo;
 //cvar_t	*cl_widescreen;
@@ -1541,7 +1540,7 @@ void NsPreset(void)
 	switch (presetChoice)
 	{
 	case 1:
-		ClientCmd("exec 32av.cfg");
+		ClientCmd("exec presetcfgs/AV/ns32.cfg");
 
 		if (printToChat)
 		{
@@ -1557,7 +1556,7 @@ void NsPreset(void)
 		}
 		break;
 	case 2:
-		ClientCmd("exec 33av.cfg");
+		ClientCmd("exec presetcfgs/AV/newdefault.cfg");
 
 		if (printToChat)
 		{
@@ -1573,7 +1572,7 @@ void NsPreset(void)
 		}
 		break;
 	case 3:
-		ClientCmd("exec compav.cfg");
+		ClientCmd("exec presetcfgs/AV/competitive.cfg");
 
 		if (printToChat)
 		{
@@ -1592,6 +1591,24 @@ void NsPreset(void)
 		gEngfuncs.Con_Printf("NS configuration preset selector. Useage:\n1: apply NS 3.2 settings\n2: apply NS 3.3 settings\n3: apply competitive settings\n");
 	}
 }
+
+void NsRates(void)
+{
+	int ratesChoice = atoi(gEngfuncs.Cmd_Argv(1));
+	char execText[30];
+
+	if (ratesChoice >= 1 && ratesChoice <= 20)
+	{
+		snprintf(execText, 30, "exec presetcfgs/rates/%d.cfg", ratesChoice);
+		ClientCmd(execText);
+	}
+	// Don't show this if 0 is entered as an arg, as it's the normal behavior for the blank default setting in options.
+	else if (gEngfuncs.Cmd_Argc() <= 1 || ratesChoice != 0)
+	{
+		gEngfuncs.Con_Printf("nsrates selects from preset network rate commands. Start from \"nsrates 1\" and increase the number until your connection feels stable.\n");
+	}
+}
+
 
 /*
 ============
@@ -1668,6 +1685,7 @@ void InitInput (void)
 	gEngfuncs.pfnAddCommand("nsversion", NsVersion);
 	gEngfuncs.pfnAddCommand("echodev", EchoDev);
 	gEngfuncs.pfnAddCommand("nspreset", NsPreset);
+	gEngfuncs.pfnAddCommand("nsrates", NsRates);
 
 	lookstrafe			= gEngfuncs.pfnRegisterVariable ( "lookstrafe", "0", FCVAR_ARCHIVE );
 	lookspring			= gEngfuncs.pfnRegisterVariable ( "lookspring", "0", FCVAR_ARCHIVE );

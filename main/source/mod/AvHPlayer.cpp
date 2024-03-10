@@ -9727,12 +9727,14 @@ void AvHPlayer::UpdateFog()
 void AvHPlayer::UpdateGamma()
 {
     float theMapGamma = GetGameRules()->GetMapGamma();
+    float theMapGammaAlt = GetGameRules()->GetMapGammaAlt();
     if(this->mClientGamma != theMapGamma)
     {
         if(!GetGameRules()->GetIsTesting())
         {
-			NetMsg_SetGammaRamp( this->pev, theMapGamma );
+			NetMsg_SetGammaRamp( this->pev, theMapGamma, theMapGammaAlt);
             this->mClientGamma = theMapGamma;
+            this->mClientGammaAlt = theMapGammaAlt;
         }
     }
 }

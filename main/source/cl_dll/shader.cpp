@@ -34,6 +34,7 @@ void CPostProcessShader::Init()
 
 	cl_postprocess = CVAR_CREATE("cl_postprocess", "1", FCVAR_ARCHIVE);
 	cl_intensity = CVAR_CREATE("cl_intensity", "1", FCVAR_ARCHIVE);
+	CVAR_CREATE("cl_intensityalt", "1", FCVAR_ARCHIVE);
 
 	// Store shaders in dll so swapping in different ones is harder.
 	const std::string vertShader =

@@ -1035,9 +1035,16 @@ AvHGamma::AvHGamma()
 	
 void AvHGamma::KeyValue(KeyValueData* pkvd)
 {
-	if(FStrEq(pkvd->szKeyName, "desiredgamma"))
+	if (FStrEq(pkvd->szKeyName, "desiredgamma"))
 	{
 		this->mGammaScalar = atof(pkvd->szValue);
+		// Set alt value as well in case the map doesn't have one.
+		this->mGammaScalarAlt = atof(pkvd->szValue);
+		pkvd->fHandled = TRUE;
+	}
+	else if (FStrEq(pkvd->szKeyName, "desiredgammaalt"))
+	{
+		this->mGammaScalarAlt = atof(pkvd->szValue);
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -1050,7 +1057,11 @@ float AvHGamma::GetGamma() const
 {
 	return this->mGammaScalar;
 }
-
+// Alternative gamma for NS 3.3 lighting
+float AvHGamma::GetGammaAlt() const
+{
+	return this->mGammaScalarAlt;
+}
 
 void AvHGamma::Spawn()
 {

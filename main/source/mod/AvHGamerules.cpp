@@ -324,6 +324,7 @@ AvHGamerules::AvHGamerules() : mTeamA(TEAM_ONE), mTeamB(TEAM_TWO)
 	this->mTimeOfLastPlaytestUpdate = -1;
 	this->mTimeOfLastHandicapUpdate = -1;
 	this->mMapGamma = kDefaultMapGamma;
+	this->mMapGammaAlt = kDefaultMapGamma;
 	this->mCombatAttackingTeamNumber = TEAM_IND;
 	this->mCheats.clear();
 	this->mSpawnEntity = NULL;
@@ -695,6 +696,7 @@ void AvHGamerules::CalculateMapGamma()
 	// Fetch from map extents entity if the map has one
 	FOR_ALL_ENTITIES(kwsGammaClassName, AvHGamma*)
 		this->mMapGamma = theEntity->GetGamma();
+		this->mMapGammaAlt = theEntity->GetGammaAlt();
 	END_FOR_ALL_ENTITIES(kwsGammaClassName)
 
 	this->mCalculatedMapGamma = true;
@@ -1385,6 +1387,16 @@ float AvHGamerules::GetMapGamma()
 	}
 
 	return this->mMapGamma;
+}
+
+float AvHGamerules::GetMapGammaAlt()
+{
+	if (!this->mCalculatedMapGamma)
+	{
+		this->CalculateMapGamma();
+	}
+
+	return this->mMapGammaAlt;
 }
 
 const AvHGameplay& AvHGamerules::GetGameplay() const
@@ -3158,7 +3170,7 @@ void AvHGamerules::UpdateHLTVProxy()
 				}
 
 				// Resend the gammaramp
-				NetMsgSpec_SetGammaRamp( GetGameRules()->GetMapGamma() );
+				NetMsgSpec_SetGammaRamp( GetGameRules()->GetMapGamma(), GetGameRules()->GetMapGammaAlt());
 
 				HiveInfoListType theTeamHiveInfo = this->mTeamB.GetHiveInfoList();
 				const HiveInfoListType tmp;

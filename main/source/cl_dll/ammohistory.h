@@ -78,7 +78,6 @@ private:
 
 	int		riAmmo[MAX_AMMO_TYPES];									// current ammo counts
 	int		iOldWeaponBits;
-	int		lastWeaponId;
 };
 
 extern WeaponsResource gWR;

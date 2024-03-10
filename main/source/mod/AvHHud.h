@@ -504,7 +504,7 @@ private:
 	bool			GetEntityInfoString(int inEntityID, string& outEntityInfoString, bool& outIsEnemy);
 	void			ModifyAmbientSoundEntryIfChanged(bool inSoundOn, int inSoundIndex, int inEntIndex, float inTimeStarted, int inVolume, int inFadeDistance, int inFlags, Vector inOrigin);
 	void			ResetTopDownUI();
-	bool			SetGamma(float inSlope);
+	bool			SetGamma(float inSlope, float inSlopeAlt);
 	void			SetReinforcements(int inReinforcements);
 	void			SetHelpMessage(const string& inHelpText, bool inForce = false, float inNormX = -1, float inNormY = -1);
 	void			SetActionButtonHelpMessage(const string& inHelpText);
@@ -685,6 +685,7 @@ private:
 	
 	
 	float					mDesiredGammaSlope;
+	float					mDesiredGammaSlopeAlt;
 
 	typedef vector<AvHAmbientSound>	AmbientSoundListType;
 	AmbientSoundListType	mAmbientSounds;
@@ -886,6 +887,7 @@ private:
 	float					mLastHudStyle;
 
 	float					mShaderGamma;
+	float					mShaderGammaAlt;
 
 };
 

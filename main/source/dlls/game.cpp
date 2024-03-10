@@ -272,7 +272,10 @@ void GameDLLInit( void )
 	CVAR_REGISTER (&avh_uplink);
 	CVAR_REGISTER (&avh_killdelay);
 
-	//Remove HL25 addition of roll angle and overbright shader in code so servers don't need to update configs.
+	// Initialize rates for servers that have old configs without them.
+	CVAR_SET_FLOAT("sv_maxupdaterate", 102.0f);
+	CVAR_SET_FLOAT("sv_maxunlag", 0.25f);
+	// Remove HL25 addition of roll angle and overbright shader in code so servers don't need to update configs.
 	CVAR_SET_FLOAT("sv_rollangle", 0.0f);
 	CVAR_SET_FLOAT("sv_allow_shaders", 0.0f);
 

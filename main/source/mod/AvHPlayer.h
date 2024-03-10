@@ -696,6 +696,7 @@ private:
 	AvHMessageID		mClientResearchingTech;
 
 	float				mClientGamma;
+	float				mClientGammaAlt;
 
 	StringList			mSentMessageList;
 

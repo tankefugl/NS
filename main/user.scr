@@ -83,11 +83,32 @@ DESCRIPTION INFO_OPTIONS
 		{ "0" }
 	}
 
+	"nsrates"
+	{
+		"Network rates (Try top to bottom until it feels stable)"
+		{
+			LIST
+			"[No Change]" "0"
+			"1: Lowest delay, but enemy stuttering likely" "1"
+			"2" "2"
+			"3" "3"
+			"4" "4"
+			"5: NS default" "5"
+			"6" "6"
+			"7" "7"
+			"8: HL default" "8"
+			"9" "9"
+			"10" "10"
+			"11: Poor connection quality" "11"
+		}
+		{ "0.000000" }
+	}
+
 	"cl_bob"
 	{
-		"Weapon bobbing (0.01 default)"
+		"Weapon bobbing (0.006 default)"
 		{ NUMBER 0.000000 0.010000 }
-		{ "1.000000" }
+		{ "0.006000" }
 	}
 
 	"cl_bobview"
@@ -306,17 +327,15 @@ DESCRIPTION INFO_OPTIONS
 		{ "1.000000" }
 	}
 
-	"r_dynamic"
-	{
-		"HL Dynamic lighting (non-nvidia graphics users should turn off if you have poor performance)"
-		{ BOOL }
-		{ "1" }
-	}
-
 	"cl_dynamiclights"
 	{
-		"NS Dynamic lights (EPILEPSY WARNING - welder flickering, bright lights from items spawning)"
-		{ BOOL }
+		"Dynamic lights"
+		{
+			LIST
+			"Off" "0"
+			"On" "1"
+			"On + Welder flashing (EPILEPSY WARNING)" "2"
+		}
 		{ "0" }
 	}
 	

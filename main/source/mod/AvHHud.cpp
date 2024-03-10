@@ -1787,7 +1787,15 @@ AvHMessageID AvHHud::HotKeyHit(char inChar)
 float AvHHud::GetGammaSlope() const
 {	
 	//gEngfuncs.Con_DPrintf("Map gamma set to %f\n", this->mShaderGamma);
-	return this->mShaderGamma;
+
+	if (CVAR_GET_FLOAT("cl_intensityalt") <= 0)
+	{
+		return this->mShaderGamma;
+	}
+	else
+	{
+		return this->mShaderGammaAlt;
+	}
 
 	//return sGameGammaTable.GetGammaSlope();
 }
@@ -1848,11 +1856,12 @@ int AvHHud::GetMaxAlienResources() const
 	return theMaxAlienResources;
 }
 
-bool AvHHud::SetGamma(float inSlope)
+bool AvHHud::SetGamma(float inSlope, float inSlopeAlt)
 {
 	bool theSuccess = true;
 
 	this->mShaderGamma = inSlope;
+	this->mShaderGammaAlt = inSlopeAlt;
 
 	//sGameGammaTable.ProcessSlope(inSlope);
 
@@ -2603,6 +2612,7 @@ void AvHHud::ResetGame(bool inMapChanged)
 
 	this->mShaderGamma = kDefaultMapGamma;
 	this->mDesiredGammaSlope = kDefaultMapGamma;
+	this->mDesiredGammaSlopeAlt = kDefaultMapGamma;
 	this->mRecordingLastFrame = false;
 	this->mTimeOfLastHelpText = -1;
 	this->mDisplayedToolTipList.clear();
@@ -2677,10 +2687,10 @@ void AvHHud::ResetGame(bool inMapChanged)
 BIND_MESSAGE(SetGmma);
 int	AvHHud::MsgFunc_SetGmma(const char* pszName, int iSize, void* pbuf)
 {
-	NetMsg_SetGammaRamp( pbuf, iSize, this->mDesiredGammaSlope );
+	NetMsg_SetGammaRamp( pbuf, iSize, this->mDesiredGammaSlope, this->mDesiredGammaSlopeAlt);
     if (!mSteamUIActive)
     {
-	    this->SetGamma(this->mDesiredGammaSlope);
+	    this->SetGamma(this->mDesiredGammaSlope, this->mDesiredGammaSlopeAlt);
     }
 	
 	return 1;
@@ -3846,6 +3856,7 @@ void AvHHud::Init(void)
 	this->mSelectingWeaponID = -1;
 	this->mSelectingNodeID = MESSAGE_NULL;
 	this->mDesiredGammaSlope = 1;
+	this->mDesiredGammaSlopeAlt = 1;
 	this->mTimeOfLastHelpText = -1;
 	this->mCurrentWeaponID = -1;
 	this->mCurrentWeaponEnabled = false;
@@ -4195,10 +4206,11 @@ int AvHHud::InitializeDemoPlayback(int inSize, unsigned char* inBuffer)
 	
 	// Read in gamma
 	LoadData(&this->mDesiredGammaSlope, inBuffer, sizeof(this->mDesiredGammaSlope), theBytesRead);
+	LoadData(&this->mDesiredGammaSlopeAlt, inBuffer, sizeof(this->mDesiredGammaSlopeAlt), theBytesRead);
 
     if (!mSteamUIActive)
     {
-        this->SetGamma(this->mDesiredGammaSlope);
+        this->SetGamma(this->mDesiredGammaSlope, this->mDesiredGammaSlopeAlt);
     }
 
 	// Read in resources
@@ -4339,6 +4351,7 @@ void AvHHud::InitializeDemoRecording()
 
 	// Gamma, resources
 	int theGammaSize = sizeof(this->mDesiredGammaSlope);
+	int theGammaAltSize = sizeof(this->mDesiredGammaSlopeAlt);
 	int theResourcesSizes = sizeof(this->mResources);
     
     // Save commander index (TODO: REMOVE)
@@ -4356,7 +4369,7 @@ void AvHHud::InitializeDemoRecording()
 	
 	int theSelectedSize = sizeof(int) + (int)this->mSelected.size()*sizeof(EntityInfo);
 
-	int theTotalSize = theUpgradesSize + theGammaSize + theResourcesSizes + theCommanderSize + theHiveInfoSize + theCurrentPieMenuControlSize + theSelectedSize;
+	int theTotalSize = theUpgradesSize + theGammaSize + theGammaAltSize + theResourcesSizes + theCommanderSize + theHiveInfoSize + theCurrentPieMenuControlSize + theSelectedSize;
 
 	// New a char array of this size
 	int theCounter = 0;
@@ -4370,6 +4383,7 @@ void AvHHud::InitializeDemoRecording()
 
 		// Write out gamma
 		SaveData(theCharArray, &this->mDesiredGammaSlope, theGammaSize, theCounter);
+		SaveData(theCharArray, &this->mDesiredGammaSlopeAlt, theGammaAltSize, theCounter);
 		SaveData(theCharArray, &this->mResources, theResourcesSizes, theCounter);
 		SaveData(theCharArray, &theCommanderIndex, theCommanderSize, theCounter);
 
@@ -4905,7 +4919,6 @@ cvar_t *texgamma = NULL;
 cvar_t *r_detailtextures = NULL;
 cvar_t *gl_max_size = NULL;
 cvar_t *gl_widescreen_yfov = NULL;
-cvar_t *sv_widescreenclamp = NULL;
 
 void AvHHud::InitExploitPrevention() {
 	gl_monolights = gEngfuncs.pfnGetCvarPointer("gl_monolights");

@@ -10,13 +10,13 @@ int CHudCrosshairs::Init()
 {
 	m_iFlags = HUD_ACTIVE;
 
-	cl_cross = CVAR_CREATE("cl_cross", "0", FCVAR_ARCHIVE);
+	cl_cross = CVAR_CREATE("cl_cross", "1", FCVAR_ARCHIVE);
 	cl_cross_color = CVAR_CREATE("cl_cross_color", "255 255 255", FCVAR_ARCHIVE);
 	cl_cross_alpha = CVAR_CREATE("cl_cross_alpha", "255", FCVAR_ARCHIVE);
-	cl_cross_thickness = CVAR_CREATE("cl_cross_thickness", "1", FCVAR_ARCHIVE);
+	cl_cross_thickness = CVAR_CREATE("cl_cross_thickness", "2", FCVAR_ARCHIVE);
 	cl_cross_size = CVAR_CREATE("cl_cross_size", "6", FCVAR_ARCHIVE);
 	cl_cross_gap = CVAR_CREATE("cl_cross_gap", "3", FCVAR_ARCHIVE);
-	cl_cross_outline = CVAR_CREATE("cl_cross_outline", "2", FCVAR_ARCHIVE);
+	cl_cross_outline = CVAR_CREATE("cl_cross_outline", "1", FCVAR_ARCHIVE);
 	cl_cross_outline_alpha = CVAR_CREATE("cl_cross_outline_alpha", "", FCVAR_ARCHIVE);
 	cl_cross_outline_inner = CVAR_CREATE("cl_cross_outline_inner", "0", FCVAR_ARCHIVE);
 	cl_cross_circle_radius = CVAR_CREATE("cl_cross_circle_radius", "0", FCVAR_ARCHIVE);
