@@ -274,7 +274,7 @@ void GameDLLInit( void )
 
 	// Initialize rates for servers that have old configs without them.
 	CVAR_SET_FLOAT("sv_maxupdaterate", 102.0f);
-	CVAR_SET_FLOAT("sv_maxunlag", 0.25f);
+	CVAR_SET_FLOAT("sv_maxunlag", 0.3f);
 	// Remove HL25 addition of roll angle and overbright shader in code so servers don't need to update configs.
 	CVAR_SET_FLOAT("sv_rollangle", 0.0f);
 	CVAR_SET_FLOAT("sv_allow_shaders", 0.0f);
