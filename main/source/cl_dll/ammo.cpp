@@ -445,7 +445,8 @@ void WeaponsResource::UserCmd_MovementOff()
 	IN_Attack2Up();
 	IN_ReloadUp();
 
-	if (gViewPort)
+	// Check if we're in game.
+	if (gEngfuncs.pfnGetLevelName()[0] != 0)
 	{ 
 		if (gHUD.GetHUDUser3() == AVH_USER3_ALIEN_PLAYER2)
 		{
