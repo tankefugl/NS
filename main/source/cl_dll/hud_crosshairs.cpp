@@ -35,6 +35,7 @@ int CHudCrosshairs::Init()
 	cl_cross_line_bottom = CVAR_CREATE("cl_cross_line_bottom", "1", FCVAR_ARCHIVE);
 	cl_cross_line_left = CVAR_CREATE("cl_cross_line_left", "1", FCVAR_ARCHIVE);
 	cl_cross_line_right = CVAR_CREATE("cl_cross_line_right", "1", FCVAR_ARCHIVE);
+	cl_cross_scaling = CVAR_CREATE("cl_cross_scaling", "1", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem(this);
 	return 0;
@@ -72,23 +73,42 @@ int CHudCrosshairs::Draw(float time)
 		outalpha = alpha;
 
 
+	float scalar = 1.0f;
+	if (cl_cross_scaling->value != 0)
+	{
+		// Scale from 1080 Y res, as it's what the default crosshairs are designed for, but don't scale when resolution is close to 1080, as it looks bad.
+		const float screenscale = ScreenHeight() / 1080.0f; //ScreenHeight() * 0.000926f
+		// Lowering scale looks like junk, don't bother.
+		//if (screenscale < 0.75f)
+		//{
+		//	scalar = 1.0f / round(1080.0f / ScreenHeight());
+		//	//scalar = 0.5f;
+		//}
+		if (screenscale > 1.0f)
+		{
+			scalar = screenscale;
+		}
+		// Additional scaling with the cvar value if desired.
+		scalar *= cl_cross_scaling->value;
+	}
+
+
 	Vector2D center(ScreenWidth() / 2.0f, ScreenHeight() / 2.0f);
 
 	HudGL gl;
 
 	// Draw the outline.
-	// TODO: this contains a terrible amount of repeating complex code.
-	//
-	// Possible solution: can be changed to this with the one downside being in rare cases where cl_cross_thickness is high AND its alpha is <255, the center of each line will be slightly darker.
-	// Example below is for bottom line. Would also cause certain crosshairs that have outlines on invisible cross lines to not look right.
-	// gl.rectangle(Vector2D(center.x + offset, center.y + gap - half_width), Vector2D(center.x - offset, center.y + gap + size + half_width));
+	// TODO: Swap out lines for rectangles to fix the line thickness limit of 10.
+	// The lines can also be changed to one rectangle with the one downside being in cases where the cross alpha is <255, the center of each line will be slightly darker.
+	// Example below is for bottom line. It would also cause certain crosshairs that have outlines on invisible cross lines to not look right.
+	// gl.rectangle(Vector2D(center.x + offset, center.y + gap /*- outline_width*/), Vector2D(center.x - offset, center.y + gap + size + outline_width));
 	if (cl_cross_outline->value > 0.0f && cl_cross_thickness->value > 0.0f && cl_cross_size->value > 0.0f) {
 
 
-		float size = cl_cross_size->value;
-		float gap = cl_cross_gap->value;
-		float half_thickness = min(cl_cross_thickness->value, ScreenHeight() * 0.3f) * 0.5f;
-		float outline_width = cl_cross_outline->value;
+		float size = cl_cross_size->value * scalar;
+		float gap = cl_cross_gap->value * scalar;
+		float half_thickness = min(cl_cross_thickness->value * scalar, ScreenHeight() * 0.3f) * 0.5f;
+		float outline_width = cl_cross_outline->value * scalar;
 		float offset = half_thickness + outline_width;
 
 		gl.color(0, 0, 0, outalpha);
@@ -163,11 +183,11 @@ int CHudCrosshairs::Draw(float time)
 
 	if (cl_cross_dot_outline->string[0] == 0)
 	{
-		dotout = cl_cross_outline->value;
+		dotout = cl_cross_outline->value * scalar;
 	}
 	else
 	{
-		dotout = cl_cross_dot_outline->value;
+		dotout = cl_cross_dot_outline->value * scalar;
 	}
 	// Dot outline
 	if (cl_cross_dot_size->value > 0.0f && dotout > 0.0f) {
@@ -177,7 +197,7 @@ int CHudCrosshairs::Draw(float time)
 
 		gl.color(0, 0, 0, dotoutalpha);
 
-		float size = min(cl_cross_dot_size->value, ScreenHeight() * 0.2f) + (dotout * 2.0f);
+		float size = min(cl_cross_dot_size->value * scalar, ScreenHeight() * 0.2f) + (dotout * 2.0f);
 		Vector2D offset = Vector2D(size / 2.0f, size / 2.0f);
 
 		gl.rectangle(center - offset, center + offset);
@@ -186,11 +206,11 @@ int CHudCrosshairs::Draw(float time)
 	float circleout;
 	if (cl_cross_circle_outline->string[0] == 0)
 	{
-		circleout = cl_cross_outline->value;
+		circleout = cl_cross_outline->value * scalar;
 	}
 	else
 	{
-		circleout = cl_cross_circle_outline->value;
+		circleout = cl_cross_circle_outline->value * scalar;
 	}
 	// Circle outline
 	if (cl_cross_circle_radius->value > 0.0f && cl_cross_circle_thickness->value > 0.0f && circleout > 0.0f) {
@@ -203,16 +223,16 @@ int CHudCrosshairs::Draw(float time)
 
 		gl.color(0, 0, 0, circleoutalpha);
 
-		auto radius = cl_cross_circle_radius->value;
+		auto radius = cl_cross_circle_radius->value * scalar;
 
 		if (!circleoutinner)
 		{
-			radius += cl_cross_circle_thickness->value * 0.5f;
+			radius += cl_cross_circle_thickness->value * scalar * 0.5f;
 			gl.line_width(circleout);
 		}
 		else
 		{
-			gl.line_width(cl_cross_circle_thickness->value + (circleout * 2.0f));
+			gl.line_width(cl_cross_circle_thickness->value * scalar + (circleout * 2.0f));
 		}
 
 		if (old_circle_radius != radius) {
@@ -229,13 +249,13 @@ int CHudCrosshairs::Draw(float time)
 	if (cl_cross_thickness->value > 0.0f && cl_cross_size->value > 0.0f) {
 		
 		float size;
-		float gap = cl_cross_gap->value;
+		float gap = cl_cross_gap->value * scalar;
 
 		// Box crosshair. This is needed since line thickness seems to cap out at 10 on my system.
 		if (cl_cross_thickness->value > cl_cross_size->value) {
-			gl.line_width(cl_cross_size->value);
-			float half_size = cl_cross_size->value * 0.5f;
-			float half_thickness = cl_cross_thickness->value * 0.5f;
+			gl.line_width(cl_cross_size->value * scalar);
+			float half_size = cl_cross_size->value * scalar * 0.5f;
+			float half_thickness = cl_cross_thickness->value * scalar * 0.5f;
 
 			if (cl_cross_line_top->value)
 				gl.line(Vector2D(center.x - half_thickness, center.y - gap - half_size), Vector2D(center.x + half_thickness, center.y - gap - half_size));
@@ -248,8 +268,8 @@ int CHudCrosshairs::Draw(float time)
 		}
 		// Normal cross.
 		else {
-			gl.line_width(cl_cross_thickness->value);
-			size = cl_cross_size->value;
+			gl.line_width(cl_cross_thickness->value * scalar);
+			size = cl_cross_size->value * scalar;
 
 			if (cl_cross_line_top->value)
 				gl.line(Vector2D(center.x, center.y - gap - size), Vector2D(center.x, center.y - gap));
@@ -279,9 +299,9 @@ int CHudCrosshairs::Draw(float time)
 			gl.color(r, g, b, circlealpha);
 		}
 		
-		gl.line_width(cl_cross_circle_thickness->value);
+		gl.line_width(cl_cross_circle_thickness->value * scalar);
 
-		float radius = cl_cross_circle_radius->value;
+		float radius = cl_cross_circle_radius->value * scalar;
 		if (old_circle_radius != radius) {
 			// Recompute the circle points.
 			circle_points = HudGL::compute_circle(radius);
@@ -307,9 +327,9 @@ int CHudCrosshairs::Draw(float time)
 			gl.color(r, g, b, dotalpha);
 		}
 
-		//float size = cl_cross_dot_size->value;
+		//float size = cl_cross_dot_size->value * scalar;
 		//clamp dot size to prevent using it as a full screen transparent mask for highlighting eneimies like with the /nvg night vision server plugin.
-		float size = min(cl_cross_dot_size->value, ScreenHeight() * 0.2f);
+		float size = min(cl_cross_dot_size->value * scalar, ScreenHeight() * 0.2f);
 		Vector2D offset = Vector2D(size / 2.0f, size / 2.0f);
 
 		gl.rectangle(center - offset, center + offset);

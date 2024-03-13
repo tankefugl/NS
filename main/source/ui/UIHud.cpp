@@ -72,10 +72,10 @@ bool UIHud::GetIsTimeForSong(float inCurrentTime) const
 {
 	bool theTimeForNewSong = false;
 
-	if(this->mMusicEnabled && this->mMusicAllowed && !this->mSongIsPlaying && cl_musicdelay->value != -1.0f)
+	if(this->mMusicEnabled && this->mMusicAllowed && !this->mSongIsPlaying)
 	{
 		float theTimeElapsedSinceSongStopped = inCurrentTime - this->mTimeSongEnded;
-		if((this->mTimeSongEnded == -1) || (theTimeElapsedSinceSongStopped > this->mRandomSecondsBetweenSongs))
+		if((this->mTimeSongEnded == -1) || (theTimeElapsedSinceSongStopped > this->mRandomSecondsBetweenSongs && cl_musicdelay->value != -1.0f))
 		{
 			theTimeForNewSong = true;
 		}

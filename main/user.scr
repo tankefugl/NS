@@ -71,7 +71,7 @@ DESCRIPTION INFO_OPTIONS
 
 	"cl_musicdelay"
 	{
-		"Random seconds between songs (-1 = Play once at start)"
+		"Random seconds between songs (-1 = Play once)"
 		{ NUMBER -1.000000 10000.000000 }
 		{ "-1" }
 	}
@@ -359,10 +359,10 @@ DESCRIPTION INFO_OPTIONS
 		{ BOOL }
 		{ "0" }
 	}
-	
-		"crosshair"
+
+	"crosshair"
 	{
-		"Legacy crosshair system"
+		"Enable Legacy crosshair system ----------------------------------------------------------------------------------------"
 		{ BOOL }
 		{ "0" }
 	}
@@ -383,7 +383,7 @@ DESCRIPTION INFO_OPTIONS
 
 	"cl_cross"
 	{
-		"New crosshair system"
+		"Enable New crosshair system -------------------------------------------------------------------------------------------"
 		{ BOOL }
 		{ "1" }
 	}
@@ -398,6 +398,13 @@ DESCRIPTION INFO_OPTIONS
 			"Default crosshairs" "2"
 		}
 		{ "2" }
+	}
+
+	"cl_cross_scaling"
+	{
+		"Upscale crosshairs when above 1080p"
+		{ BOOL }
+		{ "1" }
 	}
 
 	"cl_cross_color"

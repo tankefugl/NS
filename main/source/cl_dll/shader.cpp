@@ -33,7 +33,7 @@ void CPostProcessShader::Init()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ScreenWidth(), ScreenHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	cl_postprocess = CVAR_CREATE("cl_postprocess", "1", FCVAR_ARCHIVE);
-	cl_intensity = CVAR_CREATE("cl_intensity", "1", FCVAR_ARCHIVE);
+	cl_intensity = CVAR_CREATE("cl_intensity", "0.55", FCVAR_ARCHIVE);
 	CVAR_CREATE("cl_intensityalt", "1", FCVAR_ARCHIVE);
 
 	// Store shaders in dll so swapping in different ones is harder.

@@ -4211,7 +4211,17 @@ void AvHHud::RenderAlienUI()
 						float xdiff = fabs(theScreenPos[0] - screenWidth/2);
 						float ydiff = fabs(theScreenPos[1] - screenHeight/2);
 						float quadrance = xdiff * xdiff + ydiff * ydiff;
-						float alpha = max(0.0f, 0.9f - quadrance / (screenHeight * screenHeight));
+						float alpha;
+
+						if (theBlipStatus == kVulnerableFriendlyBlipStatus)
+						{
+							alpha = max(0.0f, 0.9f - (quadrance) / (screenHeight * screenHeight));
+						}
+						// 2024 - Reduce HUD visibility for unimportant blips.
+						else 
+						{
+							alpha = max(0.0f, 0.7f - (quadrance * 10.0f) / (screenHeight * screenHeight));
+						}
 						alpha *= alpha * alpha * alpha;
 
 						// "MonsieurEvil is under attack"
