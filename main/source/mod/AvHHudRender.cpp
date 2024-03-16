@@ -4220,7 +4220,7 @@ void AvHHud::RenderAlienUI()
 						// 2024 - Reduce HUD visibility for unimportant blips.
 						else 
 						{
-							alpha = max(0.0f, 0.7f - (quadrance * 10.0f) / (screenHeight * screenHeight));
+							alpha = max(0.0f, 0.75f - (quadrance * 8.0f) / (screenHeight * screenHeight));
 						}
 						alpha *= alpha * alpha * alpha;
 
