@@ -170,6 +170,11 @@ cvar_t	avh_killdelay				= {kvKillDelay, "0", FCVAR_SERVER};
 cvar_t 	*g_psv_gravity = NULL;
 cvar_t	*g_psv_aim = NULL;
 cvar_t	*g_footsteps = NULL;
+cvar_t* sv_maxupdaterate = NULL;
+cvar_t* sv_maxunlag = NULL;
+cvar_t* sv_rollangle = NULL;
+cvar_t* sv_allow_shaders = NULL;
+
 
 // END Cvars for Skill Level settings
 
@@ -273,11 +278,33 @@ void GameDLLInit( void )
 	CVAR_REGISTER (&avh_killdelay);
 
 	// Initialize rates for servers that have old configs without them.
-	CVAR_SET_FLOAT("sv_maxupdaterate", 102.0f);
-	CVAR_SET_FLOAT("sv_maxunlag", 0.3f);
+	sv_maxupdaterate = CVAR_GET_POINTER("sv_maxupdaterate");
+	if(sv_maxupdaterate)
+	{
+		//sv_maxupdaterate->value = 102.0f;
+		CVAR_SET_FLOAT("sv_maxupdaterate", 102.0f);
+	}
+
+	sv_maxunlag = CVAR_GET_POINTER("sv_maxunlag");
+	if (sv_maxunlag)
+	{
+		//sv_maxunlag->value = 0.3f;
+		CVAR_SET_FLOAT("sv_maxunlag", 0.3f);
+	}
 	// Remove HL25 addition of roll angle and overbright shader in code so servers don't need to update configs.
-	CVAR_SET_FLOAT("sv_rollangle", 0.0f);
-	CVAR_SET_FLOAT("sv_allow_shaders", 0.0f);
+	sv_rollangle = CVAR_GET_POINTER("sv_rollangle");
+	if (sv_rollangle)
+	{
+		//sv_rollangle->value = 0.0f;
+		CVAR_SET_FLOAT("sv_rollangle", 0.0f);
+	}
+
+	sv_allow_shaders = CVAR_GET_POINTER("sv_allow_shaders");
+	if (sv_allow_shaders)
+	{
+		//sv_allow_shaders->value = 0.0f;
+		CVAR_SET_FLOAT("sv_allow_shaders", 0.0f);
+	}
 
 }
 
