@@ -92,14 +92,12 @@ DESCRIPTION INFO_OPTIONS
 			"1: Lowest delay, but enemy stuttering likely" "1"
 			"2" "2"
 			"3" "3"
-			"4" "4"
-			"5: NS default" "5"
+			"4: NS default" "4"
+			"5" "5"
 			"6" "6"
-			"7" "7"
-			"8: HL default" "8"
-			"9" "9"
-			"10" "10"
-			"11: Poor connection quality" "11"
+			"7: HL default" "7"
+			"8" "8"
+			"9: Poor connection quality" "9"
 		}
 		{ "0.000000" }
 	}
