@@ -146,6 +146,8 @@
 #include "AvHSiegeTurret.h"
 #include "AvHHulls.h"
 
+#include "AvHAIPlayerManager.h"
+
 //LINK_ENTITY_TO_CLASS(kwMine, AvHMine);
 //LINK_ENTITY_TO_CLASS(kwDeployedTurret, AvHDeployedTurret);
 //LINK_ENTITY_TO_CLASS(kwTurret, AvHTurret);
@@ -1941,7 +1943,7 @@ void AvHCommandStation::CommandUse( CBaseEntity* pActivator, CBaseEntity* pCalle
 	AvHPlayer* thePlayer = dynamic_cast<AvHPlayer*>(pActivator);
 
 	// Mapper-placed CCs can be killed but they don't go away
-	if(thePlayer && !(thePlayer->pev->flags & FL_FAKECLIENT) && !this->GetHasBeenKilled() && thePlayer->GetIsAbleToAct())
+	if(thePlayer && !this->GetHasBeenKilled() && thePlayer->GetIsAbleToAct())
 	{
 		AvHTeam* theTeam = thePlayer->GetTeamPointer();
 		if(theTeam && (theTeam->GetTeamType() == AVH_CLASS_TYPE_MARINE))
@@ -1991,6 +1993,12 @@ void AvHCommandStation::CommandUse( CBaseEntity* pActivator, CBaseEntity* pCalle
 					// The player somehow touches the command station while still a commander
 					if(thePlayer->GetUser3() != AVH_USER3_COMMANDER_PLAYER)
 					{
+						// A human used the comm chair, kick the AI commander out if they're in there and don't let them re-enter for 20 seconds
+						if (!(thePlayer->pev->flags & FL_FAKECLIENT))
+						{
+							AIMGR_SetCommanderAllowedTime(theStationTeamNumber, gpGlobals->time + 20.0f);
+						}
+
 						thePlayer->SendMessage(kCommandStationInUse, TOOLTIP);
 					}
 				}

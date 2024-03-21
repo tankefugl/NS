@@ -24,6 +24,9 @@
     <Filter Include="textrep">
       <UniqueIdentifier>{bdec0058-6589-4e1b-ab38-ecebc623b07f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mod\bots">
+      <UniqueIdentifier>{66a5a6b4-18d8-4a1f-b7f7-70ed086d2c06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animating.cpp">
@@ -509,6 +512,39 @@
     <ClCompile Include="compatibility.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="..\mod\AvHAIPlayerManager.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAIPlayerUtil.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAITactical.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAITask.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAIWeaponHelper.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAICommander.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAIConfig.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAIHelper.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAIMath.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAINavigation.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mod\AvHAIPlayer.cpp">
+      <Filter>mod\bots</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="activity.h">
@@ -894,6 +930,42 @@
     </ClInclude>
     <ClInclude Include="..\textrep\TRTagValuePair.h">
       <Filter>textrep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAIPlayerManager.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAIPlayerUtil.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAITactical.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAITask.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAIWeaponHelper.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAICommander.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAIConfig.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAIConstants.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAIHelper.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAIMath.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAINavigation.h">
+      <Filter>mod\bots</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mod\AvHAIPlayer.h">
+      <Filter>mod\bots</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

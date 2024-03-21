@@ -145,6 +145,7 @@
 #include "../mod/AvHAlienAbilityConstants.h"
 #include "../mod/AvHNetworkMessages.h"
 #include "../mod/AvHNexusServer.h"
+#include "../mod/AvHAIPlayerManager.h"
 
 #include "../game_shared/voice_gamemgr.h"
 extern CVoiceGameMgr	g_VoiceGameMgr;
@@ -353,7 +354,12 @@ void ClientPutInServer( edict_t *pEntity )
 
 	// Allocate a CBasePlayer for pev, and call spawn
 	pPlayer->SetPlayMode(PLAYMODE_READYROOM);
-	//pPlayer->Spawn();
+	
+	//if (pev->flags & FL_FAKECLIENT)
+	//{
+	//	pPlayer->Spawn();
+	//}
+	
 
 	// Reset interpolation during first frame
 	pPlayer->pev->effects |= EF_NOINTERP;
@@ -389,9 +395,13 @@ void Host_Say( edict_t *pEntity, int teamonly )
 
 	if ( !stricmp( pcmd, cpSay) || !stricmp( pcmd, cpSayTeam ) )
 	{
-		if ( CMD_ARGC() >= 2 )
+		int NumArgs = CMD_ARGC();
+
+		if (NumArgs >= 2 )
 		{
 			p = (char *)CMD_ARGS();
+
+			bool bMessageParsed = false;
 
 			if(GetGameRules()->GetIsTournamentMode() && !GetGameRules()->GetGameStarted())
 			{
@@ -403,6 +413,8 @@ void Host_Say( edict_t *pEntity, int teamonly )
 					{
 						theTeam->SetIsReady();
 					}
+
+					bMessageParsed = true;
 				}
 				else if (!strcmp(CMD_ARGV(1), kNotReadyNotification))
 				{
@@ -412,7 +424,32 @@ void Host_Say( edict_t *pEntity, int teamonly )
 					{
 						theTeam->SetIsReady(false);
 					}
+
+					bMessageParsed = true;
 				}
+			}
+
+			// Check to see if we are asking the AI commander for something
+			if (!bMessageParsed)
+			{
+				char shortenedMsg[32];
+				char* msg = (char*)CMD_ARGV(1);
+
+				strncpy(shortenedMsg, msg, 31);
+
+				char* pch;
+				pch = strtok(shortenedMsg, " ");
+
+				if (!stricmp(pch, kAICommanderRequest))
+				{
+					pch = strtok(NULL, " \n");
+
+					if (pch != NULL)
+					{
+						AIMGR_ReceiveCommanderRequest((AvHTeamNumber)pEntity->v.team, pEntity, pch);
+					}
+				}
+				
 			}
 		}
 		else

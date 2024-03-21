@@ -106,6 +106,15 @@
 #include "AvHNetworkMessages.h"
 #include "AvHNexusServer.h"
 
+#include "AvHAIPlayerUtil.h"
+#include "AvHAIHelper.h"
+#include "AvHAIMath.h"
+#include "AvHAINavigation.h"
+#include "AvHAIPlayerManager.h"
+#include "AvHAITask.h"
+#include "AvHAITactical.h"
+#include "AvHAICommander.h"
+
 extern AvHParticleTemplateListServer	gParticleTemplateList;
 extern CVoiceGameMgr					g_VoiceGameMgr;
 extern int								gCommanderPointsAwardedEventID;
@@ -333,14 +342,11 @@ BOOL AvHGamerules::ClientCommand( CBasePlayer *pPlayer, const char *pcmd )
 	{
 		if(theAvHPlayer)
 		{
-			if(!(theAvHPlayer->pev->flags & FL_FAKECLIENT))
+			if (!theAvHPlayer->GetIsBeingDigested())
 			{
-				if(!theAvHPlayer->GetIsBeingDigested())
-				{
-					theAvHPlayer->SetPlayMode(PLAYMODE_READYROOM, true);
-				}
-				theSuccess = true;
+				theAvHPlayer->SetPlayMode(PLAYMODE_READYROOM, true);
 			}
+			theSuccess = true;
 		}
 		theSuccess = true;
 	}
@@ -348,26 +354,23 @@ BOOL AvHGamerules::ClientCommand( CBasePlayer *pPlayer, const char *pcmd )
 	{
 		if(theAvHPlayer)
 		{
-			if(!(theAvHPlayer->pev->flags & FL_FAKECLIENT))
+			if (!theAvHPlayer->GetIsBeingDigested())
 			{
-				if(!theAvHPlayer->GetIsBeingDigested())
+				// : 984
+				// Add a throttle on the readyroom key
+				const static int kReadyRoomThrottleTimeout = 2.0f;
+				if ((theAvHPlayer->GetTimeLastF4() == -1.0f) ||
+					(gpGlobals->time > theAvHPlayer->GetTimeLastF4() + kReadyRoomThrottleTimeout))
 				{
-					// : 984
-					// Add a throttle on the readyroom key
-					const static int kReadyRoomThrottleTimeout=2.0f;
-					if ( (theAvHPlayer->GetTimeLastF4() == -1.0f) || 
-						 (gpGlobals->time > theAvHPlayer->GetTimeLastF4() + kReadyRoomThrottleTimeout) )  
-					{
-						theAvHPlayer->SendMessage(kReadyRoomThrottleMessage);
-						theAvHPlayer->SetTimeLastF4(gpGlobals->time);
-					}
-					else if ( gpGlobals->time < theAvHPlayer->GetTimeLastF4() + kReadyRoomThrottleTimeout )
-					{
-						theAvHPlayer->SetPlayMode(PLAYMODE_READYROOM, true);
-					}
+					theAvHPlayer->SendMessage(kReadyRoomThrottleMessage);
+					theAvHPlayer->SetTimeLastF4(gpGlobals->time);
 				}
-				theSuccess = true;
+				else if (gpGlobals->time < theAvHPlayer->GetTimeLastF4() + kReadyRoomThrottleTimeout)
+				{
+					theAvHPlayer->SetPlayMode(PLAYMODE_READYROOM, true);
+				}
 			}
+			theSuccess = true;
 		}
 		theSuccess = true;
 	}
@@ -1370,24 +1373,26 @@ BOOL AvHGamerules::ClientCommand( CBasePlayer *pPlayer, const char *pcmd )
 	#ifdef WIN32
 	else if(FStrEq(pcmd, "createfake"))
 	{
-		if(this->GetCheatsEnabled())
+		/*if (!theAvHPlayer || theIsServerOp || theIsPlaytest || theIsDedicatedServer || this->GetCheatsEnabled())
 		{
 			char theFakeClientName[256];
 			sprintf(theFakeClientName, "Bot%d", RANDOM_LONG(0, 2000));
 			edict_t* BotEnt = (*g_engfuncs.pfnCreateFakeClient)(theFakeClientName);
-			
+
 			// create the player entity by calling MOD's player function
 			// (from LINK_ENTITY_TO_CLASS for player object)
-			player( VARS(BotEnt) );
-			
+			player(VARS(BotEnt));
+
 			char ptr[128];  // allocate space for message from ClientConnect
-			ClientConnect( BotEnt, theFakeClientName, "127.0.0.1", ptr );
-			
+			ClientConnect(BotEnt, theFakeClientName, "127.0.0.1", ptr);
+
 			// Pieter van Dijk - use instead of DispatchSpawn() - Hip Hip Hurray!
-			ClientPutInServer( BotEnt );
-			
+			ClientPutInServer(BotEnt);
+
 			BotEnt->v.flags |= FL_FAKECLIENT;
-		}
+		}*/
+
+		theSuccess = true;
 	}
 	#endif
 #endif
@@ -1411,6 +1416,47 @@ BOOL AvHGamerules::ClientCommand( CBasePlayer *pPlayer, const char *pcmd )
             theSuccess = true;
         }
     }
+	else if (FStrEq(pcmd, "bot_setdebugaiplayer"))
+	{
+		CBaseEntity* SpectatedPlayer = theAvHPlayer->GetSpectatingEntity();
+
+		if (SpectatedPlayer)
+		{
+			AIMGR_SetDebugAIPlayer(SpectatedPlayer->edict());
+		}
+		else
+		{
+			AIMGR_SetDebugAIPlayer(nullptr);
+		}
+
+		theSuccess = true;
+	}
+	else if (FStrEq(pcmd, "bot_cometome"))
+	{
+		vector<AvHAIPlayer*> AIPlayers = AIMGR_GetAllAIPlayers();
+
+		for (auto it = AIPlayers.begin(); it != AIPlayers.end(); it++)
+		{
+			AvHAIPlayer* thisBot = (*it);
+			{
+				AITASK_SetMoveTask(thisBot, &thisBot->PrimaryBotTask, theAvHPlayer->pev->origin, true);
+			}
+		}
+
+		theSuccess = true;
+	}
+	else if (FStrEq(pcmd, "bot_drawtempobstacles"))
+	{
+		AIDEBUG_DrawTemporaryObstacles(10.0f);
+
+		theSuccess = true;
+	}
+	else if (FStrEq(pcmd, "bot_drawoffmeshconns"))
+	{
+		AIDEBUG_DrawOffMeshConnections(10.0f);
+
+		theSuccess = true;
+	}
     else if( FStrEq( pcmd, kcRemoveUpgrade) )
     {
         // Allow even with cheats off right now, put this back in for first beta

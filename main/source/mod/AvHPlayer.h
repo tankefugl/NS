@@ -295,6 +295,7 @@ public:
 	int				GetExperienceLevel() const;
 
 	AvHServerPlayerData* GetServerPlayerData();
+	const OrderListType& GetActiveOrders() { return mClientOrders; }
 
 	virtual bool	GetHasItem(const char *szName);
 	virtual void	GiveNamedItem(const char *szName, bool inSendMessage = false);
@@ -482,6 +483,10 @@ public:
 	// 
 
 	bool			GetHasSeenATeam();
+
+	bool				GetPurchaseAllowed(AvHMessageID inUpgrade, int& outCost, string* outErrorMessage = NULL) const;
+
+	void				GiveOrderToSelection(AvHOrder& inOrder);
 private:
 	void				AcquireOverwatchTarget();
 	bool				AttemptToBuildAlienStructure(AvHMessageID inMessageID);
@@ -499,13 +504,13 @@ private:
 	bool				QueryEnemySighted(CBaseEntity* inEntity);
 	bool				GetHasActiveAlienWeaponWithImpulse(AvHMessageID inMessageID) const;
 	bool				GetRandomGameStartedTick(float inApproximateFrameRate);
-	bool				GetPurchaseAllowed(AvHMessageID inUpgrade, int& outCost, string* outErrorMessage = NULL) const;
+	
 	int					GetRelevantWeight(void) const;
 	int					GetRelevantWeightForWeapon(AvHBasePlayerWeapon* inWeapon) const;
 	void				GetSpeeds(int& outBaseSpeed, int& outUnemcumberedSpeed) const;
 	void				GiveCombatUpgradesOnSpawn();
 	bool				GiveOrderToSelection(AvHOrderType inOrder, Vector inNormRay);
-	void				GiveOrderToSelection(AvHOrder& inOrder);
+	
 	void				GiveUpgrade(AvHMessageID inUpgrade);
 	void				HandleOverwatch(void);
 	void				HandleResearch();

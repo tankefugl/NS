@@ -201,6 +201,7 @@
 #include "AvHNetworkMessages.h"
 #include "AvHNexusServer.h"
 #include "AvHParticleTemplateClient.h"
+#include "AvHAIPlayerManager.h"
 
 // : 0001073
 #ifdef USE_OLDAUTH
@@ -231,6 +232,13 @@ extern cvar_t                           avh_mapvoteratio;
 extern cvar_t							avh_structurelimit;
 extern cvar_t							avh_version;
 
+extern cvar_t							avh_botsenabled;
+extern cvar_t							avh_botautomode;
+extern cvar_t							avh_botminplayers;
+extern cvar_t							avh_botskill;
+extern cvar_t							avh_botcommandermode;
+extern cvar_t							avh_botdebugmode;
+
 BOOL IsSpawnPointValid( CBaseEntity *pPlayer, CBaseEntity *pSpot );
 inline int FNullEnt( CBaseEntity *ent ) { return (ent == NULL) || FNullEnt( ent->edict() ); }
 //extern void ResetCachedEntities();
@@ -245,7 +253,6 @@ extern cvar_t							avh_countdowntime;
 extern int								gCommanderPointsAwardedEventID;
 extern cvar_t							avh_networkmeterrate;
 
-std::string gPlayerNames[128];
 cvar_t* cocName;
 cvar_t* cocExp;
 int gStartPlayerID = 0;
@@ -266,6 +273,7 @@ int kProfileRunConfig = 0xFFFFFFFF;
 #endif
 
 std::string GetLogStringForPlayer( edict_t *pEntity );
+
 
 const AvHMapExtents& GetMapExtents()
 {
@@ -345,6 +353,76 @@ AvHGamerules::AvHGamerules() : mTeamA(TEAM_ONE), mTeamB(TEAM_TWO)
 	RegisterServerVariable(&avh_fastjp);
 	RegisterServerVariable(&avh_randomrfk);
 	RegisterServerVariable(&avh_parasiteonmap);
+	// AI Player cvars
+	RegisterServerVariable(&avh_botsenabled);
+	RegisterServerVariable(&avh_botautomode);
+	RegisterServerVariable(&avh_botminplayers);
+	RegisterServerVariable(&avh_botskill);
+	RegisterServerVariable(&avh_botdebugmode);
+	RegisterServerVariable(&avh_botcommandermode);
+
+	REGISTER_SERVER_FUNCTION("sv_botadd", []()
+		{
+			if (!AIMGR_IsBotEnabled())
+			{
+				ALERT(at_console, "Bots are disabled, or the navmesh could not be loaded.");
+				return;
+			}
+
+			int DesiredTeam = 0;
+
+			if (CMD_ARGC() >= 2)
+			{
+				const char* TeamInput = CMD_ARGV(1);
+
+				if (TeamInput != NULL)
+				{
+					DesiredTeam = atoi(TeamInput);
+				}
+			}
+
+			AIMGR_AddAIPlayerToTeam(DesiredTeam);
+		});
+
+	REGISTER_SERVER_FUNCTION("sv_botremove", []()
+		{
+			if (!AIMGR_IsBotEnabled())
+			{
+				ALERT(at_console, "Bots are disabled, or the navmesh could not be loaded.");
+				return;
+			}
+
+			int DesiredTeam = 0;
+
+			if (CMD_ARGC() >= 2)
+			{
+				const char* TeamInput = CMD_ARGV(1);
+
+				if (TeamInput != NULL)
+				{
+					DesiredTeam = atoi(TeamInput);
+				}
+			}
+
+			AIMGR_RemoveAIPlayerFromTeam(DesiredTeam);
+		});
+
+	REGISTER_SERVER_FUNCTION("sv_botreloadnav", []()
+		{
+			if (avh_botsenabled.value > 0)
+			{
+				AIMGR_ReloadNavigationData();
+			}
+			else
+			{
+				ALERT(at_console, "Bots are disabled, enable first before loading the navmesh.");
+			}
+		});
+
+	REGISTER_SERVER_FUNCTION("sv_botregenini", []()
+		{
+			AIMGR_RegenBotIni();
+		});
 
 	g_VoiceGameMgr.Init(&gVoiceHelper, gpGlobals->maxClients);
 
@@ -354,6 +432,7 @@ AvHGamerules::AvHGamerules() : mTeamA(TEAM_ONE), mTeamB(TEAM_TWO)
 
 	this->mGameInReset = false;
 
+	AIMGR_NewMap();
 	this->ResetGame();
 }
 
@@ -1209,6 +1288,30 @@ bool AvHGamerules::GetArePlayersAllowedToJoinImmediately(void) const
 	return thePlayerIsAllowedToJoinImmediately;
 }
 
+bool AvHGamerules::GetTeamHasRoomToJoin(AvHTeamNumber inTeamNumber) const
+{
+	AvHTeamNumber teamA = this->mTeamA.GetTeamNumber();
+	AvHTeamNumber teamB = this->mTeamB.GetTeamNumber();
+	AvHTeamNumber theOtherTeamNumber = (inTeamNumber == teamA) ? teamB : teamA;
+
+	const AvHTeam* theTeam = this->GetTeam(inTeamNumber);
+	const AvHTeam* theOtherTeam = this->GetTeam(theOtherTeamNumber);
+
+	if (theTeam && theOtherTeam)
+	{
+		int theWouldBeNumPlayersOnTeam = theTeam->GetPlayerCount();
+		int theWouldBeNumPlayersOnOtherTeam = theOtherTeam->GetPlayerCount();
+
+		int theDiscrepancyAllowed = max(1.0f, avh_limitteams.value);
+		if (((theWouldBeNumPlayersOnTeam - theWouldBeNumPlayersOnOtherTeam) <= theDiscrepancyAllowed) || this->GetIsTournamentMode() || this->GetCheatsEnabled())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool AvHGamerules::GetCanJoinTeamInFuture(AvHPlayer* inPlayer, AvHTeamNumber inTeamNumber, string& outString) const
 {
 	// You can switch teams, unless
@@ -1452,6 +1555,21 @@ bool AvHGamerules::GetIsTrainingMode(void) const
 #endif
 }
 
+bool AvHGamerules::GetBotsEnabled(void) const
+{
+	return (ns_cvar_float(&avh_botsenabled) > 0);
+}
+
+int AvHGamerules::GetBotMinPlayerCount(void) const
+{
+	return (int)ns_cvar_float(&avh_botminplayers);
+}
+
+int AvHGamerules::GetBotSkill(void) const
+{
+	return (int)ns_cvar_float(&avh_botskill);
+}
+
 AvHMapMode AvHGamerules::GetMapMode(void) const
 {
 	return this->mMapMode;
@@ -1612,6 +1730,26 @@ const AvHTeam* AvHGamerules::GetTeamA(void) const
 const AvHTeam* AvHGamerules::GetTeamB(void) const
 {
 	return &this->mTeamB;
+}
+
+AvHTeamNumber AvHGamerules::GetTeamANumber()
+{
+	return this->mTeamA.GetTeamNumber();
+}
+
+AvHTeamNumber AvHGamerules::GetTeamBNumber()
+{
+	return this->mTeamB.GetTeamNumber();
+}
+
+int AvHGamerules::GetTeamAPlayerCount()
+{
+	return this->mTeamA.GetPlayerCount();
+}
+
+int AvHGamerules::GetTeamBPlayerCount()
+{
+	return this->mTeamB.GetPlayerCount();
 }
 
 AvHTeam* AvHGamerules::GetTeam(AvHTeamNumber inTeamNumber)
@@ -2065,6 +2203,8 @@ void AvHGamerules::PlayerSpawn( CBasePlayer *pPlayer )
 		//theAvHPlayer->InitializeFromTeam();
 		//this->GetTeam(theAvHPlayer->GetTeam())->AddPlayer(theAvHPlayer->entindex(), theAvHPlayer->GetRole());
 	}
+
+	AIMGR_PlayerSpawned();
 }
 
 void AvHGamerules::PlayerThink( CBasePlayer *pPlayer )
@@ -2598,6 +2738,8 @@ void AvHGamerules::ResetGame(bool inPreserveTeams)
 	gSvCheatsLastUpdateTime = -1.0f;
 	this->mHasPlayersToReset = false;
 	this->mLastPlayerResetTime = -1.0f;
+
+	AIMGR_ResetRound();
 }
 
 void AvHGamerules::RecalculateMapMode( void )
@@ -3320,6 +3462,7 @@ void AvHGamerules::SetGameStarted(bool inGameStarted)
 	if(!this->mGameStarted && inGameStarted)
 	{
 		FireTargets(ktGameStartedStatus, NULL, NULL, USE_TOGGLE, 0.0f);
+		AIMGR_RoundStarted();
 		//AvHNexus::startGame();
 	}
 	this->mGameStarted = inGameStarted;
@@ -3505,7 +3648,21 @@ void AvHGamerules::Think(void)
 	this->UpdateGameTime();
 
     if(GET_RUN_CODE(4))
-    {
+    {	
+		AIMGR_UpdateAIPlayerCounts();
+		
+		if (AIMGR_IsBotEnabled())
+		{
+			if (AIMGR_GetNavMeshStatus() == NAVMESH_STATUS_PENDING)
+			{
+				AIMGR_LoadNavigationData();
+			}
+
+			AIMGR_UpdateAIMapData();
+
+			AIMGR_UpdateAIPlayers();
+		}
+
 	    if(!this->GetGameStarted())
 	    {
 		    if(!this->GetIsTournamentMode())
@@ -4557,5 +4714,4 @@ void AvHGamerules::BalanceChanged()
 		theEntity->SendWeaponUpdate();
 	END_FOR_ALL_ENTITIES(kAvHPlayerClassName)
 }
-
 
