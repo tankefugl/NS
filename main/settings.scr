@@ -59,7 +59,7 @@ DESCRIPTION SERVER_OPTIONS
 	{
 		"#Valve_Max_Players"
 		{ NUMBER 2.000000 32.000000 }
-		{ "2.000000" }
+		{ "24.000000" }
 	}
 
 	"sv_password"
