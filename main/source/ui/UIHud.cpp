@@ -233,7 +233,11 @@ bool UIHud::PickRandomSong(string& outRelativeSongName) const
 	{
 		do
 		{
-			theSongList.push_back(thePath + kDelimiter + string(theFindData.cFileName));
+			// Remove title track from in-game music here so people updating don't have to remove the file.
+			if (string(theFindData.cFileName) != string("ns_titlescreen.mp3"))
+			{
+				theSongList.push_back(thePath + kDelimiter + string(theFindData.cFileName));
+			}
 		} 
 		while(FindNextFile(theFileHandle, &theFindData));
 	
