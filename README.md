@@ -1,6 +1,6 @@
 # Natural Selection v3.3
 
-An updated build of the game [Natural Selection] for Windows and Linux focused on quality-of-life improvements and bug fixes. For a new custom-built bot for NS, go check out [Evobot].
+An updated build of the game [Natural Selection] for Windows and Linux focused on quality-of-life improvements and bug fixes.
 
 ## Downloads
 
