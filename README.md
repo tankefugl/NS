@@ -80,6 +80,8 @@ In order to check if your server is connected to the steam servers copy the foll
 
 There is an updated version of metamod called [metamod-p](https://github.com/APGRoboCop/metamod-p/).
 
+To run NS plugins, please use the [updated build of AMX](https://github.com/pierow/amxmodx-ns/releases) that supports this version of NS.
+
 ## Bots
 Evobot is integrated in NS 3.3 and can be configured in the listen server creation UI or via the following commands in the `server.cfg` for dedicated servers:
 ```
