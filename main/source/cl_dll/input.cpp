@@ -107,6 +107,8 @@ extern cvar_t *in_joystick;
 int	in_impulse	= 0;
 int	in_cancel	= 0;
 
+bool pistolHandlerDown = false;
+
 cvar_t	*m_pitch;
 cvar_t	*m_yaw;
 cvar_t	*m_forward;
@@ -823,6 +825,35 @@ void IN_AttackDownForced(void)
 void IN_AttackUpForced(void)
 {
 	KeyUpForced( &in_attack );
+}
+
+void IN_AttackHandlerDown(void)
+{
+	if (gHUD.GetCurrentWeaponID() == AVH_WEAPON_PISTOL && cl_pistoltrigger && cl_pistoltrigger->value)
+	{
+		IN_AttackDown();
+		IN_AttackUp();
+		pistolHandlerDown = true;
+	}
+	else
+	{
+		IN_AttackDown();
+	}
+}
+
+void IN_AttackHandlerUp(void)
+{
+	// Pistol binary trigger. Check if attack was down, otherwise the engine will fire the pistol when closing the console or tabbing in as it calls every -command.
+	if (gHUD.GetCurrentWeaponID() == AVH_WEAPON_PISTOL && cl_pistoltrigger && cl_pistoltrigger->value && pistolHandlerDown)
+	{
+		IN_AttackDown();
+		IN_AttackUp();
+		pistolHandlerDown = false;
+	}
+	else
+	{
+		IN_AttackUp();
+	}
 }
 
 // Special handling
@@ -1642,8 +1673,8 @@ void InitInput (void)
 	gEngfuncs.pfnAddCommand ("-moveright", IN_MoverightUp);
 	gEngfuncs.pfnAddCommand ("+speed", IN_SpeedDown);
 	gEngfuncs.pfnAddCommand ("-speed", IN_SpeedUp);
-	gEngfuncs.pfnAddCommand ("+attack", IN_AttackDown);
-	gEngfuncs.pfnAddCommand ("-attack", IN_AttackUp);
+	gEngfuncs.pfnAddCommand ("+attack", IN_AttackHandlerDown);
+	gEngfuncs.pfnAddCommand ("-attack", IN_AttackHandlerUp);
 	//gEngfuncs.pfnAddCommand ("+movement", IN_Attack2Down);
 	//gEngfuncs.pfnAddCommand ("-movement", IN_Attack2Up);
 	gEngfuncs.pfnAddCommand ("+use", IN_UseDown);
@@ -1727,7 +1758,7 @@ void InitInput (void)
 	cl_chatbeep			= gEngfuncs.pfnRegisterVariable	("cl_chatbeep", "1", FCVAR_ARCHIVE);
 	cl_mutemenu			= gEngfuncs.pfnRegisterVariable ("cl_mutemenu", "3", FCVAR_ARCHIVE);
 	cl_weaponcfgs		= gEngfuncs.pfnRegisterVariable ("cl_weaponcfgs", "1", FCVAR_ARCHIVE);
-	cl_pistoltrigger	= gEngfuncs.pfnRegisterVariable ("cl_pistoltrigger", "1", FCVAR_ARCHIVE | FCVAR_USERINFO);
+	cl_pistoltrigger	= gEngfuncs.pfnRegisterVariable ("cl_pistoltrigger", "1", FCVAR_ARCHIVE);
 	cl_cmcancellast		= gEngfuncs.pfnRegisterVariable("cl_cmcancellast", "0", FCVAR_ARCHIVE);
 
 

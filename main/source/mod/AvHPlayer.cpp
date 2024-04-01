@@ -4863,6 +4863,7 @@ void AvHPlayer::PlayerConstructUse()
         if((this->mTimeOfLastConstructUseAnimation == 0) || (gpGlobals->time > (this->mTimeOfLastConstructUseAnimation + kConstructAnimationInterval)))
         {
             // Play special builder animation
+            this->pev->weaponanim = kConstructAnimationIndex;
             PLAYBACK_EVENT_FULL(0, this->edict(), gWeaponAnimationEventID, 0, this->pev->origin, (float *)&g_vecZero, 0.0, 0.0, 0, kConstructAnimationIndex, 0, 0 );
 
             // Delay idle

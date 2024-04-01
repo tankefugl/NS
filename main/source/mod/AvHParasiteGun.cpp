@@ -109,7 +109,21 @@ int AvHParasiteGun::GetDamageType() const
 
 int	AvHParasiteGun::GetDeployAnimation() const
 {
-	return 6;
+	int theDeployAnimation = 5;
+
+	AvHWeaponID thePreviousID = this->GetPreviousWeaponID();
+
+	switch (thePreviousID)
+	{
+	case AVH_WEAPON_BITE:
+	case AVH_WEAPON_PARASITE:
+	case AVH_ABILITY_LEAP:
+	case AVH_WEAPON_DIVINEWIND:
+		theDeployAnimation = -1;
+		break;
+	}
+
+	return theDeployAnimation;
 }
 
 bool AvHParasiteGun::GetFiresUnderwater() const

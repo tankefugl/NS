@@ -94,8 +94,8 @@ float AvHClaws::GetRateOfFire() const
 int	AvHClaws::GetDeployAnimation() const
 {
 	// Look at most recently used weapon and see if we can transition from it
-	int theDeployAnimation = 9;
-	
+	int theDeployAnimation = 27;
+
 	AvHWeaponID thePreviousID = this->GetPreviousWeaponID();
 	
 	switch(thePreviousID)

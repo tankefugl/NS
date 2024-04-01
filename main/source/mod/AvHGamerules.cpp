@@ -947,15 +947,10 @@ void AvHGamerules::ClientUserInfoChanged(CBasePlayer *pPlayer, char *infobuffer)
 	// NOTE: Not currently calling down to parent CHalfLifeTeamplay 
 
 	const char* theAutoWeapSwapValue = g_engfuncs.pfnInfoKeyValue(infobuffer, "cl_weaponswap");
-	if (theAutoWeapSwapValue) 
+
+	if (theAutoWeapSwapValue)
 	{
 		pPlayer->m_iAutoWeaponSwap = atoi(theAutoWeapSwapValue);
-	}
-
-	const char* thePistolTriggerValue = g_engfuncs.pfnInfoKeyValue(infobuffer, "cl_pistoltrigger");
-	if (thePistolTriggerValue) 
-	{
-		pPlayer->m_iPistolTrigger = atoi(thePistolTriggerValue);
 	}
 }
 

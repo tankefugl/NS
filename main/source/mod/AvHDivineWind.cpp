@@ -98,7 +98,21 @@ float AvHDivineWind::GetRateOfFire() const
 
 int	AvHDivineWind::GetDeployAnimation() const
 {
-	return 13;
+	int theDeployAnimation = 5;
+
+	AvHWeaponID thePreviousID = this->GetPreviousWeaponID();
+
+	switch (thePreviousID)
+	{
+	case AVH_WEAPON_BITE:
+	case AVH_WEAPON_PARASITE:
+	case AVH_ABILITY_LEAP:
+	case AVH_WEAPON_DIVINEWIND:
+		theDeployAnimation = -1;
+		break;
+	}
+
+	return theDeployAnimation;
 }
 
 bool AvHDivineWind::GetFiresUnderwater() const

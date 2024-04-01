@@ -1192,6 +1192,8 @@ public:
 	virtual void	GetEventOrigin(Vector& outOrigin) const;
 
 	virtual bool	GetFiresUnderwater() const;
+
+	virtual int		GetIdleAnimation() const;
 	
 	virtual bool	GetIsDroppable() const;
 	

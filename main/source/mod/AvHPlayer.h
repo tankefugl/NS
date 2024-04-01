@@ -868,7 +868,6 @@ private:
 
 	bool				mUsedKilled;
 
-
 	//TODO: remove this system from AvHPlayer and create an 
 	// explicit balance forwarding class registered to each
 	// client instead.  This functionality is tangential to

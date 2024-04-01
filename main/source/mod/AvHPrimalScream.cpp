@@ -82,14 +82,18 @@ bool AvHPrimalScream::GetFiresUnderwater() const
 int	AvHPrimalScream::GetDeployAnimation() const
 {
 	// Look at most recently used weapon and see if we can transition from it
-	int theDeployAnimation = -1;
+	int theDeployAnimation = 1;
 	
 	AvHWeaponID thePreviousID = this->GetPreviousWeaponID();
 	
 	switch(thePreviousID)
 	{
 	case AVH_WEAPON_BITE2:
-		theDeployAnimation = 9;
+		theDeployAnimation = -1;
+		break;
+	case AVH_WEAPON_SPORES:
+	case AVH_WEAPON_UMBRA:
+		theDeployAnimation = 12;
 		break;
 	case AVH_WEAPON_SPIKE:
 		theDeployAnimation = 8;
