@@ -563,6 +563,8 @@ bool AITASK_IsResupplyTaskStillValid(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 
 	if (!UTIL_StructureIsFullyBuilt(Task->TaskTarget) || UTIL_StructureIsRecycling(Task->TaskTarget)) { return false; }
 
+	if (IsAreaAffectedBySpores(Task->TaskTarget->v.origin) && !PlayerHasHeavyArmour(pBot->Edict)) { return false; }
+
 	return (
 			(pBot->Edict->v.health < pBot->Edict->v.max_health)
 		||	(UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) < UTIL_GetPlayerPrimaryMaxAmmoReserve(pBot->Player))
@@ -1095,11 +1097,18 @@ void BotProgressMoveTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 {
 	Task->TaskStartedTime = gpGlobals->time;
 
-	if (IsPlayerLerk(pBot->Edict))
+	bool bPlayerCloaked = pBot->Player->GetOpacity() < 0.5f && !GetHasUpgrade(pBot->Edict->v.iuser4, MASK_SENSORY_NEARBY);
+
+	if (IsPlayerLerk(pBot->Edict) || bPlayerCloaked)
 	{
 		if (AITAC_ShouldBotBeCautious(pBot))
 		{
-			MoveTo(pBot, Task->TaskLocation, MOVESTYLE_HIDE, 100.0f);
+			if (bPlayerCloaked)
+			{
+				pBot->BotNavInfo.bShouldWalk = true;
+			}
+
+			MoveTo(pBot, Task->TaskLocation, MOVESTYLE_AMBUSH, 100.0f);
 		}
 		else
 		{
@@ -1649,11 +1658,19 @@ void BotProgressGuardTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 	if (vDist2DSq(pBot->Edict->v.origin, Task->TaskLocation) > sqrf(UTIL_MetresToGoldSrcUnits(10.0f)))
 	{
 		Task->TaskStartedTime = 0.0f;
-		if (IsPlayerLerk(pBot->Edict))
+
+		bool bPlayerCloaked = pBot->Player->GetOpacity() < 0.5f && !GetHasUpgrade(pBot->Edict->v.iuser4, MASK_SENSORY_NEARBY);
+
+		if (IsPlayerLerk(pBot->Edict) || bPlayerCloaked)
 		{
 			if (AITAC_ShouldBotBeCautious(pBot))
 			{
-				MoveTo(pBot, Task->TaskLocation, MOVESTYLE_HIDE, 100.0f);
+				if (bPlayerCloaked)
+				{
+					pBot->BotNavInfo.bShouldWalk = true;
+				}
+
+				MoveTo(pBot, Task->TaskLocation, MOVESTYLE_AMBUSH, 100.0f);
 			}
 			else
 			{

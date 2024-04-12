@@ -101,7 +101,7 @@ void AIMGR_UpdateAIPlayerCounts()
 	// If bots are disabled or we've exceeded max AI time and no humans are playing, ensure we've removed all bots from the game
 	// Max AI time is configurable in nsbots.ini, and helps prevent infinite stalemates
 	// Default time is 90 minutes before bots start leaving to let the map cycle
-	if (!AIMGR_IsBotEnabled() || (bMatchExceededMaxLength && AIMGR_GetNumActiveHumanPlayers() == 0))
+	if (!AIMGR_IsBotEnabled() || (bMatchExceededMaxLength && AIMGR_GetNumActiveHumanPlayers() == 0) || (AIMGR_HasMatchEnded() && gpGlobals->time - GetGameRules()->GetVictoryTime() > 5.0f))
 	{
 		if (AIMGR_GetNumAIPlayers() > 0)
 		{
@@ -112,38 +112,6 @@ void AIMGR_UpdateAIPlayerCounts()
 	}
 
 	if (!AIMGR_ShouldStartPlayerBalancing()) { return; }
-
-	// If game has ended, kick bots that have dropped back to the ready room
-	if (GetGameRules()->GetVictoryTeam() != TEAM_IND)
-	{
-		AIMGR_RemoveBotsInReadyRoom();
-		return;
-	}
-
-
-
-	BotFillTiming CurrentFillTiming = CONFIG_GetBotFillTiming();
-
-	if (!GetGameRules()->GetGameStarted())
-	{
-		if (CurrentFillTiming == FILLTIMING_ROUNDSTART) { return; } // Do nothing if we're only meant to add bots after round start, and the round hasn't started
-
-		if (CurrentFillTiming == FILLTIMING_ALLHUMANS)
-		{
-			for (int i = 1; i <= gpGlobals->maxClients; i++)
-			{
-				edict_t* PlayerEdict = INDEXENT(i);
-				if (FNullEnt(PlayerEdict) || PlayerEdict->free || (PlayerEdict->v.flags & FL_FAKECLIENT)) { continue; } // Ignore fake clients
-
-				AvHPlayer* PlayerRef = dynamic_cast<AvHPlayer*>(CBaseEntity::Instance(PlayerEdict));
-
-				if (!PlayerRef) { continue; }
-
-				if (PlayerRef->GetInReadyRoom()) { return; } // If there is a human in the ready room, don't add any more bots
-			}
-		}
-	}
-	
 
 	if (avh_botautomode.value == 1) // Fill teams: bots will be added and removed to maintain a minimum player count
 	{
@@ -297,6 +265,28 @@ void AIMGR_RemoveAIPlayerFromTeam(int Team)
 
 	AvHTeamNumber teamA = GetGameRules()->GetTeamANumber();
 	AvHTeamNumber teamB = GetGameRules()->GetTeamBNumber();
+
+	if (AIMGR_HasMatchEnded() && Team == 0)
+	{
+		vector<AvHAIPlayer>::iterator ItemToRemove = ActiveAIPlayers.end(); // Current bot to be kicked
+
+		for (auto it = ActiveAIPlayers.begin(); it != ActiveAIPlayers.end(); it++)
+		{
+			if (IsPlayerInReadyRoom(it->Edict))
+			{
+				ItemToRemove = it;
+				break;
+			}
+		}
+
+		if (ItemToRemove != ActiveAIPlayers.end())
+		{
+			ItemToRemove->Player->Kick();
+
+			ActiveAIPlayers.erase(ItemToRemove);
+			return;
+		}
+	}
 
 	if (Team > 0)
 	{
@@ -1190,7 +1180,43 @@ vector<AvHPlayer*> AIMGR_GetNonAIPlayersOnTeam(AvHTeamNumber Team)
 
 bool AIMGR_ShouldStartPlayerBalancing()
 {
-	return (bPlayerSpawned && gpGlobals->time - AIStartedTime > AI_GRACE_PERIOD) || (gpGlobals->time - AIStartedTime > AI_MAX_START_TIMEOUT);
+	if (gpGlobals->time - AIStartedTime < AI_GRACE_PERIOD) { return false; }
+
+	if (AIMGR_HasMatchEnded()) { return false; }
+
+	BotFillTiming FillTiming = CONFIG_GetBotFillTiming();
+
+	switch (FillTiming)
+	{
+		case FILLTIMING_MAPLOAD:
+			return true;
+		case FILLTIMING_ROUNDSTART:
+			return GetGameRules()->GetGameStarted();
+		default:
+			break;
+	}
+
+	if (!bPlayerSpawned)
+	{
+		return (gpGlobals->time - AIStartedTime > AI_MAX_START_TIMEOUT);
+	}
+
+	// We've started adding bots, keep going
+	if (AIMGR_GetNumAIPlayers() > 0) { return true; }
+
+	for (int i = 1; i <= gpGlobals->maxClients; i++)
+	{
+		edict_t* PlayerEdict = INDEXENT(i);
+		if (FNullEnt(PlayerEdict) || PlayerEdict->free || (PlayerEdict->v.flags & FL_FAKECLIENT)) { continue; } // Ignore fake clients
+
+		AvHPlayer* PlayerRef = dynamic_cast<AvHPlayer*>(CBaseEntity::Instance(PlayerEdict));
+
+		if (!PlayerRef) { continue; }
+
+		if (PlayerRef->GetInReadyRoom()) { return false; } // If there is a human in the ready room, don't add any more bots
+	}
+
+	return true;
 }
 
 void AIMGR_UpdateAIMapData()
@@ -1280,6 +1306,9 @@ void AIMGR_OnBotEnabled()
 		UnloadNavigationData();
 	}
 
+	CONFIG_ParseConfigFile();
+	CONFIG_PopulateBotNames();
+
 	AITAC_ClearMapAIData(true);
 
 	bBotsEnabled = true;
@@ -1353,13 +1382,31 @@ void AIMGR_UpdateAISystem()
 
 	if (AIMGR_IsBotEnabled())
 	{
-		if (AIMGR_GetNavMeshStatus() == NAVMESH_STATUS_PENDING)
+		if (!AIMGR_HasMatchEnded())
 		{
-			AIMGR_LoadNavigationData();
-		}
+			if (AIMGR_GetNavMeshStatus() == NAVMESH_STATUS_PENDING)
+			{
+				AIMGR_LoadNavigationData();
+			}
 
-		AIMGR_UpdateAIMapData();
+			AIMGR_UpdateAIMapData();
+		}
 
 		AIMGR_UpdateAIPlayers();
 	}
+}
+
+bool AIMGR_HasMatchEnded()
+{
+	// Game has finished
+	if (GetGameRules()->GetVictoryTeam() != TEAM_IND) { return true; }
+
+	// Game is still going, but if it's exceeded the max AI match time and there are no humans playing, consider the match over
+	// Helps prevent stalemates if bots get stuck and keeps map rotations going
+	float MaxMinutes = CONFIG_GetMaxAIMatchTimeMinutes();
+	float MaxSeconds = MaxMinutes * 60.0f;
+
+	bool bMatchExceededMaxLength = (GetGameRules()->GetGameTime() > MaxSeconds);
+
+	return (bMatchExceededMaxLength && AIMGR_GetNumActiveHumanPlayers() == 0);
 }

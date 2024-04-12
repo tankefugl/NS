@@ -66,6 +66,8 @@ void BotClearEnemyTrackingInfo(enemy_status* TrackingInfo);
 bool IsPlayerInBotFOV(AvHAIPlayer* Observer, edict_t* TargetPlayer);
 void UpdateAIPlayerViewFrustum(AvHAIPlayer* pBot);
 
+bool UTIL_IsCloakedPlayerInvisible(edict_t* Observer, AvHPlayer* Player);
+
 
 Vector GetVisiblePointOnPlayerFromObserver(edict_t* Observer, edict_t* TargetPlayer);
 

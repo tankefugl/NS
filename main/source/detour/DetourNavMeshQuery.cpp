@@ -1130,6 +1130,9 @@ dtStatus dtNavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef,
 	{
 		// Remove node from open list and put it in closed list.
 		dtNode* bestNode = m_openList->pop();
+
+		if (!bestNode) { continue; }
+
 		bestNode->flags &= ~DT_NODE_OPEN;
 		bestNode->flags |= DT_NODE_CLOSED;
 		
@@ -1143,14 +1146,16 @@ dtStatus dtNavMeshQuery::findPath(dtPolyRef startRef, dtPolyRef endRef,
 		// Get current poly and tile.
 		// The API input has been cheked already, skip checking internal data.
 		const dtPolyRef bestRef = bestNode->id;
-		const dtMeshTile* bestTile = 0;
-		const dtPoly* bestPoly = 0;
+		const dtMeshTile* bestTile = nullptr;
+		const dtPoly* bestPoly = nullptr;
 		m_nav->getTileAndPolyByRefUnsafe(bestRef, &bestTile, &bestPoly);
+
+		if (!bestTile || !bestPoly || !bestTile->links) { continue; }
 		
 		// Get parent poly and tile.
 		dtPolyRef parentRef = 0;
-		const dtMeshTile* parentTile = 0;
-		const dtPoly* parentPoly = 0;
+		const dtMeshTile* parentTile = nullptr;
+		const dtPoly* parentPoly = nullptr;
 		if (bestNode->pidx)
 			parentRef = m_nodePool->getNodeAtIdx(bestNode->pidx)->id;
 		if (parentRef)

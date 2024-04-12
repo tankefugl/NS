@@ -2522,6 +2522,27 @@ void CheckAndHandleDoorObstruction(AvHAIPlayer* pBot)
 
 		DoorTrigger* Trigger = UTIL_GetNearestDoorTrigger(pBot->CurrentFloorPosition, Door, nullptr, true);
 
+		// Fail-safe: If the bot cannot reach any trigger for whatever reason, then telepathically trigger one otherwise it will be stuck forever
+		if (!Trigger)
+		{
+			for (auto it = Door->TriggerEnts.begin(); it != Door->TriggerEnts.end(); it++)
+			{
+				if (it->NextActivationTime > gpGlobals->time)
+				{
+					Trigger = nullptr;
+					break;
+				}
+
+				Trigger = &(*it);
+			}
+
+			if (Trigger)
+			{
+				Trigger->Entity->Use(pBot->Player, pBot->Player, USE_TOGGLE, 0.0f);
+				return;
+			}
+		}
+
 		if (Trigger && Trigger->NextActivationTime < gpGlobals->time)
 		{
 			if (Trigger->TriggerType == DOOR_BUTTON)
@@ -2562,45 +2583,56 @@ edict_t* UTIL_GetDoorBlockingPathPoint(AvHAIPlayer* pBot, bot_path_node* PathNod
 	{
 		Vector TargetLoc = Vector(FromLoc.x, FromLoc.y, PathNode->requiredZ);
 
-		UTIL_TraceLine(FromLoc, TargetLoc, ignore_monsters, dont_ignore_glass, (pBot!= nullptr) ? pBot->Edict->v.pContainingEntity : nullptr, &doorHit);
-
 		if (!FNullEnt(SearchDoor))
 		{
-			if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+			if (vlineIntersectsAABB(FromLoc, TargetLoc, SearchDoor->v.absmin, SearchDoor->v.absmax))
+			{
+				return SearchDoor;
+			}
 		}
 		else
 		{
-			if (!FNullEnt(doorHit.pHit))
+			for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 			{
-				if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+				if (vlineIntersectsAABB(FromLoc, TargetLoc, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 				{
-					return doorHit.pHit;
+					return it->DoorEdict;
 				}
 			}
-			
+
+			for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+			{
+				if (vlineIntersectsAABB(FromLoc, TargetLoc, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+				{
+					return it->WeldableEdict;
+				}
+			}
 		}
 
 		Vector TargetLoc2 = Vector(ToLoc.x, ToLoc.y, PathNode->requiredZ);
 
-		UTIL_TraceLine(TargetLoc, TargetLoc2, ignore_monsters, dont_ignore_glass, (pBot != nullptr) ? pBot->Edict->v.pContainingEntity : nullptr, &doorHit);
-
 		if (!FNullEnt(SearchDoor))
 		{
-			if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+			if (vlineIntersectsAABB(TargetLoc, TargetLoc2, SearchDoor->v.absmin, SearchDoor->v.absmax))
+			{
+				return SearchDoor;
+			}
 		}
 		else
 		{
-			if (!FNullEnt(doorHit.pHit))
+			for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 			{
-				if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+				if (vlineIntersectsAABB(TargetLoc, TargetLoc2, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 				{
-					return doorHit.pHit;
+					return it->DoorEdict;
+				}
+			}
+
+			for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+			{
+				if (vlineIntersectsAABB(TargetLoc, TargetLoc2, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+				{
+					return it->WeldableEdict;
 				}
 			}
 		}
@@ -2610,69 +2642,89 @@ edict_t* UTIL_GetDoorBlockingPathPoint(AvHAIPlayer* pBot, bot_path_node* PathNod
 	{
 		Vector TargetLoc = Vector(ToLoc.x, ToLoc.y, FromLoc.z);
 
-		UTIL_TraceLine(FromLoc, TargetLoc, ignore_monsters, dont_ignore_glass, (pBot != nullptr) ? pBot->Edict->v.pContainingEntity : nullptr, &doorHit);
-
 		if (!FNullEnt(SearchDoor))
 		{
-			if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+			if (vlineIntersectsAABB(FromLoc, TargetLoc, SearchDoor->v.absmin, SearchDoor->v.absmax))
+			{
+				return SearchDoor;
+			}
 		}
 		else
 		{
-			if (!FNullEnt(doorHit.pHit))
+			for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 			{
-				if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+				if (vlineIntersectsAABB(FromLoc, TargetLoc, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 				{
-					return doorHit.pHit;
+					return it->DoorEdict;
+				}
+			}
+
+			for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+			{
+				if (vlineIntersectsAABB(FromLoc, TargetLoc, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+				{
+					return it->WeldableEdict;
 				}
 			}
 		}
 
-		UTIL_TraceLine(TargetLoc, ToLoc + Vector(0.0f, 0.0f, 10.0f), ignore_monsters, dont_ignore_glass, (pBot != nullptr) ? pBot->Edict->v.pContainingEntity : nullptr, &doorHit);
+		Vector NextTargetLoc = ToLoc + Vector(0.0f, 0.0f, 10.0f);
 
 		if (!FNullEnt(SearchDoor))
 		{
-			if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+			if (vlineIntersectsAABB(TargetLoc, NextTargetLoc, SearchDoor->v.absmin, SearchDoor->v.absmax))
+			{
+				return SearchDoor;
+			}
 		}
 		else
 		{
-			if (!FNullEnt(doorHit.pHit))
+			for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 			{
-				if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+				if (vlineIntersectsAABB(TargetLoc, NextTargetLoc, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 				{
-					return doorHit.pHit;
+					return it->DoorEdict;
+				}
+			}
+
+			for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+			{
+				if (vlineIntersectsAABB(TargetLoc, NextTargetLoc, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+				{
+					return it->WeldableEdict;
 				}
 			}
 		}
 	}
+
 	Vector StartTrace = FromLoc + Vector(0.0f, 0.0f, 16.0f);
 	Vector EndTrace = ToLoc + Vector(0.0f, 0.0f, 16.0f);
 
-	UTIL_TraceLine(StartTrace, EndTrace, ignore_monsters, dont_ignore_glass, (pBot != nullptr) ? pBot->Edict->v.pContainingEntity : nullptr, &doorHit);
-
 	if (!FNullEnt(SearchDoor))
 	{
-		if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+		if (vlineIntersectsAABB(StartTrace, EndTrace, SearchDoor->v.absmin, SearchDoor->v.absmax))
+		{
+			return SearchDoor;
+		}
 	}
 	else
 	{
-		if (!FNullEnt(doorHit.pHit))
+		for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 		{
-			if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-				|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-				|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-				|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+			if (vlineIntersectsAABB(StartTrace, EndTrace, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 			{
-				return doorHit.pHit;
+				return it->DoorEdict;
+			}
+		}
+
+		for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+		{
+			if (vlineIntersectsAABB(StartTrace, EndTrace, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+			{
+				return it->WeldableEdict;
 			}
 		}
 	}
-
 
 	return nullptr;
 }
@@ -2908,45 +2960,56 @@ edict_t* UTIL_GetDoorBlockingPathPoint(const Vector FromLocation, const Vector T
 	{
 		Vector TargetLoc = Vector(FromLoc.x, FromLoc.y, ToLocation.z);
 
-		UTIL_TraceLine(FromLoc, TargetLoc, ignore_monsters, dont_ignore_glass, nullptr, &doorHit);
-
 		if (!FNullEnt(SearchDoor))
 		{
-			if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+			if (vlineIntersectsAABB(FromLoc, TargetLoc, SearchDoor->v.absmin, SearchDoor->v.absmax))
+			{
+				return SearchDoor;
+			}
 		}
 		else
 		{
-			if (!FNullEnt(doorHit.pHit))
+			for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 			{
-				if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0 )
+				if (vlineIntersectsAABB(FromLoc, TargetLoc, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 				{
-					return doorHit.pHit;
+					return it->DoorEdict;
 				}
 			}
 
+			for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+			{
+				if (vlineIntersectsAABB(FromLoc, TargetLoc, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+				{
+					return it->WeldableEdict;
+				}
+			}
 		}
 
 		Vector TargetLoc2 = Vector(ToLoc.x, ToLoc.y, ToLocation.z);
 
-		UTIL_TraceLine(TargetLoc, TargetLoc2, ignore_monsters, dont_ignore_glass, nullptr, &doorHit);
-
 		if (!FNullEnt(SearchDoor))
 		{
-			if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+			if (vlineIntersectsAABB(FromLoc, TargetLoc2, SearchDoor->v.absmin, SearchDoor->v.absmax))
+			{
+				return SearchDoor;
+			}
 		}
 		else
 		{
-			if (!FNullEnt(doorHit.pHit))
+			for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 			{
-				if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+				if (vlineIntersectsAABB(FromLoc, TargetLoc2, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 				{
-					return doorHit.pHit;
+					return it->DoorEdict;
+				}
+			}
+
+			for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+			{
+				if (vlineIntersectsAABB(FromLoc, TargetLoc2, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+				{
+					return it->WeldableEdict;
 				}
 			}
 		}
@@ -2956,64 +3019,84 @@ edict_t* UTIL_GetDoorBlockingPathPoint(const Vector FromLocation, const Vector T
 	{
 		Vector TargetLoc = Vector(ToLoc.x, ToLoc.y, FromLoc.z);
 
-		UTIL_TraceLine(FromLoc, TargetLoc, ignore_monsters, dont_ignore_glass, nullptr, &doorHit);
-
 		if (!FNullEnt(SearchDoor))
 		{
-			if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+			if (vlineIntersectsAABB(FromLoc, TargetLoc, SearchDoor->v.absmin, SearchDoor->v.absmax))
+			{
+				return SearchDoor;
+			}
 		}
 		else
 		{
-			if (!FNullEnt(doorHit.pHit))
+			for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 			{
-				if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+				if (vlineIntersectsAABB(FromLoc, TargetLoc, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 				{
-					return doorHit.pHit;
+					return it->DoorEdict;
+				}
+			}
+
+			for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+			{
+				if (vlineIntersectsAABB(FromLoc, TargetLoc, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+				{
+					return it->WeldableEdict;
 				}
 			}
 		}
 
-		UTIL_TraceLine(TargetLoc, ToLoc + Vector(0.0f, 0.0f, 10.0f), ignore_monsters, dont_ignore_glass, nullptr, &doorHit);
-
-
 		if (!FNullEnt(SearchDoor))
 		{
-			if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+			if (vlineIntersectsAABB(TargetLoc, ToLoc, SearchDoor->v.absmin, SearchDoor->v.absmax))
+			{
+				return SearchDoor;
+			}
 		}
 		else
 		{
-			if (!FNullEnt(doorHit.pHit))
+			for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 			{
-				if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-					|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+				if (vlineIntersectsAABB(TargetLoc, ToLoc, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 				{
-					return doorHit.pHit;
+					return it->DoorEdict;
+				}
+			}
+
+			for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+			{
+				if (vlineIntersectsAABB(TargetLoc, ToLoc, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+				{
+					return it->WeldableEdict;
 				}
 			}
 		}
+
 	}
 
-	UTIL_TraceLine(FromLoc, ToLoc + Vector(0.0f, 0.0f, 10.0f), ignore_monsters, dont_ignore_glass, nullptr, &doorHit);
+	Vector TargetLoc = ToLoc + Vector(0.0f, 0.0f, 10.0f);
 
 	if (!FNullEnt(SearchDoor))
 	{
-		if (doorHit.pHit == SearchDoor) { return doorHit.pHit; }
+		if (vlineIntersectsAABB(FromLoc, TargetLoc, SearchDoor->v.absmin, SearchDoor->v.absmax))
+		{
+			return SearchDoor;
+		}
 	}
 	else
 	{
-		if (!FNullEnt(doorHit.pHit))
+		for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
 		{
-			if (strcmp(STRING(doorHit.pHit->v.classname), "func_door") == 0
-				|| strcmp(STRING(doorHit.pHit->v.classname), "func_seethroughdoor") == 0
-				|| strcmp(STRING(doorHit.pHit->v.classname), "func_door_rotating") == 0
-				|| strcmp(STRING(doorHit.pHit->v.classname), "avhweldable") == 0)
+			if (vlineIntersectsAABB(FromLoc, TargetLoc, it->DoorEdict->v.absmin, it->DoorEdict->v.absmax))
 			{
-				return doorHit.pHit;
+				return it->DoorEdict;
+			}
+		}
+
+		for (auto it = NavWeldableObstacles.begin(); it != NavWeldableObstacles.end(); it++)
+		{
+			if (vlineIntersectsAABB(FromLoc, TargetLoc, it->WeldableEdict->v.absmin, it->WeldableEdict->v.absmax))
+			{
+				return it->WeldableEdict;
 			}
 		}
 	}
@@ -3406,7 +3489,9 @@ void GroundMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoin
 			LeapDist = UTIL_MetresToGoldSrcUnits(1.0f);
 		}
 
-		if (CanBotLeap(pBot) && vDist2DSq(pBot->Edict->v.origin, EndPoint) > sqrf(LeapDist) && UTIL_PointIsDirectlyReachable(pBot->BotNavInfo.NavProfile, pBot->Edict->v.origin, EndPoint))
+		bool bIsAmbush = (pBot->BotNavInfo.MoveStyle == MOVESTYLE_AMBUSH);
+
+		if (!bIsAmbush && CanBotLeap(pBot) && vDist2DSq(pBot->Edict->v.origin, EndPoint) > sqrf(LeapDist) && UTIL_PointIsDirectlyReachable(pBot->BotNavInfo.NavProfile, pBot->Edict->v.origin, EndPoint))
 		{
 			float CombatWeaponEnergyCost = GetEnergyCostForWeapon(pBot->DesiredCombatWeapon);
 			float RequiredEnergy = (CombatWeaponEnergyCost + GetLeapCost(pBot)) - (GetPlayerEnergyRegenPerSecond(pEdict) * 0.5f); // We allow for around .5s of regen time as well
@@ -7770,7 +7855,6 @@ void UTIL_PopulateTriggersForEntity(edict_t* Entity, vector<DoorTrigger>& Trigge
 
 void UTIL_PopulateWeldableObstacles()
 {
-	UTIL_ClearWeldablesData();
 
 	CBaseEntity* currWeldable = NULL;
 	while (((currWeldable = UTIL_FindEntityByClassname(currWeldable, "avhweldable")) != NULL))
@@ -8394,6 +8478,7 @@ void UTIL_PopulateDoors()
 		NewDoor.DoorEntity = ToggleRef;
 		NewDoor.DoorEdict = DoorEnt->edict();
 		NewDoor.CurrentState = ToggleRef->m_toggle_state;
+		NewDoor.DoorName = STRING(NewDoor.DoorEdict->v.targetname);
 
 		const char* DoorName = STRING(NewDoor.DoorEdict->v.targetname);
 

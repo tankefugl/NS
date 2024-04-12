@@ -815,6 +815,8 @@ float UTIL_CalculateSlopeAngleBetweenPoints(const Vector StartPoint, const Vecto
 // Function to check if a finite line intersects with an AABB
 bool vlineIntersectsAABB(Vector lineStart, Vector lineEnd, Vector BoxMinPosition, Vector BoxMaxPosition)
 {
+	if (vPointOverlaps3D(lineStart, BoxMinPosition, BoxMaxPosition) || vPointOverlaps3D(lineEnd, BoxMinPosition, BoxMaxPosition)) { return true; }
+
 	Vector RayDir = UTIL_GetVectorNormal(lineEnd - lineStart);
 	float LineLength = vDist3D(lineStart, lineEnd);
 	Vector dirfrac;

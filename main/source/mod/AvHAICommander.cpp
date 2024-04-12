@@ -145,7 +145,7 @@ bool AICOMM_UpgradeStructure(AvHAIPlayer* pBot, AvHAIBuildableStructure* Structu
 
 bool AICOMM_RecycleStructure(AvHAIPlayer* pBot, AvHAIBuildableStructure* StructureToRecycle)
 {
-	if (!StructureToRecycle || StructureToRecycle->StructureType == STRUCTURE_MARINE_DEPLOYEDMINE) { return false; }
+	if (!StructureToRecycle || StructureToRecycle->StructureType == STRUCTURE_MARINE_DEPLOYEDMINE || UTIL_StructureIsRecycling(StructureToRecycle->edict)) { return false; }
 
 	return AICOMM_ResearchTech(pBot, StructureToRecycle, BUILD_RECYCLE);
 }
@@ -956,11 +956,11 @@ bool AICOMM_IsRequestValid(ai_commander_request* Request)
 			return !IsPlayerBuffed(Requestor)
 				&& !AITAC_ItemExistsInLocation(Requestor->v.origin, DEPLOYABLE_ITEM_CATALYSTS, RequestorTeam, AI_REACHABILITY_MARINE, 0.0f, UTIL_MetresToGoldSrcUnits(5.0f), false);
 		case BUILD_PHASEGATE:
-			return !AITAC_IsStructureOfTypeNearLocation(RequestorTeam, STRUCTURE_MARINE_PHASEGATE, Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
+			return !AITAC_IsStructureOfTypeNearLocation(RequestorTeam, STRUCTURE_MARINE_PHASEGATE, Requestor->v.origin, UTIL_MetresToGoldSrcUnits(10.0f));
 		case BUILD_TURRET_FACTORY:
-			return !AITAC_IsStructureOfTypeNearLocation(RequestorTeam, (STRUCTURE_MARINE_TURRETFACTORY | STRUCTURE_MARINE_ADVTURRETFACTORY), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
+			return !AITAC_IsStructureOfTypeNearLocation(RequestorTeam, (STRUCTURE_MARINE_TURRETFACTORY | STRUCTURE_MARINE_ADVTURRETFACTORY), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(15.0f));
 		case BUILD_ARMORY:
-			return !AITAC_IsStructureOfTypeNearLocation(RequestorTeam, (STRUCTURE_MARINE_ARMOURY | STRUCTURE_MARINE_ADVARMOURY), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));	
+			return !AITAC_IsStructureOfTypeNearLocation(RequestorTeam, (STRUCTURE_MARINE_ARMOURY | STRUCTURE_MARINE_ADVARMOURY), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(15.0f));	
 		case BUILD_COMMANDSTATION:
 			return !AITAC_IsStructureOfTypeNearLocation(RequestorTeam, STRUCTURE_MARINE_COMMCHAIR, Requestor->v.origin, UTIL_MetresToGoldSrcUnits(10.0f));
 		case BUILD_SCAN:
@@ -2927,305 +2927,124 @@ bool AICOMM_CheckForNextSupportAction(AvHAIPlayer* pBot)
 
 	}
 
-	if (NextRequest->RequestType == BUILD_PHASEGATE)
+
+	if (NextRequest->RequestType == BUILD_PHASEGATE && !AITAC_ResearchIsComplete(CommanderTeam, TECH_RESEARCH_PHASETECH))
 	{
-		if (!AITAC_ResearchIsComplete(CommanderTeam, TECH_RESEARCH_PHASETECH))
-		{
-			char msg[128];
-			sprintf(msg, "We haven't got phase tech yet, %s. Ask again later.", STRING(Requestor->v.netname));
-			BotSay(pBot, true, 0.5f, msg);
-			NextRequest->bResponded = true;
-			return false;
-		}
-
-		if (pBot->Player->GetResources() < BALANCE_VAR(kPhaseGateCost))
-		{
-			if (!NextRequest->bAcknowledged)
-			{
-				char msg[128];
-				sprintf(msg, "Just waiting on resources, %s. Will drop asap.", STRING(Requestor->v.netname));
-				BotSay(pBot, true, 0.5f, msg);
-				NextRequest->bAcknowledged = true;
-				return false;
-			}
-			return false; 
-		}
-
-		Vector IdealDeployLocation = Requestor->v.origin + (UTIL_GetForwardVector2D(Requestor->v.angles) * 75.0f);
-		Vector ProjectedDeployLocation = AdjustPointForPathfinding(IdealDeployLocation, GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE));
-
-		if (!vIsZero(ProjectedDeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_PHASEGATE, ProjectedDeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-		}
-
-		Vector DeployLocation = UTIL_GetRandomPointOnNavmeshInRadius(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
-
-		if (!vIsZero(DeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_PHASEGATE, DeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-		}
-
-		DeployLocation = UTIL_GetRandomPointOnNavmeshInRadiusIgnoreReachability(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
-
-		if (!vIsZero(DeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_PHASEGATE, DeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-			else
-			{
-				char msg[128];
-				sprintf(msg, "I can't find a good deploy spot, %s. Try again elsewhere.", STRING(Requestor->v.netname));
-				BotSay(pBot, true, 0.5f, msg);
-				NextRequest->bResponded = true;
-				return false;
-			}
-		}
-		else
-		{
-			char msg[128];
-			sprintf(msg, "I can't find a good deploy spot, %s. Try again elsewhere.", STRING(Requestor->v.netname));
-			BotSay(pBot, true, 0.5f, msg);
-			NextRequest->bResponded = true;
-			return false;
-		}
-
+		char msg[128];
+		sprintf(msg, "We haven't got phase tech yet, %s. Ask again later.", STRING(Requestor->v.netname));
+		BotSay(pBot, true, 0.5f, msg);
+		NextRequest->bResponded = true;
 		return false;
-
 	}
 
-	if (NextRequest->RequestType == BUILD_ARMORY || NextRequest->RequestType == BUILD_COMMANDSTATION)
+	if (NextRequest->RequestType == BUILD_OBSERVATORY && !AITAC_ResearchIsComplete(CommanderTeam, TECH_RESEARCH_PHASETECH))
 	{
-		float RequiredRes = (NextRequest->RequestType == BUILD_ARMORY) ? BALANCE_VAR(kArmoryCost) : BALANCE_VAR(kCommandStationCost);
+		DeployableSearchFilter ArmouryFilter;
+		ArmouryFilter.DeployableTeam = CommanderTeam;
+		ArmouryFilter.DeployableTypes = (STRUCTURE_MARINE_ARMOURY | STRUCTURE_MARINE_ADVARMOURY);
+		ArmouryFilter.IncludeStatusFlags = STRUCTURE_STATUS_COMPLETED;
+		ArmouryFilter.ExcludeStatusFlags = STRUCTURE_STATUS_RECYCLING;
 
-		if (pBot->Player->GetResources() < RequiredRes)
-		{
-			if (!NextRequest->bAcknowledged)
-			{
-				char msg[128];
-				sprintf(msg, "Just waiting on resources, %s. Will drop asap.", STRING(Requestor->v.netname));
-				BotSay(pBot, true, 0.5f, msg);
-				NextRequest->bAcknowledged = true;
-				return false;
-			}
-			return false;
-		}
+		bool bHasArmoury = AITAC_DeployableExistsAtLocation(ZERO_VECTOR, &ArmouryFilter);
 
-		Vector IdealDeployLocation = Requestor->v.origin + (UTIL_GetForwardVector2D(Requestor->v.angles) * 75.0f);
-		Vector ProjectedDeployLocation = AdjustPointForPathfinding(IdealDeployLocation, GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE));
-
-		AvHAIDeployableStructureType StructureToDeploy = (NextRequest->RequestType == BUILD_ARMORY) ? STRUCTURE_MARINE_ARMOURY : STRUCTURE_MARINE_COMMCHAIR;
-
-		if (!vIsZero(ProjectedDeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, StructureToDeploy, ProjectedDeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-		}
-
-		Vector DeployLocation = UTIL_GetRandomPointOnNavmeshInRadius(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
-
-		if (!vIsZero(DeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, StructureToDeploy, DeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-		}
-
-		DeployLocation = UTIL_GetRandomPointOnNavmeshInRadiusIgnoreReachability(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
-
-		if (!vIsZero(DeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, StructureToDeploy, DeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-			else
-			{
-				char msg[128];
-				sprintf(msg, "I can't find a good deploy spot, %s. Try again elsewhere.", STRING(Requestor->v.netname));
-				BotSay(pBot, true, 0.5f, msg);
-				NextRequest->bResponded = true;
-				return false;
-			}
-		}
-		else
+		if (!bHasArmoury)
 		{
 			char msg[128];
-			sprintf(msg, "I can't find a good deploy spot, %s. Try again elsewhere.", STRING(Requestor->v.netname));
+			sprintf(msg, "We haven't got an armory yet, %s. Ask again later.", STRING(Requestor->v.netname));
 			BotSay(pBot, true, 0.5f, msg);
 			NextRequest->bResponded = true;
 			return false;
 		}
-
-		return false;
-
 	}
 
-	if (NextRequest->RequestType == BUILD_TURRET_FACTORY)
+
+	float RequiredRes = 0.0f;
+	AvHAIDeployableStructureType StructureToDeploy = STRUCTURE_NONE;
+
+	switch (NextRequest->RequestType)
 	{
-		if (pBot->Player->GetResources() < BALANCE_VAR(kTurretFactoryCost))
-		{
-			if (!NextRequest->bAcknowledged)
-			{
-				char msg[128];
-				sprintf(msg, "Just waiting on resources, %s. Will drop asap.", STRING(Requestor->v.netname));
-				BotSay(pBot, true, 0.5f, msg);
-				NextRequest->bAcknowledged = true;
-				return false;
-			}
-			return false;
-		}
-
-		Vector IdealDeployLocation = Requestor->v.origin + (UTIL_GetForwardVector2D(Requestor->v.angles) * 75.0f);
-		Vector ProjectedDeployLocation = AdjustPointForPathfinding(IdealDeployLocation, GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE));
-
-		if (!vIsZero(ProjectedDeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_TURRETFACTORY, ProjectedDeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-		}
-
-		Vector DeployLocation = UTIL_GetRandomPointOnNavmeshInRadius(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
-
-		if (!vIsZero(DeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_TURRETFACTORY, DeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-		}
-
-		DeployLocation = UTIL_GetRandomPointOnNavmeshInRadiusIgnoreReachability(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
-
-		if (!vIsZero(DeployLocation))
-		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_TURRETFACTORY, DeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-			else
-			{
-				char msg[128];
-				sprintf(msg, "I can't find a good deploy spot, %s. Try again elsewhere.", STRING(Requestor->v.netname));
-				BotSay(pBot, true, 0.5f, msg);
-				NextRequest->bResponded = true;
-				return false;
-			}
-		}
-		else
-		{
-			char msg[128];
-			sprintf(msg, "I can't find a good deploy spot, %s. Try again elsewhere.", STRING(Requestor->v.netname));
-			BotSay(pBot, true, 0.5f, msg);
-			NextRequest->bResponded = true;
-			return false;
-		}
-
-		return false;
-
+	case BUILD_ARMORY:
+		RequiredRes = BALANCE_VAR(kArmoryCost);
+		StructureToDeploy = STRUCTURE_MARINE_ARMOURY;
+		break;
+	case BUILD_COMMANDSTATION:
+		RequiredRes = BALANCE_VAR(kCommandStationCost);
+		StructureToDeploy = STRUCTURE_MARINE_COMMCHAIR;
+		break;
+	case BUILD_OBSERVATORY:
+		RequiredRes = BALANCE_VAR(kObservatoryCost);
+		StructureToDeploy = STRUCTURE_MARINE_OBSERVATORY;
+		break;
+	case BUILD_TURRET_FACTORY:
+		RequiredRes = BALANCE_VAR(kTurretFactoryCost);
+		StructureToDeploy = STRUCTURE_MARINE_TURRETFACTORY;
+	case BUILD_TURRET:
+		RequiredRes = BALANCE_VAR(kSentryCost);
+		StructureToDeploy = STRUCTURE_MARINE_TURRET;
+	case BUILD_PHASEGATE:
+		RequiredRes = BALANCE_VAR(kPhaseGateCost);
+		StructureToDeploy = STRUCTURE_MARINE_PHASEGATE;
+	default:
+		break;
 	}
 
-	if (NextRequest->RequestType == BUILD_TURRET)
+	// Invalid commander request
+	if (StructureToDeploy == STRUCTURE_NONE)
 	{
-		if (pBot->Player->GetResources() < BALANCE_VAR(kSentryCost))
+		NextRequest->bResponded = true;
+		return false;
+	}
+
+	if (pBot->Player->GetResources() < RequiredRes)
+	{
+		if (!NextRequest->bAcknowledged)
 		{
-			if (!NextRequest->bAcknowledged)
-			{
-				char msg[128];
-				sprintf(msg, "Just waiting on resources, %s. Will drop asap.", STRING(Requestor->v.netname));
-				BotSay(pBot, true, 0.5f, msg);
-				NextRequest->bAcknowledged = true;
-				return false;
-			}
+			char msg[128];
+			sprintf(msg, "Just waiting on resources, %s. Will drop asap.", STRING(Requestor->v.netname));
+			BotSay(pBot, true, 0.5f, msg);
+			NextRequest->bAcknowledged = true;
 			return false;
 		}
+		return false;
+	}
 
-		Vector IdealDeployLocation = Requestor->v.origin + (UTIL_GetForwardVector2D(Requestor->v.angles) * 75.0f);
-		Vector ProjectedDeployLocation = AdjustPointForPathfinding(IdealDeployLocation, GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE));
+	Vector IdealDeployLocation = Requestor->v.origin + (UTIL_GetForwardVector2D(Requestor->v.angles) * 75.0f);
+	Vector ProjectedDeployLocation = AdjustPointForPathfinding(IdealDeployLocation, GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE));
 
-		if (!vIsZero(ProjectedDeployLocation))
+	if (!vIsZero(ProjectedDeployLocation))
+	{
+		bool bSuccess = AICOMM_DeployStructure(pBot, StructureToDeploy, ProjectedDeployLocation, STRUCTURE_PURPOSE_NONE);
+
+		if (bSuccess)
 		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_TURRET, ProjectedDeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
+			NextRequest->bResponded = true;
+			return true;
 		}
+	}
 
-		Vector DeployLocation = UTIL_GetRandomPointOnNavmeshInRadius(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
+	Vector DeployLocation = UTIL_GetRandomPointOnNavmeshInRadius(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
 
-		if (!vIsZero(DeployLocation))
+	if (!vIsZero(DeployLocation))
+	{
+		bool bSuccess = AICOMM_DeployStructure(pBot, StructureToDeploy, DeployLocation, STRUCTURE_PURPOSE_NONE);
+
+		if (bSuccess)
 		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_TURRET, DeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
+			NextRequest->bResponded = true;
+			return true;
 		}
+	}
 
-		DeployLocation = UTIL_GetRandomPointOnNavmeshInRadiusIgnoreReachability(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
+	DeployLocation = UTIL_GetRandomPointOnNavmeshInRadiusIgnoreReachability(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), Requestor->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
 
-		if (!vIsZero(DeployLocation))
+	if (!vIsZero(DeployLocation))
+	{
+		bool bSuccess = AICOMM_DeployStructure(pBot, StructureToDeploy, DeployLocation, STRUCTURE_PURPOSE_NONE);
+
+		if (bSuccess)
 		{
-			bool bSuccess = AICOMM_DeployStructure(pBot, STRUCTURE_MARINE_TURRET, DeployLocation, STRUCTURE_PURPOSE_NONE);
-
-			if (bSuccess)
-			{
-				NextRequest->bResponded = true;
-				return true;
-			}
-			else
-			{
-				char msg[128];
-				sprintf(msg, "I can't find a good deploy spot, %s. Try again elsewhere.", STRING(Requestor->v.netname));
-				BotSay(pBot, true, 0.5f, msg);
-				NextRequest->bResponded = true;
-				return false;
-			}
+			NextRequest->bResponded = true;
+			return true;
 		}
 		else
 		{
@@ -3235,9 +3054,14 @@ bool AICOMM_CheckForNextSupportAction(AvHAIPlayer* pBot)
 			NextRequest->bResponded = true;
 			return false;
 		}
-
+	}
+	else
+	{
+		char msg[128];
+		sprintf(msg, "I can't find a good deploy spot, %s. Try again elsewhere.", STRING(Requestor->v.netname));
+		BotSay(pBot, true, 0.5f, msg);
+		NextRequest->bResponded = true;
 		return false;
-
 	}
 
 	return false;
@@ -3678,6 +3502,10 @@ void AICOMM_ReceiveChatRequest(AvHAIPlayer* Commander, edict_t* Requestor, const
 	else if (!stricmp(Request, "cc") || !stricmp(Request, "chair") || !stricmp(Request, "command chair"))
 	{
 		NewRequestType = BUILD_COMMANDSTATION;
+	}
+	else if (!stricmp(Request, "obs") || !stricmp(Request, "observatory"))
+	{
+		NewRequestType = BUILD_OBSERVATORY;
 	}
 
 	if (NewRequestType == MESSAGE_NULL) { return; }
