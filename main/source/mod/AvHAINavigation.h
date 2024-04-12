@@ -88,6 +88,7 @@ typedef struct _NAV_DOOR
 	vector<Vector> StopPoints; // Where does this door/platform stop when triggered?
 	NavDoorType DoorType = DOORTYPE_DOOR;
 	vector<AvHAIOffMeshConnection*> AffectedConnections;
+	const char* DoorName;
 } nav_door;
 
 typedef struct _NAV_WELDABLE

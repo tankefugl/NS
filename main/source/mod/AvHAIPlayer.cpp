@@ -465,11 +465,18 @@ void BotAlienAttackNonPlayerTarget(AvHAIPlayer* pBot, edict_t* Target)
 			}
 		}
 
-		if (IsPlayerLerk(pBot->Edict))
+		bool bPlayerCloaked = pBot->Player->GetOpacity() < 0.5f && !GetHasUpgrade(pBot->Edict->v.iuser4, MASK_SENSORY_NEARBY);
+
+		if (IsPlayerLerk(pBot->Edict) || bPlayerCloaked)
 		{
 			if (AITAC_ShouldBotBeCautious(pBot))
 			{
-				MoveTo(pBot, AttackPoint, MOVESTYLE_HIDE, 100.0f);
+				if (bPlayerCloaked)
+				{
+					pBot->BotNavInfo.bShouldWalk = true;
+				}
+
+				MoveTo(pBot, AttackPoint, MOVESTYLE_AMBUSH, 100.0f);
 			}
 			else
 			{
@@ -1398,7 +1405,9 @@ void BotUpdateView(AvHAIPlayer* pBot)
 
 		float bot_reaction_time = (IsPlayerMarine(pBot->Edict)) ? pBot->BotSkillSettings.marine_bot_reaction_time : pBot->BotSkillSettings.alien_bot_reaction_time;
 
-		bool bIsVisible = (bInFOV && (bHasLOS || bIsTracked));
+		bool bIsPlayerInvisible = UTIL_IsCloakedPlayerInvisible(pBot->Edict, PlayerRef);
+
+		bool bIsVisible = !bIsPlayerInvisible && (bInFOV && (bHasLOS || bIsTracked));
 
 		if (bIsVisible != TrackingInfo->bIsVisible)
 		{
@@ -1416,7 +1425,9 @@ void BotUpdateView(AvHAIPlayer* pBot)
 
 		TrackingInfo->bHasLOS = bHasLOS;
 
-		if (bInFOV && (bHasLOS || bIsTracked))
+		bool bCanSeeEnemy = (!bIsPlayerInvisible && bHasLOS);
+
+		if (bInFOV && (bCanSeeEnemy || bIsTracked))
 		{
 			Vector FloorLocation = UTIL_GetEntityGroundLocation(Enemy);
 			Vector BotVelocity = Enemy->v.velocity;
@@ -1462,7 +1473,7 @@ void BotUpdateView(AvHAIPlayer* pBot)
 			continue;
 		}
 
-		if (!bInFOV || !bHasLOS)
+		if (!bInFOV || !bCanSeeEnemy)
 		{
 			if (gpGlobals->time < TrackingInfo->EndTrackingTime)
 			{
@@ -1538,6 +1549,35 @@ void BotUpdateView(AvHAIPlayer* pBot)
 	{
 		pBot->LastSafeLocation = pBot->Edict->v.origin;
 	}
+}
+
+bool UTIL_IsCloakedPlayerInvisible(edict_t* Observer, AvHPlayer* Player)
+{
+	if (Player->GetOpacity() > 0.6f) { return false; }
+
+	if (Player->GetIsCloaked()) { return true; }
+
+	switch (Player->GetUser3())
+	{
+		case AVH_USER3_ALIEN_PLAYER1:
+		case AVH_USER3_ALIEN_PLAYER2:
+		case AVH_USER3_ALIEN_PLAYER3:
+		{
+			if (Player->GetOpacity() < 0.3f) { return true; }
+
+			return (vDist3DSq(Observer->v.origin, Player->pev->origin) > sqrf(UTIL_MetresToGoldSrcUnits(10.0f)) || Player->pev->velocity.Length2D() < 50.0f);
+		}
+		case AVH_USER3_ALIEN_PLAYER4:
+		case AVH_USER3_ALIEN_PLAYER5:
+		{
+			if (Player->GetOpacity() > 0.4f) { return false; }
+			if (Player->GetOpacity() < 0.2f) { return true; }
+
+			return vDist3DSq(Observer->v.origin, Player->pev->origin) > sqrf(UTIL_MetresToGoldSrcUnits(10.0f));
+		}
+	}
+
+	return false;
 }
 
 void BotClearEnemyTrackingInfo(enemy_status* TrackingInfo)
@@ -1848,64 +1888,11 @@ void EndBotFrame(AvHAIPlayer* pBot)
 
 void CustomThink(AvHAIPlayer* pBot)
 {
-	if (IsPlayerMarine(pBot->Player))
+	if (IsPlayerMarine(pBot->Edict)) { return; }
+
+	if (!PlayerHasAlienUpgradeOfType(pBot->Edict, HIVE_TECH_SENSORY))
 	{
-		if (!PlayerHasWeapon(pBot->Player, WEAPON_MARINE_MINES))
-		{
-			AvHAIDroppedItem* NearestMines = AITAC_FindClosestItemToLocation(pBot->Edict->v.origin, DEPLOYABLE_ITEM_MINES, pBot->Player->GetTeam(), AI_REACHABILITY_MARINE, 0.0f, 5000.0f, false);
-
-			if (NearestMines)
-			{
-				AITASK_SetPickupTask(pBot, &pBot->PrimaryBotTask, NearestMines->edict, true);
-			}
-		}
-		else
-		{
-			DeployableSearchFilter MineStructureFilter;
-			MineStructureFilter.DeployableTeam = pBot->Player->GetTeam();
-			MineStructureFilter.DeployableTypes = STRUCTURE_MARINE_INFANTRYPORTAL;
-			MineStructureFilter.ReachabilityTeam = pBot->Player->GetTeam();
-			MineStructureFilter.ReachabilityFlags = AI_REACHABILITY_MARINE;
-
-			AvHAIBuildableStructure NearestIP = AITAC_FindClosestDeployableToLocation(pBot->Edict->v.origin, &MineStructureFilter);
-
-			if (NearestIP.IsValid())
-			{
-				AITASK_SetMineStructureTask(pBot, &pBot->PrimaryBotTask, NearestIP.edict, true);
-			}
-		}
-
-		BotProgressTask(pBot, &pBot->PrimaryBotTask);
-
-		return;
-	}
-
-
-	if (IsPlayerMarine(pBot->Player)) 
-	{
-		pBot->CurrentEnemy = BotGetNextEnemyTarget(pBot);
-
-		if (pBot->CurrentEnemy < 0)
-		{
-			MoveTo(pBot, AITAC_GetTeamStartingLocation(AIMGR_GetEnemyTeam(pBot->Player->GetTeam())), MOVESTYLE_NORMAL);
-		}
-		else
-		{
-			MarineCombatThink(pBot);
-		}
-
-		return;
-	}
-
-	if (!IsPlayerOnos(pBot->Edict))
-	{
-		if (pBot->Player->GetResources() < BALANCE_VAR(kOnosCost))
-		{
-			pBot->Player->GiveResources(70.0f);
-		}
-
-		BotEvolveLifeform(pBot, pBot->CurrentFloorPosition, ALIEN_LIFEFORM_FIVE);
-
+		BotEvolveUpgrade(pBot, pBot->CurrentFloorPosition, ALIEN_EVOLUTION_TEN);
 		return;
 	}
 
@@ -1918,8 +1905,7 @@ void CustomThink(AvHAIPlayer* pBot)
 	else
 	{
 		AlienCombatThink(pBot);
-	}	
-
+	}
 }
 
 void DroneThink(AvHAIPlayer* pBot)
@@ -2343,6 +2329,9 @@ AvHAICombatStrategy GetSkulkCombatStrategyForTarget(AvHAIPlayer* pBot, enemy_sta
 	{
 		return COMBAT_STRATEGY_ATTACK;
 	}
+
+	// We're invisible, so go get them
+	if (pBot->Player->GetOpacity() < 0.1f) { return COMBAT_STRATEGY_ATTACK; }
 
 	AvHTeamNumber BotTeam = pBot->Player->GetTeam();
 	AvHTeamNumber EnemyTeam = AIMGR_GetEnemyTeam(BotTeam);
@@ -2955,7 +2944,7 @@ bool RegularMarineCombatThink(AvHAIPlayer* pBot)
 
 			AvHAIBuildableStructure NearestArmouryRef = AITAC_FindClosestDeployableToLocation(pBot->Edict->v.origin, &NearestArmoury);
 
-			if (NearestArmouryRef.IsValid() && !IsAreaAffectedBySpores(NearestArmouryRef.Location))
+			if (NearestArmouryRef.IsValid() && (!IsAreaAffectedBySpores(NearestArmouryRef.Location) || PlayerHasHeavyArmour(pBot->Edict)))
 			{
 				if (!TrackedEnemyRef->bHasLOS || (IsPlayerAlien(pBot->Edict) && vDist2DSq(NearestArmouryRef.Location, CurrentEnemy->v.origin) > sqrf(UTIL_MetresToGoldSrcUnits(10.0f))))
 				{
@@ -3299,7 +3288,7 @@ void AIPlayerSetMarineSweeperPrimaryTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Tas
 
 	AvHAIBuildableStructure UnbuiltIP = AITAC_FindClosestDeployableToLocation(CommChairLocation, &StructureFilter);
 
-	if (UnbuiltIP.IsValid())
+	if (UnbuiltIP.IsValid() && (!IsAreaAffectedBySpores(UnbuiltIP.Location) || PlayerHasHeavyArmour(pBot->Edict)))
 	{
 		AITASK_SetBuildTask(pBot, Task, UnbuiltIP.edict, true);
 		return;
@@ -3310,7 +3299,7 @@ void AIPlayerSetMarineSweeperPrimaryTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Tas
 
 	AvHAIBuildableStructure UnbuiltStructure = AITAC_FindClosestDeployableToLocation(CommChairLocation, &StructureFilter);
 
-	if (UnbuiltStructure.IsValid())
+	if (UnbuiltStructure.IsValid() && (!IsAreaAffectedBySpores(UnbuiltStructure.Location) || PlayerHasHeavyArmour(pBot->Edict)))
 	{
 		AITASK_SetBuildTask(pBot, Task, UnbuiltStructure.edict, true);
 		return;
@@ -3340,7 +3329,7 @@ void AIPlayerSetMarineSweeperPrimaryTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Tas
 
 		AvHAIBuildableStructure AttackedStructure = AITAC_FindClosestDeployableToLocation(CommChairLocation, &AttackedStructureFilter);
 
-		if (AttackedStructure.IsValid())
+		if (AttackedStructure.IsValid() && (!IsAreaAffectedBySpores(AttackedStructure.Location) || PlayerHasHeavyArmour(pBot->Edict)))
 		{
 			AITASK_SetWeldTask(pBot, Task, AttackedStructure.edict, true);
 			return;
@@ -3632,11 +3621,14 @@ void AIPlayerSetWantsAndNeedsCOMarineTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Ta
 		// We really need some health or ammo, hit the armoury
 		if (NearestArmoury.IsValid())
 		{
-			Task->TaskType = TASK_RESUPPLY;
-			Task->bTaskIsUrgent = true;
-			Task->TaskLocation = NearestArmoury.Location;
-			Task->TaskTarget = NearestArmoury.edict;
-			return;
+			if (!IsAreaAffectedBySpores(NearestArmoury.Location) || PlayerHasHeavyArmour(pBot->Edict))
+			{
+				Task->TaskType = TASK_RESUPPLY;
+				Task->bTaskIsUrgent = true;
+				Task->TaskLocation = NearestArmoury.Location;
+				Task->TaskTarget = NearestArmoury.edict;
+				return;
+			}
 		}
 	}
 
@@ -3691,11 +3683,14 @@ void AIPlayerSetWantsAndNeedsMarineTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task
 		// We really need some health or ammo, either hit the armoury, or ask for a resupply
 		if (NearestArmoury.IsValid())
 		{
-			Task->TaskType = TASK_RESUPPLY;
-			Task->bTaskIsUrgent = true;
-			Task->TaskLocation = NearestArmoury.Location;
-			Task->TaskTarget = NearestArmoury.edict;
-			return;
+			if (!IsAreaAffectedBySpores(NearestArmoury.Location) || PlayerHasHeavyArmour(pBot->Edict))
+			{
+				Task->TaskType = TASK_RESUPPLY;
+				Task->bTaskIsUrgent = true;
+				Task->TaskLocation = NearestArmoury.Location;
+				Task->TaskTarget = NearestArmoury.edict;
+				return;
+			}
 		}
 		else
 		{
@@ -3971,7 +3966,7 @@ void AIPlayerSetSecondaryMarineTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 
 	AvHAIBuildableStructure UnbuiltIP = AITAC_FindClosestDeployableToLocation(pBot->Edict->v.origin, &UnbuiltFilter);
 
-	if (UnbuiltIP.IsValid())
+	if (UnbuiltIP.IsValid() && (!IsAreaAffectedBySpores(UnbuiltIP.Location) || PlayerHasHeavyArmour(pBot->Edict)))
 	{
 		float ThisDist = vDist2D(UnbuiltIP.Location, pBot->Edict->v.origin);
 		int NumBuilders = AITAC_GetNumPlayersOfTeamInArea(BotTeam, UnbuiltIP.Location, ThisDist - 5.0f, false, pBot->Edict, AVH_USER3_COMMANDER_PLAYER);
@@ -4009,7 +4004,7 @@ void AIPlayerSetSecondaryMarineTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 		}
 	}
 
-	if (NearestStructure.IsValid())
+	if (NearestStructure.IsValid() && (!IsAreaAffectedBySpores(NearestStructure.Location) || PlayerHasHeavyArmour(pBot->Edict)))
 	{
 		AITASK_SetBuildTask(pBot, Task, NearestStructure.edict, true);
 		return;
@@ -4121,6 +4116,8 @@ void AIPlayerSetSecondaryMarineTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 		{
 			AvHAIBuildableStructure ThisStructure = (*it);
 
+			if (ThisStructure.edict->v.waterlevel > 0) { continue; }
+
 			int NumMines = AITAC_GetNumDeployablesNearLocation(ThisStructure.Location, &MineFilter);
 
 			if (NumMines < 4)
@@ -4167,8 +4164,6 @@ void AIPlayerSetSecondaryMarineTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 			return;
 		}
 	}
-
-
 
 }
 
@@ -5351,6 +5346,10 @@ void AIPlayerThink(AvHAIPlayer* pBot)
 	{
 		TestNavThink(pBot);
 	}
+	else if (avh_botdebugmode.value == 3)
+	{
+		CustomThink(pBot);
+	}
 	else
 	{
 		switch (GetGameRules()->GetMapMode())
@@ -5479,7 +5478,7 @@ void BotSwitchToWeapon(AvHAIPlayer* pBot, AvHAIWeapon NewWeaponSlot)
 
 bool ShouldBotThink(AvHAIPlayer* pBot)
 {
-	return NavmeshLoaded() && GetGameRules()->GetGameStarted() && (IsPlayerActiveInGame(pBot->Edict) || IsPlayerCommander(pBot->Edict)) && !IsPlayerGestating(pBot->Edict);
+	return NavmeshLoaded() && GetGameRules()->GetGameStarted() && !AIMGR_HasMatchEnded() && (IsPlayerActiveInGame(pBot->Edict) || IsPlayerCommander(pBot->Edict)) && !IsPlayerGestating(pBot->Edict);
 }
 
 void BotResumePlay(AvHAIPlayer* pBot)
@@ -6904,6 +6903,15 @@ void AIPlayerSetSecondaryAlienTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 		return;
 	}
 
+	// If we're engaging an enemy turret then finish the job
+	if (Task->TaskType == TASK_ATTACK)
+	{
+		if (vDist2DSq(pBot->Edict->v.origin, Task->TaskTarget->v.origin) < sqrf(UTIL_MetresToGoldSrcUnits(20.0f)))
+		{
+			return;
+		}
+	}
+
 	DeployableSearchFilter AttackedStructuresFilter;
 	AttackedStructuresFilter.DeployableTypes = (IsPlayerLerk(pBot->Edict)) ? SEARCH_ALL_STRUCTURES : STRUCTURE_ALIEN_RESTOWER;
 	AttackedStructuresFilter.DeployableTeam = BotTeam;
@@ -6943,6 +6951,24 @@ void AIPlayerSetSecondaryAlienTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 	{
 		AITASK_SetDefendTask(pBot, Task, StructureToDefend.edict, true);
 		return;
+	}
+
+	DeployableSearchFilter EnemyStructures;
+	EnemyStructures.DeployableTypes = SEARCH_ALL_STRUCTURES;
+	EnemyStructures.DeployableTeam = BotTeam;
+	EnemyStructures.ReachabilityTeam = BotTeam;
+	EnemyStructures.ReachabilityFlags = pBot->BotNavInfo.NavProfile.ReachabilityFlag;
+	EnemyStructures.MaxSearchRadius = UTIL_MetresToGoldSrcUnits(10.0f);
+
+	vector<AvHAIBuildableStructure> NearbyEnemyStructures = AITAC_FindAllDeployables(pBot->Edict->v.origin, &EnemyStructures);
+
+	for (auto it = NearbyEnemyStructures.begin(); it != NearbyEnemyStructures.end(); it++)
+	{
+		if (UTIL_PlayerHasLOSToEntity(pBot->Edict, it->edict, UTIL_MetresToGoldSrcUnits(20.0f), false))
+		{
+			AITASK_SetAttackTask(pBot, Task, it->edict, false);
+			return;
+		}
 	}
 
 }
@@ -7200,6 +7226,8 @@ bool SkulkCombatThink(AvHAIPlayer* pBot)
 	if (pBot->CurrentCombatStrategy == COMBAT_STRATEGY_ATTACK || (pBot->CurrentCombatStrategy == COMBAT_STRATEGY_AMBUSH && bShouldBreakAmbush))
 	{	
 
+		bool bIsCloaked = (UTIL_IsCloakedPlayerInvisible(CurrentEnemy, pBot->Player) || pBot->Player->GetOpacity() < 0.5f);
+
 		AvHAIWeapon DesiredWeapon = WEAPON_SKULK_BITE;
 
 		// If we have xenocide, then choose it if we have lots of good targets in blast radius
@@ -7235,7 +7263,7 @@ bool SkulkCombatThink(AvHAIPlayer* pBot)
 			}
 		}
 
-		if (DesiredWeapon != WEAPON_SKULK_XENOCIDE)
+		if (!bIsCloaked && DesiredWeapon != WEAPON_SKULK_XENOCIDE)
 		{
 			if (!IsPlayerParasited(CurrentEnemy) && DistToEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)))
 			{
@@ -7267,9 +7295,12 @@ bool SkulkCombatThink(AvHAIPlayer* pBot)
 			}
 		}
 
-		MoveTo(pBot, MoveTarget, MOVESTYLE_NORMAL);
+		BotMoveStyle DesiredMoveStyle = (bIsCloaked) ? MOVESTYLE_AMBUSH : MOVESTYLE_NORMAL;
+		pBot->BotNavInfo.bShouldWalk = bIsCloaked && !GetHasUpgrade(pBot->Edict->v.iuser4, MASK_SENSORY_NEARBY);
 
-		if (DistToEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)))
+		MoveTo(pBot, MoveTarget, DesiredMoveStyle);
+
+		if (!bIsCloaked && DistToEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)))
 		{
 			if (CanBotLeap(pBot))
 			{

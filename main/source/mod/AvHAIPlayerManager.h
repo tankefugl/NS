@@ -122,4 +122,6 @@ void AIMGR_OnBotDisabled();
 
 void AIMGR_UpdateAISystem();
 
+bool AIMGR_HasMatchEnded();
+
 #endif

@@ -163,7 +163,7 @@ enum OffMeshState
 struct dtPoly
 {
 	/// Index to first link in linked list. (Or #DT_NULL_LINK if there is no link.)
-	unsigned int firstLink;
+	unsigned int firstLink = DT_NULL_LINK;
 
 	/// The indices of the polygon's vertices.
 	/// The actual vertices are located in dtMeshTile::verts.
@@ -173,14 +173,14 @@ struct dtPoly
 	unsigned short neis[DT_VERTS_PER_POLYGON];
 
 	/// The user defined polygon flags.
-	unsigned int flags;
+	unsigned int flags = 0;
 
 	/// The number of vertices in the polygon.
-	unsigned char vertCount;
+	unsigned char vertCount = 0;
 
 	/// The bit packed area id and polygon type.
 	/// @note Use the structure's set and get methods to acess this value.
-	unsigned char areaAndtype;
+	unsigned char areaAndtype = 0;
 
 	/// Sets the user defined area id. [Limit: < #DT_MAX_AREAS]
 	inline void setArea(unsigned char a) { areaAndtype = (areaAndtype & 0xc0) | (a & 0x3f); }
@@ -200,10 +200,10 @@ struct dtPoly
 /// Defines the location of detail sub-mesh data within a dtMeshTile.
 struct dtPolyDetail
 {
-	unsigned int vertBase;			///< The offset of the vertices in the dtMeshTile::detailVerts array.
-	unsigned int triBase;			///< The offset of the triangles in the dtMeshTile::detailTris array.
-	unsigned char vertCount;		///< The number of vertices in the sub-mesh.
-	unsigned char triCount;			///< The number of triangles in the sub-mesh.
+	unsigned int vertBase = 0;			///< The offset of the vertices in the dtMeshTile::detailVerts array.
+	unsigned int triBase = 0;			///< The offset of the triangles in the dtMeshTile::detailTris array.
+	unsigned char vertCount = 0;		///< The number of vertices in the sub-mesh.
+	unsigned char triCount = 0;			///< The number of triangles in the sub-mesh.
 };
 
 /// Defines a link between polygons.
@@ -211,12 +211,12 @@ struct dtPolyDetail
 /// @see dtMeshTile
 struct dtLink
 {
-	dtPolyRef ref;					///< Neighbour reference. (The neighbor that is linked to.)
-	unsigned int next;				///< Index of the next link.
-	unsigned char edge;				///< Index of the polygon edge that owns this link.
-	unsigned char side;				///< If a boundary link, defines on which side the link is.
-	unsigned char bmin;				///< If a boundary link, defines the minimum sub-edge area.
-	unsigned char bmax;				///< If a boundary link, defines the maximum sub-edge area.
+	dtPolyRef ref = 0;					///< Neighbour reference. (The neighbor that is linked to.)
+	unsigned int next = 0;				///< Index of the next link.
+	unsigned char edge = 0;				///< Index of the polygon edge that owns this link.
+	unsigned char side = 0;				///< If a boundary link, defines on which side the link is.
+	unsigned char bmin = 0;				///< If a boundary link, defines the minimum sub-edge area.
+	unsigned char bmax = 0;				///< If a boundary link, defines the maximum sub-edge area.
 	int OffMeshID = -1;			///< If an off-mesh connection, this will be the UserID of the connection that made this link
 };
 
@@ -225,8 +225,8 @@ struct dtLink
 /// @see dtMeshTile
 struct dtBVNode
 {
-	unsigned short bmin[3];			///< Minimum bounds of the node's AABB. [(x, y, z)]
-	unsigned short bmax[3];			///< Maximum bounds of the node's AABB. [(x, y, z)]
+	unsigned short bmin[3] = { 0 };			///< Minimum bounds of the node's AABB. [(x, y, z)]
+	unsigned short bmax[3] = { 0 };			///< Maximum bounds of the node's AABB. [(x, y, z)]
 	int i;							///< The node's index. (Negative for escape sequence.)
 };
 
@@ -235,7 +235,7 @@ struct dtBVNode
 struct dtOffMeshConnection
 {
 	/// The endpoints of the connection. [(ax, ay, az, bx, by, bz)]
-	float pos[6] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	float pos[6] = { 0.0f };
 
 	/// The radius of the endpoints. [Limit: >= 0]
 	float rad = 0.0f;		
@@ -280,65 +280,65 @@ struct dtOffMeshConnection
 /// @ingroup detour
 struct dtMeshHeader
 {
-	int magic;				///< Tile magic number. (Used to identify the data format.)
-	int version;			///< Tile data format version number.
-	int x;					///< The x-position of the tile within the dtNavMesh tile grid. (x, y, layer)
-	int y;					///< The y-position of the tile within the dtNavMesh tile grid. (x, y, layer)
-	int layer;				///< The layer of the tile within the dtNavMesh tile grid. (x, y, layer)
-	unsigned int userId;	///< The user defined id of the tile.
-	int polyCount;			///< The number of polygons in the tile.
-	int vertCount;			///< The number of vertices in the tile.
-	int maxLinkCount;		///< The number of allocated links.
-	int detailMeshCount;	///< The number of sub-meshes in the detail mesh.
+	int magic = 0;				///< Tile magic number. (Used to identify the data format.)
+	int version = 0;			///< Tile data format version number.
+	int x = 0;					///< The x-position of the tile within the dtNavMesh tile grid. (x, y, layer)
+	int y = 0;					///< The y-position of the tile within the dtNavMesh tile grid. (x, y, layer)
+	int layer = 0;				///< The layer of the tile within the dtNavMesh tile grid. (x, y, layer)
+	unsigned int userId = 0;	///< The user defined id of the tile.
+	int polyCount = 0;			///< The number of polygons in the tile.
+	int vertCount = 0;			///< The number of vertices in the tile.
+	int maxLinkCount = 0;		///< The number of allocated links.
+	int detailMeshCount = 0;	///< The number of sub-meshes in the detail mesh.
 	
 	/// The number of unique vertices in the detail mesh. (In addition to the polygon vertices.)
-	int detailVertCount;
+	int detailVertCount = 0;
 	
-	int detailTriCount;			///< The number of triangles in the detail mesh.
-	int bvNodeCount;			///< The number of bounding volume nodes. (Zero if bounding volumes are disabled.)
-	int offMeshConCount;		///< The number of off-mesh connections.
+	int detailTriCount = 0;			///< The number of triangles in the detail mesh.
+	int bvNodeCount = 0;			///< The number of bounding volume nodes. (Zero if bounding volumes are disabled.)
+	int offMeshConCount = 0;		///< The number of off-mesh connections.
 
-	int offMeshBase;			///< The index of the first polygon which is an off-mesh connection.
-	float walkableHeight;		///< The height of the agents using the tile.
-	float walkableRadius;		///< The radius of the agents using the tile.
-	float walkableClimb;		///< The maximum climb height of the agents using the tile.
-	float bmin[3];				///< The minimum bounds of the tile's AABB. [(x, y, z)]
-	float bmax[3];				///< The maximum bounds of the tile's AABB. [(x, y, z)]
+	int offMeshBase = 0;			///< The index of the first polygon which is an off-mesh connection.
+	float walkableHeight = 0.0f;		///< The height of the agents using the tile.
+	float walkableRadius = 0.0f;		///< The radius of the agents using the tile.
+	float walkableClimb = 0.0f;		///< The maximum climb height of the agents using the tile.
+	float bmin[3] = { 0.0f };				///< The minimum bounds of the tile's AABB. [(x, y, z)]
+	float bmax[3] = { 0.0f };				///< The maximum bounds of the tile's AABB. [(x, y, z)]
 	
 	/// The bounding volume quantization factor. 
-	float bvQuantFactor;
+	float bvQuantFactor = 0.0f;
 };
 
 /// Defines a navigation mesh tile.
 /// @ingroup detour
 struct dtMeshTile
 {
-	unsigned int salt;					///< Counter describing modifications to the tile.
+	unsigned int salt = 0;					///< Counter describing modifications to the tile.
 
-	unsigned int linksFreeList;			///< Index to the next free link.
-	dtMeshHeader* header;				///< The tile header.
-	dtPoly* polys;						///< The tile polygons. [Size: dtMeshHeader::polyCount]
-	float* verts;						///< The tile vertices. [Size: dtMeshHeader::vertCount]
-	dtLink* links;						///< The tile links. [Size: dtMeshHeader::maxLinkCount]
-	dtPolyDetail* detailMeshes;			///< The tile's detail sub-meshes. [Size: dtMeshHeader::detailMeshCount]
+	unsigned int linksFreeList = 0;			///< Index to the next free link.
+	dtMeshHeader* header = nullptr;				///< The tile header.
+	dtPoly* polys = nullptr;						///< The tile polygons. [Size: dtMeshHeader::polyCount]
+	float* verts = nullptr;						///< The tile vertices. [Size: dtMeshHeader::vertCount]
+	dtLink* links = nullptr;						///< The tile links. [Size: dtMeshHeader::maxLinkCount]
+	dtPolyDetail* detailMeshes = nullptr;			///< The tile's detail sub-meshes. [Size: dtMeshHeader::detailMeshCount]
 	
 	/// The detail mesh's unique vertices. [(x, y, z) * dtMeshHeader::detailVertCount]
-	float* detailVerts;	
+	float* detailVerts = nullptr;
 
 	/// The detail mesh's triangles. [(vertA, vertB, vertC, triFlags) * dtMeshHeader::detailTriCount].
 	/// See dtDetailTriEdgeFlags and dtGetDetailTriEdgeFlags.
-	unsigned char* detailTris;	
+	unsigned char* detailTris = nullptr;	
 
 	/// The tile bounding volume nodes. [Size: dtMeshHeader::bvNodeCount]
 	/// (Will be null if bounding volumes are disabled.)
-	dtBVNode* bvTree;
+	dtBVNode* bvTree = nullptr;
 
-	dtOffMeshConnection** offMeshCons;		///< The tile off-mesh connections. [Size: dtMeshHeader::offMeshConCount]
+	dtOffMeshConnection** offMeshCons = nullptr;		///< The tile off-mesh connections. [Size: dtMeshHeader::offMeshConCount]
 	
-	unsigned char* data;					///< The tile data. (Not directly accessed under normal situations.)
-	int dataSize;							///< Size of the tile data.
-	int flags;								///< Tile flags. (See: #dtTileFlags)
-	dtMeshTile* next;						///< The next free tile, or the next tile in the spatial grid.
+	unsigned char* data = nullptr;					///< The tile data. (Not directly accessed under normal situations.)
+	int dataSize = 0;							///< Size of the tile data.
+	int flags = 0;								///< Tile flags. (See: #dtTileFlags)
+	dtMeshTile* next = nullptr;						///< The next free tile, or the next tile in the spatial grid.
 private:
 	dtMeshTile(const dtMeshTile&);
 	dtMeshTile& operator=(const dtMeshTile&);
@@ -359,11 +359,11 @@ inline int dtGetDetailTriEdgeFlags(unsigned char triFlags, int edgeIndex)
 /// @ingroup detour
 struct dtNavMeshParams
 {
-	float orig[3];					///< The world space origin of the navigation mesh's tile space. [(x, y, z)]
-	float tileWidth;				///< The width of each tile. (Along the x-axis.)
-	float tileHeight;				///< The height of each tile. (Along the z-axis.)
-	int maxTiles;					///< The maximum number of tiles the navigation mesh can contain. This and maxPolys are used to calculate how many bits are needed to identify tiles and polygons uniquely.
-	int maxPolys;					///< The maximum number of polygons each tile can contain. This and maxTiles are used to calculate how many bits are needed to identify tiles and polygons uniquely.
+	float orig[3] = { 0.0f };					///< The world space origin of the navigation mesh's tile space. [(x, y, z)]
+	float tileWidth = 0.0f;				///< The width of each tile. (Along the x-axis.)
+	float tileHeight = 0.0f;				///< The height of each tile. (Along the z-axis.)
+	int maxTiles = 0;					///< The maximum number of tiles the navigation mesh can contain. This and maxPolys are used to calculate how many bits are needed to identify tiles and polygons uniquely.
+	int maxPolys = 0;					///< The maximum number of polygons each tile can contain. This and maxTiles are used to calculate how many bits are needed to identify tiles and polygons uniquely.
 };
 
 /// A navigation mesh based on tiles of convex polygons.
@@ -700,20 +700,20 @@ private:
 	void closestPointOnPoly(dtPolyRef ref, const float* pos, float* closest, bool* posOverPoly) const;
 	
 	dtNavMeshParams m_params;			///< Current initialization params. TODO: do not store this info twice.
-	float m_orig[3];					///< Origin of the tile (0,0)
-	float m_tileWidth, m_tileHeight;	///< Dimensions of each tile.
-	int m_maxTiles;						///< Max number of tiles.
-	int m_tileLutSize;					///< Tile hash lookup size (must be pot).
-	int m_tileLutMask;					///< Tile hash lookup mask.
+	float m_orig[3] = { 0.0f };					///< Origin of the tile (0,0)
+	float m_tileWidth = 0.0f, m_tileHeight = 0.0f;	///< Dimensions of each tile.
+	int m_maxTiles = 0;						///< Max number of tiles.
+	int m_tileLutSize = 0;					///< Tile hash lookup size (must be pot).
+	int m_tileLutMask = 0;					///< Tile hash lookup mask.
 		
-	dtMeshTile** m_posLookup;			///< Tile hash lookup.
-	dtMeshTile* m_nextFree;				///< Freelist of tiles.
-	dtMeshTile* m_tiles;				///< List of tiles.
+	dtMeshTile** m_posLookup = nullptr;			///< Tile hash lookup.
+	dtMeshTile* m_nextFree = nullptr;				///< Freelist of tiles.
+	dtMeshTile* m_tiles = nullptr;				///< List of tiles.
 		
 #ifndef DT_POLYREF64
-	unsigned int m_saltBits;			///< Number of salt bits in the tile ID.
-	unsigned int m_tileBits;			///< Number of tile bits in the tile ID.
-	unsigned int m_polyBits;			///< Number of poly bits in the tile ID.
+	unsigned int m_saltBits = 0;			///< Number of salt bits in the tile ID.
+	unsigned int m_tileBits = 0;			///< Number of tile bits in the tile ID.
+	unsigned int m_polyBits = 0;			///< Number of poly bits in the tile ID.
 #endif
 
 	friend class dtNavMeshQuery;

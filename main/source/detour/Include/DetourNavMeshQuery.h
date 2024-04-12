@@ -34,9 +34,9 @@
 /// @ingroup detour
 class dtQueryFilter
 {
-	float m_areaCost[DT_MAX_AREAS];		///< Cost per area type. (Used by default implementation.)
-	unsigned int m_includeFlags;		///< Flags for polygons that can be visited. (Used by default implementation.)
-	unsigned int m_excludeFlags;		///< Flags for polygons that should not be visted. (Used by default implementation.)
+	float m_areaCost[DT_MAX_AREAS] = { 1.0f };		///< Cost per area type. (Used by default implementation.)
+	unsigned int m_includeFlags = 0;		///< Flags for polygons that can be visited. (Used by default implementation.)
+	unsigned int m_excludeFlags = 0;		///< Flags for polygons that should not be visted. (Used by default implementation.)
 	
 public:
 	dtQueryFilter();
@@ -130,25 +130,25 @@ public:
 struct dtRaycastHit
 {
 	/// The hit parameter. (FLT_MAX if no wall hit.)
-	float t; 
+	float t = 0.0f; 
 	
 	/// hitNormal	The normal of the nearest wall hit. [(x, y, z)]
-	float hitNormal[3];
+	float hitNormal[3] = { 0.0f };
 
 	/// The index of the edge on the final polygon where the wall was hit.
-	int hitEdgeIndex;
+	int hitEdgeIndex = 0;
 	
 	/// Pointer to an array of reference ids of the visited polygons. [opt]
-	dtPolyRef* path;
+	dtPolyRef* path = nullptr;
 	
 	/// The number of visited polygons. [opt]
-	int pathCount;
+	int pathCount = 0;
 
 	/// The maximum number of polygons the @p path array can hold.
-	int maxPath;
+	int maxPath = 0;
 
 	///  The cost of the path until hit.
-	float pathCost;
+	float pathCost = 0;
 };
 
 /// Provides custom polygon query behavior.
