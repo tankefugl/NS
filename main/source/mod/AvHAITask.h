@@ -118,4 +118,5 @@ void BotAlienHealTarget(AvHAIPlayer* pBot, edict_t* HealTarget);
 
 void RegisterBotAlienBuildAttempt(AvHAIPlayer* pBot, AvHAIPlayerTask* Task, Vector PlacementLocation, AvHAIDeployableStructureType DesiredStructure);
 
+
 #endif

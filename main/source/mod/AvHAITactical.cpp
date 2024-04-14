@@ -4711,22 +4711,24 @@ bool AITAC_ShouldBotBuildHive(AvHAIPlayer* pBot, AvHAIHiveDefinition** EligibleH
 
 		// Must be an empty hive
 		DeployableSearchFilter EnemyFortificationsFilter;
-		EnemyFortificationsFilter.DeployableTeam = EnemyTeam;
-		EnemyFortificationsFilter.MaxSearchRadius = UTIL_MetresToGoldSrcUnits(10.0f);
+		EnemyFortificationsFilter.DeployableTeam = EnemyTeam;		
 
 		if (AIMGR_GetTeamType(EnemyTeam) == AVH_CLASS_TYPE_MARINE)
 		{
-			EnemyFortificationsFilter.DeployableTypes = (STRUCTURE_MARINE_PHASEGATE | STRUCTURE_MARINE_TURRETFACTORY | STRUCTURE_MARINE_ADVTURRETFACTORY);
+			EnemyFortificationsFilter.MaxSearchRadius = UTIL_MetresToGoldSrcUnits(20.0f);
+			EnemyFortificationsFilter.DeployableTypes = (STRUCTURE_MARINE_PHASEGATE | STRUCTURE_MARINE_TURRETFACTORY | STRUCTURE_MARINE_ADVTURRETFACTORY | STRUCTURE_MARINE_SIEGETURRET);
 			EnemyFortificationsFilter.ExcludeStatusFlags = STRUCTURE_STATUS_RECYCLING;
 			EnemyFortificationsFilter.IncludeStatusFlags = STRUCTURE_STATUS_COMPLETED; // This is important to prevent exploiting the AI. Those structures have to be built first!
 		}
 		else
 		{
+			EnemyFortificationsFilter.MaxSearchRadius = UTIL_MetresToGoldSrcUnits(10.0f);
 			EnemyFortificationsFilter.DeployableTypes = (STRUCTURE_ALIEN_OFFENCECHAMBER);
 		}
 
 		// Enemy have built some stuff, wait until it's clear before building
 		if (AITAC_DeployableExistsAtLocation(ThisHive->FloorLocation, &EnemyFortificationsFilter)) { continue; }
+
 
 		// Should be clear to drop dat hive!
 

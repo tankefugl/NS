@@ -2978,12 +2978,15 @@ bool AICOMM_CheckForNextSupportAction(AvHAIPlayer* pBot)
 	case BUILD_TURRET_FACTORY:
 		RequiredRes = BALANCE_VAR(kTurretFactoryCost);
 		StructureToDeploy = STRUCTURE_MARINE_TURRETFACTORY;
+		break;
 	case BUILD_TURRET:
 		RequiredRes = BALANCE_VAR(kSentryCost);
 		StructureToDeploy = STRUCTURE_MARINE_TURRET;
+		break;
 	case BUILD_PHASEGATE:
 		RequiredRes = BALANCE_VAR(kPhaseGateCost);
 		StructureToDeploy = STRUCTURE_MARINE_PHASEGATE;
+		break;
 	default:
 		break;
 	}
