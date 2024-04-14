@@ -322,7 +322,7 @@ typedef struct _BOT_GUARD_INFO
 {
 	Vector GuardLocation = g_vecZero; // What position are we guarding?
 	Vector GuardStandPosition = g_vecZero; // Where the bot should stand to guard position (moves around a bit)
-	Vector GuardPoints[8]; // All potential areas to watch that an enemy could approach from
+	std::vector<Vector> GuardPoints; // All potential areas to watch that an enemy could approach from
 	int NumGuardPoints = 0; // How many watch areas there are for the current location
 	Vector GuardLookLocation = g_vecZero; // Which area are we currently watching?
 	float GuardStartLookTime = 0.0f; // When did we start watching the current area?

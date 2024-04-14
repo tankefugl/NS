@@ -16,7 +16,7 @@ std::unordered_map<std::string, TeamSizeDefinitions> TeamSizeMap;
 
 bot_skill BotSkillLevels[4];
 
-AvHMessageID ChamberSequence[3] = { ALIEN_BUILD_DEFENSE_CHAMBER, ALIEN_BUILD_MOVEMENT_CHAMBER, ALIEN_BUILD_SENSORY_CHAMBER };
+std::vector<AvHMessageID> ChamberSequence;
 
 string DefaultBotNames[MAX_PLAYERS] = { "MrRobot",
                                     "Wall-E",
@@ -173,6 +173,7 @@ void CONFIG_PopulateBotNames()
     if (BotNames.size() > 2)
     {
         auto rng = std::default_random_engine{};
+        rng.seed(time(0));
         std::shuffle(begin(BotNames), end(BotNames), rng);
     }
 
@@ -187,6 +188,7 @@ void CONFIG_PopulateBotNames()
     if (DefaultNames.size() > 2)
     {
         auto rng = std::default_random_engine{};
+        rng.seed(time(0));
         std::shuffle(begin(DefaultNames), end(DefaultNames), rng);
     }
 
@@ -255,6 +257,15 @@ void CONFIG_ParseConfigFile()
     BotSkillLevels[3].alien_bot_motion_tracking_skill = 1.0f;
     BotSkillLevels[3].alien_bot_view_speed = 2.0f;
 
+    ChamberSequence.clear();
+    ChamberSequence.push_back(ALIEN_BUILD_DEFENSE_CHAMBER);
+    ChamberSequence.push_back(ALIEN_BUILD_MOVEMENT_CHAMBER);
+    ChamberSequence.push_back(ALIEN_BUILD_SENSORY_CHAMBER);
+
+    std::srand(time(0));
+    auto rng = std::default_random_engine{};
+    rng.seed(time(0));
+    std::shuffle(std::begin(ChamberSequence), std::end(ChamberSequence), rng);
 
     string BotConfigFile = string(getModDirectory()) + "/nsbots.ini";
 
@@ -503,12 +514,6 @@ void CONFIG_ParseConfigFile()
 
             if (!stricmp(keyChar, "ChamberSequence"))
             {
-                AvHMessageID HiveOneTech = MESSAGE_NULL;
-                AvHMessageID HiveTwoTech = MESSAGE_NULL;
-                AvHMessageID HiveThreeTech = MESSAGE_NULL;
-
-                std::vector<AvHMessageID> AvailableTechs = { ALIEN_BUILD_DEFENSE_CHAMBER, ALIEN_BUILD_MOVEMENT_CHAMBER, ALIEN_BUILD_SENSORY_CHAMBER };
-
                 auto firstTechDelimiter = value.find("/");
 
                 if (firstTechDelimiter == std::string::npos)
@@ -533,103 +538,63 @@ void CONFIG_ParseConfigFile()
                 const char* SecondTechChar = SecondTech.c_str();
                 const char* ThirdTechChar = ThirdTech.c_str();
 
-                if (!stricmp(FirstTechChar, "movement"))
+                if (!stricmp(FirstTechChar, "defense"))
                 {
-                    HiveOneTech = ALIEN_BUILD_MOVEMENT_CHAMBER;
-
-                    AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_MOVEMENT_CHAMBER), AvailableTechs.end());
-
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_DEFENSE_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[0], ChamberSequence[Index]);
                 }
-                else if (!stricmp(FirstTechChar, "defense"))
+                else if (!stricmp(FirstTechChar, "movement"))
                 {
-                    HiveOneTech = ALIEN_BUILD_DEFENSE_CHAMBER;
-
-                    AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_DEFENSE_CHAMBER), AvailableTechs.end());
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_MOVEMENT_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[0], ChamberSequence[Index]);
                 }
                 else if (!stricmp(FirstTechChar, "sensory"))
                 {
-                    HiveOneTech = ALIEN_BUILD_SENSORY_CHAMBER;
-
-                    AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_SENSORY_CHAMBER), AvailableTechs.end());
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_SENSORY_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[0], ChamberSequence[Index]);
                 }
 
-                if (!stricmp(SecondTechChar, "movement"))
+
+                if (!stricmp(SecondTechChar, "defense"))
                 {
-                    if (std::find(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_MOVEMENT_CHAMBER) != AvailableTechs.end())
-                    {
-                        HiveTwoTech = ALIEN_BUILD_MOVEMENT_CHAMBER;
-                        AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_MOVEMENT_CHAMBER), AvailableTechs.end());
-                    }
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_DEFENSE_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[1], ChamberSequence[Index]);
                 }
-                else if (!stricmp(SecondTechChar, "defense"))
+                else if (!stricmp(SecondTechChar, "movement"))
                 {
-                    if (std::find(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_DEFENSE_CHAMBER) != AvailableTechs.end())
-                    {
-                        HiveTwoTech = ALIEN_BUILD_DEFENSE_CHAMBER;
-                        AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_DEFENSE_CHAMBER), AvailableTechs.end());
-                    }
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_MOVEMENT_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[1], ChamberSequence[Index]);
                 }
                 else if (!stricmp(SecondTechChar, "sensory"))
                 {
-                    if (std::find(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_SENSORY_CHAMBER) != AvailableTechs.end())
-                    {
-                        HiveTwoTech = ALIEN_BUILD_SENSORY_CHAMBER;
-                        AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_SENSORY_CHAMBER), AvailableTechs.end());
-                    }
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_SENSORY_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[1], ChamberSequence[Index]);
                 }
 
-                if (!stricmp(ThirdTechChar, "movement"))
+                if (!stricmp(ThirdTechChar, "defense"))
                 {
-                    if (std::find(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_MOVEMENT_CHAMBER) != AvailableTechs.end())
-                    {
-                        HiveThreeTech = ALIEN_BUILD_MOVEMENT_CHAMBER;
-                        AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_MOVEMENT_CHAMBER), AvailableTechs.end());
-                    }
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_DEFENSE_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[2], ChamberSequence[Index]);
                 }
-                else if (!stricmp(ThirdTechChar, "defense"))
+                else if (!stricmp(ThirdTechChar, "movement"))
                 {
-                    if (std::find(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_DEFENSE_CHAMBER) != AvailableTechs.end())
-                    {
-                        HiveThreeTech = ALIEN_BUILD_DEFENSE_CHAMBER;
-                        AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_DEFENSE_CHAMBER), AvailableTechs.end());
-                    }
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_MOVEMENT_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[2], ChamberSequence[Index]);
                 }
                 else if (!stricmp(ThirdTechChar, "sensory"))
                 {
-                    if (std::find(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_SENSORY_CHAMBER) != AvailableTechs.end())
-                    {
-                        HiveThreeTech = ALIEN_BUILD_SENSORY_CHAMBER;
-                        AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), ALIEN_BUILD_SENSORY_CHAMBER), AvailableTechs.end());
-                    }
+                    auto Element = std::find(ChamberSequence.begin(), ChamberSequence.end(), ALIEN_BUILD_SENSORY_CHAMBER);
+                    int Index = Element - ChamberSequence.begin();
+                    std::swap(ChamberSequence[2], ChamberSequence[Index]);
                 }
-
-                if (HiveOneTech == MESSAGE_NULL)
-                {
-                    int random = rand() % AvailableTechs.size();
-                    HiveOneTech = AvailableTechs[random];
-
-                    AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), HiveOneTech), AvailableTechs.end());
-                }
-
-                if (HiveTwoTech == MESSAGE_NULL)
-                {
-                    int random = rand() % AvailableTechs.size();
-                    HiveTwoTech = AvailableTechs[random];
-
-                    AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), HiveTwoTech), AvailableTechs.end());
-                }
-
-                if (HiveThreeTech == MESSAGE_NULL)
-                {
-                    int random = rand() % AvailableTechs.size();
-                    HiveThreeTech = AvailableTechs[random];
-
-                    AvailableTechs.erase(std::remove(AvailableTechs.begin(), AvailableTechs.end(), HiveTwoTech), AvailableTechs.end());
-                }
-
-                ChamberSequence[0] = HiveOneTech;
-                ChamberSequence[1] = HiveTwoTech;
-                ChamberSequence[2] = HiveThreeTech;
 
                 continue;
             }
