@@ -92,6 +92,9 @@ void AIPlayerCOAlienThink(AvHAIPlayer* pBot);
 // Think routine for the deathmatch game mode (e.g. when playing CS maps)
 void AIPlayerDMThink(AvHAIPlayer* pBot);
 
+// What to do when the game hasn't OFFICIALLY ended, but basically is (i.e. one side has no hive/CC/infantry portal)
+void AIPlayerEndMatchThink(AvHAIPlayer* pBot);
+
 void TestNavThink(AvHAIPlayer* pBot);
 void DroneThink(AvHAIPlayer* pBot);
 void CustomThink(AvHAIPlayer* pBot);

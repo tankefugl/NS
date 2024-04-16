@@ -636,6 +636,7 @@ void AIMGR_UpdateAIPlayers()
 				if (UpdateIndex > -1 && BotIndex >= UpdateIndex && NumBotsThinkThisFrame < BotsPerFrame)
 				{
 					AIPlayerThink(bot);
+					
 					NumBotsThinkThisFrame++;
 				}
 				BotIndex++;
@@ -1409,4 +1410,44 @@ bool AIMGR_HasMatchEnded()
 	bool bMatchExceededMaxLength = (GetGameRules()->GetGameTime() > MaxSeconds);
 
 	return (bMatchExceededMaxLength && AIMGR_GetNumActiveHumanPlayers() == 0);
+}
+
+bool AIMGR_IsMatchPracticallyOver()
+{
+	if (!GetGameRules()->GetGameStarted() || GetGameRules()->GetMapMode() != MAP_MODE_NS) { return false; }
+
+	AvHTeamNumber TeamANumber = AIMGR_GetTeamANumber();
+	AvHTeamNumber TeamBNumber = AIMGR_GetTeamBNumber();
+
+	if (AIMGR_GetTeamType(TeamANumber) == AVH_CLASS_TYPE_ALIEN)
+	{
+		if (AITAC_GetNumTeamHives(TeamANumber, false) == 0) { return true; }
+	}
+	else
+	{
+		DeployableSearchFilter ChairFilter;
+		ChairFilter.DeployableTypes = STRUCTURE_MARINE_COMMCHAIR;
+		ChairFilter.DeployableTeam = TeamANumber;
+		ChairFilter.ReachabilityTeam = TeamANumber;
+		ChairFilter.ReachabilityFlags = AI_REACHABILITY_MARINE;
+
+		if (!AITAC_DeployableExistsAtLocation(ZERO_VECTOR, &ChairFilter)) { return true; }
+	}
+
+	if (AIMGR_GetTeamType(TeamBNumber) == AVH_CLASS_TYPE_ALIEN)
+	{
+		if (AITAC_GetNumTeamHives(TeamBNumber, false) == 0) { return true; }
+	}
+	else
+	{
+		DeployableSearchFilter ChairFilter;
+		ChairFilter.DeployableTypes = STRUCTURE_MARINE_COMMCHAIR;
+		ChairFilter.DeployableTeam = TeamBNumber;
+		ChairFilter.ReachabilityTeam = TeamBNumber;
+		ChairFilter.ReachabilityFlags = AI_REACHABILITY_MARINE;
+
+		if (!AITAC_DeployableExistsAtLocation(ZERO_VECTOR, &ChairFilter)) { return true; }
+	}
+
+	return false;
 }

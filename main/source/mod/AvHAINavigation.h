@@ -257,6 +257,9 @@ DoorTrigger* UTIL_GetDoorTriggerByEntity(edict_t* TriggerEntity);
 
 bool UTIL_TriggerHasBeenRecentlyActivated(edict_t* TriggerEntity);
 
+// Directly calls the Use function on this trigger, regardless of where the bot is
+void NAV_ForceActivateTrigger(AvHAIPlayer* pBot, DoorTrigger* TriggerRef);
+
 // Will check for any func_breakable which might be in the way (e.g. window, vent) and make the bot aim and attack it to break it. Marines will switch to knife to break it.
 void CheckAndHandleBreakableObstruction(AvHAIPlayer* pBot, const Vector MoveFrom, const Vector MoveTo, unsigned int MovementFlags);
 
@@ -349,13 +352,13 @@ void HandlePlayerAvoidance(AvHAIPlayer* pBot, const Vector MoveDestination);
 Vector AdjustPointForPathfinding(const Vector Point);
 Vector AdjustPointForPathfinding(const Vector Point, const nav_profile& NavProfile);
 
-// Special path finding that takes the presence of phase gates into account 
+// Special path finding for lerks
 dtStatus FindFlightPathToPoint(const nav_profile& NavProfile, Vector FromLocation, Vector ToLocation, vector<bot_path_node>& path, float MaxAcceptableDistance);
 
 Vector UTIL_FindHighestSuccessfulTracePoint(const Vector TraceFrom, const Vector TargetPoint, const Vector NextPoint, const float IterationStep, const float MinIdealHeight, const float MaxHeight);
 
 // Similar to FindPathToPoint, but you can specify a max acceptable distance for partial results. Will return a failure if it can't reach at least MaxAcceptableDistance away from the ToLocation
-dtStatus FindPathClosestToPoint(AvHAIPlayer* pBot, const BotMoveStyle MoveStyle, const Vector FromLocation, const Vector ToLocation, vector<bot_path_node>& path, float MaxAcceptableDistance);
+dtStatus FindPathClosestToPoint(AvHAIPlayer* pBot, const BotMoveStyle MoveStyle, const Vector ToLocation, vector<bot_path_node>& path, float MaxAcceptableDistance);
 dtStatus FindPathClosestToPoint(const nav_profile& NavProfile, const Vector FromLocation, const Vector ToLocation, vector<bot_path_node>& path, float MaxAcceptableDistance);
 
 dtStatus DEBUG_TestFindPath(const nav_profile& NavProfile, const Vector FromLocation, const Vector ToLocation, vector<bot_path_node>& path, float MaxAcceptableDistance);
@@ -481,6 +484,7 @@ void UTIL_ApplyTempObstaclesToDoor(nav_door* DoorRef, const int Area);
 
 nav_door* UTIL_GetNavDoorByEdict(const edict_t* DoorEdict);
 nav_door* UTIL_GetClosestLiftToPoints(const Vector StartPoint, const Vector EndPoint);
+AvHAIOffMeshConnection* UTIL_GetOffMeshConnectionForLift(nav_door* LiftRef);
 
 Vector UTIL_AdjustPointAwayFromNavWall(const Vector Location, const float MaxDistanceFromWall);
 
