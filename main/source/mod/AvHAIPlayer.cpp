@@ -2204,8 +2204,6 @@ void UpdateAIMarinePlayerNSRole(AvHAIPlayer* pBot)
 
 void AIPlayerNSThink(AvHAIPlayer* pBot)
 {
-	return;
-
 	AvHTeam* BotTeam = GetGameRules()->GetTeam(pBot->Player->GetTeam());
 
 	if (!BotTeam) { return; }
