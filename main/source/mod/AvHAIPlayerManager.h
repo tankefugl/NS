@@ -124,4 +124,6 @@ void AIMGR_UpdateAISystem();
 
 bool AIMGR_HasMatchEnded();
 
+bool AIMGR_IsMatchPracticallyOver();
+
 #endif

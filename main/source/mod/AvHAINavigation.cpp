@@ -1091,6 +1091,7 @@ bool LoadNavMesh(const char* mapname)
 		NewMapConnection.TargetObject = nullptr;
 		NewMapConnection.FromLocation = Vector(def.pos[0], -def.pos[2], def.pos[1]);
 		NewMapConnection.ToLocation = Vector(def.pos[3], -def.pos[5], def.pos[4]);
+		NewMapConnection.bBiDirectional = def.bBiDir;
 
 		for (int ii = 0; ii < BUILDING_NAV_MESH; ii++)
 		{
@@ -1680,7 +1681,7 @@ dtStatus FindFlightPathToPoint(const nav_profile &NavProfile, Vector FromLocatio
 	for (int nVert = 0; nVert < nVertCount; nVert++)
 	{
 		Vector NextPathPoint = g_vecZero;
-		Vector PrevPoint = (path.size() > 0) ? path.back().Location : FromFloorLocation;
+		Vector PrevPoint = (path.size() > 0) ? path.back().Location : FromLocation;
 
 		// The path point output by Detour uses the OpenGL, right-handed coordinate system. Convert to Goldsrc coordinates
 		NextPathPoint.x = StraightPath[nIndex++];
@@ -1992,13 +1993,55 @@ dtStatus FindPathClosestToPoint(const nav_profile& NavProfile, const Vector From
 	return DT_SUCCESS;
 }
 
-dtStatus FindPathClosestToPoint(AvHAIPlayer* pBot, const BotMoveStyle MoveStyle, const Vector FromLocation, const Vector ToLocation, vector<bot_path_node>& path, float MaxAcceptableDistance)
+Vector NAV_GetNearestLiftDisembarkPoint(nav_door* LiftReference)
+{
+	AvHAIOffMeshConnection* NearestConnection = UTIL_GetOffMeshConnectionForLift(LiftReference);
+
+	if (!NearestConnection) { return ZERO_VECTOR; }
+
+	Vector DesiredStartStop = ZERO_VECTOR;
+	Vector DesiredEndStop = ZERO_VECTOR;
+	float minStartDist = 0.0f;
+	float minEndDist = 0.0f;
+
+	// Find the desired stop point for us to get onto the lift
+	for (auto it = LiftReference->StopPoints.begin(); it != LiftReference->StopPoints.end(); it++)
+	{
+		Vector LiftStopPoint = (*it) + Vector(0.0f, 0.0f, LiftReference->DoorEdict->v.size.z * 0.5f);
+
+		float thisStartDist = vDist3DSq(LiftStopPoint, NearestConnection->FromLocation);
+		float thisEndDist = vDist3DSq(LiftStopPoint, NearestConnection->ToLocation);
+		if (vIsZero(DesiredStartStop) || thisStartDist < minStartDist)
+		{
+			DesiredStartStop = *it;
+			minStartDist = thisStartDist;
+		}
+
+		if (vIsZero(DesiredEndStop) || thisEndDist < minEndDist)
+		{
+			DesiredEndStop = *it;
+			minEndDist = thisEndDist;
+		}
+	}
+
+	Vector LiftPosition = UTIL_GetCentreOfEntity(LiftReference->DoorEdict);
+
+	bool bIsLiftMoving = (LiftReference->DoorEdict->v.velocity.Length() > 0.0f);
+	bool bIsLiftMovingToStart = bIsLiftMoving && (vDist3DSq(LiftReference->DoorEntity->m_vecFinalDest, DesiredStartStop) < sqrf(50.0f));
+	bool bIsLiftMovingToEnd = bIsLiftMoving && (vDist3DSq(LiftReference->DoorEntity->m_vecFinalDest, DesiredEndStop) < sqrf(50.0f));
+	bool bIsLiftAtOrNearStart = (vDist3DSq(LiftPosition, DesiredStartStop) < sqrf(50.0f));
+	bool bIsLiftAtOrNearEnd = (vDist3DSq(LiftPosition, DesiredEndStop) < sqrf(50.0f));
+
+	return (bIsLiftAtOrNearStart || bIsLiftMovingToStart) ? NearestConnection->FromLocation : NearestConnection->ToLocation;
+}
+
+dtStatus FindPathClosestToPoint(AvHAIPlayer* pBot, const BotMoveStyle MoveStyle, const Vector ToLocation, vector<bot_path_node>& path, float MaxAcceptableDistance)
 {
 	if (!pBot) { return DT_FAILURE; }
 
 	if (pBot->BotNavInfo.NavProfile.bFlyingProfile)
 	{
-		return FindFlightPathToPoint(pBot->BotNavInfo.NavProfile, FromLocation, ToLocation, path, MaxAcceptableDistance);
+		return FindFlightPathToPoint(pBot->BotNavInfo.NavProfile, pBot->Edict->v.origin, ToLocation, path, MaxAcceptableDistance);
 	}
 
 	const dtNavMeshQuery* m_navQuery = UTIL_GetNavMeshQueryForProfile(pBot->BotNavInfo.NavProfile);
@@ -2007,12 +2050,39 @@ dtStatus FindPathClosestToPoint(AvHAIPlayer* pBot, const BotMoveStyle MoveStyle,
 
 	bool bHasWelder = (m_navFilter->getIncludeFlags() & SAMPLE_POLYFLAGS_WELD);
 
-	if (!m_navQuery || !m_navMesh || !m_navFilter || vIsZero(FromLocation) || vIsZero(ToLocation))
+	if (!m_navQuery || !m_navMesh || !m_navFilter || vIsZero(ToLocation))
 	{
 		return DT_FAILURE;
 	}
 
+	Vector FromLocation = pBot->CurrentFloorPosition;
+
 	Vector FromFloorLocation = AdjustPointForPathfinding(FromLocation);
+
+	nav_door* LiftReference =  UTIL_GetNavDoorByEdict(pBot->Edict->v.groundentity);
+	bool bMustDisembarkLiftFirst = false;
+	Vector LiftStart = ZERO_VECTOR;
+	Vector LiftEnd = ZERO_VECTOR;
+
+	if (LiftReference)
+	{
+		LiftEnd = NAV_GetNearestLiftDisembarkPoint(LiftReference);
+
+		if (!vIsZero(LiftEnd))
+		{
+			FromLocation = LiftEnd;			
+
+			AvHAIOffMeshConnection* LiftOffMesh = UTIL_GetOffMeshConnectionForLift(LiftReference);
+
+			if (LiftOffMesh)
+			{
+				LiftStart = (vEquals(LiftEnd, LiftOffMesh->ToLocation, 5.0f)) ? LiftOffMesh->FromLocation : LiftOffMesh->ToLocation;
+				bMustDisembarkLiftFirst = true;
+				FromFloorLocation = LiftEnd;
+			}
+		}
+	}
+	
 	Vector ToFloorLocation = AdjustPointForPathfinding(ToLocation);
 
 	float pStartPos[3] = { FromFloorLocation.x, FromFloorLocation.z, -FromFloorLocation.y };
@@ -2092,6 +2162,19 @@ dtStatus FindPathClosestToPoint(AvHAIPlayer* pBot, const BotMoveStyle MoveStyle,
 	pBot->BotNavInfo.SpecialMovementFlags = 0;
 
 	Vector NodeFromLocation = FromFloorLocation;
+
+	if (bMustDisembarkLiftFirst)
+	{
+		bot_path_node StartPathNode;
+		StartPathNode.FromLocation = LiftStart;
+		StartPathNode.Location = LiftEnd;
+		StartPathNode.flag = SAMPLE_POLYFLAGS_LIFT;
+		StartPathNode.area = SAMPLE_POLYAREA_LIFT;
+		
+		path.push_back(StartPathNode);
+
+		NodeFromLocation = LiftEnd;
+	}
 
 	for (int nVert = 0; nVert < nVertCount; nVert++)
 	{
@@ -3319,12 +3402,14 @@ void NewMove(AvHAIPlayer* pBot)
 
 	// Used to anticipate if we're about to enter a crouch area so we can start crouching early
 	unsigned char NextArea = SAMPLE_POLYAREA_GROUND;
+	SamplePolyFlags NextNavFlags = SAMPLE_POLYFLAGS_DISABLED;
 
 	if (pBot->BotNavInfo.CurrentPathPoint < pBot->BotNavInfo.CurrentPath.size() - 1)
 	{
 		bot_path_node NextPathNode = pBot->BotNavInfo.CurrentPath[pBot->BotNavInfo.CurrentPathPoint + 1];
 
 		NextArea = NextPathNode.area;
+		NextNavFlags = (SamplePolyFlags)NextPathNode.flag;
 
 		bool bIsNearNextPoint = (vDist2DSq(pBot->Edict->v.origin, NextPathNode.FromLocation) <= sqrf(50.0f));
 
@@ -3399,7 +3484,7 @@ void NewMove(AvHAIPlayer* pBot)
 	// While moving, check to make sure we're not obstructed by a func_breakable, e.g. vent or window.
 	CheckAndHandleBreakableObstruction(pBot, MoveFrom, MoveTo, CurrentNavFlags);
 
-	if (CurrentNavFlags != SAMPLE_POLYFLAGS_LIFT)
+	if (CurrentNavFlags != SAMPLE_POLYFLAGS_LIFT && NextNavFlags != SAMPLE_POLYFLAGS_LIFT)
 	{
 		CheckAndHandleDoorObstruction(pBot);
 	}
@@ -4083,6 +4168,61 @@ DoorTrigger* UTIL_GetDoorTriggerByEntity(edict_t* TriggerEntity)
 	return nullptr;
 }
 
+bool HasDoorBeenTriggered(nav_door* DoorRef)
+{
+	if (!DoorRef) { return false; }
+
+	for (auto it = DoorRef->TriggerEnts.begin(); it != DoorRef->TriggerEnts.end(); it++)
+	{
+		if (it->bIsActivated && gpGlobals->time < it->NextActivationTime)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void NAV_ForceActivateTrigger(AvHAIPlayer* pBot, DoorTrigger* TriggerRef)
+{
+	if (!TriggerRef || !TriggerRef->Entity) { return; }
+
+	
+
+	switch (TriggerRef->TriggerType)
+	{
+		case DOOR_TRIGGER:
+			TriggerRef->Entity->Touch(pBot->Player);
+			break;
+		case DOOR_USE:
+		case DOOR_BUTTON:
+			TriggerRef->Entity->Use(pBot->Player, pBot->Player, USE_TOGGLE, 0.0f);
+			break;
+		default:
+			break;
+	}
+}
+
+DoorTrigger* NAV_GetTriggerReachableFromLift(float LiftHeight, nav_door* Lift)
+{
+	DoorTrigger* Result = nullptr;
+
+	for (auto it = Lift->TriggerEnts.begin(); it != Lift->TriggerEnts.end(); it++)
+	{
+		if (!it->bIsActivated) { continue; }
+
+		Vector ClosestPointOnButton = UTIL_GetClosestPointOnEntityToLocation(UTIL_GetCentreOfEntity(Lift->DoorEdict), (*it).Edict);
+		Vector ClosestPointOnLift = UTIL_GetClosestPointOnEntityToLocation(ClosestPointOnButton, Lift->DoorEdict);
+
+		if (vDist2DSq(ClosestPointOnButton, ClosestPointOnLift) < sqrf(max_player_use_reach) && fabs(LiftHeight - ClosestPointOnButton.z) < 64.0f)
+		{
+			return &(*it);
+		}
+	}
+
+	return nullptr;
+}
+
 void LiftMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoint)
 {
 	nav_door* NearestLift = UTIL_GetClosestLiftToPoints(StartPoint, EndPoint);
@@ -4131,228 +4271,227 @@ void LiftMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoint)
 	bool bIsOnLift = (pBot->Edict->v.groundentity == NearestLift->DoorEdict);
 	bool bWaitingToEmbark = (!bIsOnLift && vDist3DSq(pBot->Edict->v.origin, StartPoint) < vDist3DSq(pBot->Edict->v.origin, EndPoint)) || (bIsOnLift && !bIsLiftMoving && bIsLiftAtOrNearStart);
 
-
-	// Do nothing if we're on a moving lift
-	if (bIsLiftMoving && bIsOnLift)
+	if (bIsOnLift)
 	{
-		Vector LiftEdge = UTIL_GetClosestPointOnEntityToLocation(StartPoint, NearestLift->DoorEdict);
-
-		bool bFullyOnLift = vDist2DSq(pBot->Edict->v.origin, LiftEdge) > sqrf(GetPlayerRadius(pBot->Player) * 2.0f);
-
-		if (!bFullyOnLift)
+		// We're approaching our destination, get off
+		if (bIsLiftAtOrNearEnd)
 		{
-			pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - pBot->Edict->v.origin);
+			MoveToWithoutNav(pBot, EndPoint);
+			return;
 		}
 
-		if (!UTIL_QuickHullTrace(pBot->Edict, pBot->Edict->v.origin, pBot->CollisionHullTopLocation + Vector(0.0f, 0.0f, 64.0f)))
+		// Either the lift is moving, or is about to start moving
+		if (bIsLiftMoving || (bIsLiftAtOrNearStart && HasDoorBeenTriggered(NearestLift)))
 		{
-			pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - pBot->Edict->v.origin);
+			Vector LiftEdge = UTIL_GetClosestPointOnEntityToLocation(StartPoint, NearestLift->DoorEdict);
+
+			bool bFullyOnLift = vDist2DSq(pBot->Edict->v.origin, LiftEdge) > sqrf(GetPlayerRadius(pBot->Player) * 2.0f);
+
+			if (!bFullyOnLift)
+			{
+				pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - pBot->Edict->v.origin);
+			}
+
+			if (!UTIL_QuickHullTrace(pBot->Edict, pBot->Edict->v.origin, pBot->CollisionHullTopLocation + Vector(0.0f, 0.0f, 64.0f)))
+			{
+				pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - pBot->Edict->v.origin);
+			}
+
+			return;
 		}
 
+		// We're on the lift, but it's not about to start moving.
+
+		
+		// We're trapped half-way. Some dick must have hit the button and stopped the lift part-way
+		// Activate force powers!
+		if (!bIsLiftAtOrNearStart)
+		{
+			for (auto it = NearestLift->TriggerEnts.begin(); it != NearestLift->TriggerEnts.end(); it++)
+			{
+				if (it->bIsActivated)
+				{
+					NAV_ForceActivateTrigger(pBot, &(*it));
+					return;
+				}
+			}
+		}
+
+		// We're not trapped, see if there is a button we can reach from where we are
+
+		DoorTrigger* NearestTrigger = NAV_GetTriggerReachableFromLift(pBot->Edict->v.origin.z, NearestLift);
+
+		if (NearestTrigger)
+		{
+			if (IsPlayerInUseRange(pBot->Edict, NearestTrigger->Edict))
+			{
+				BotUseObject(pBot, NearestTrigger->Edict, false);
+				return;
+			}
+			else
+			{
+				pBot->desiredMovementDir = UTIL_GetVectorNormal2D(UTIL_GetCentreOfEntity(NearestTrigger->Edict) - pBot->Edict->v.origin);
+			}
+
+			return;
+		}
+
+		// Otherwise, we're able to get back to the start, so do that
+		MoveToWithoutNav(pBot, StartPoint);
 		return;
+
 	}
 
 	// if we've reached our stop, or we can directly get to the end point. Move straight there
-
-	Vector BotNavPosition = UTIL_ProjectPointToNavmesh(pBot->CollisionHullBottomLocation);
-
-	BotNavPosition = (vIsZero(BotNavPosition)) ? pBot->CollisionHullBottomLocation : BotNavPosition;
-
-	if ((bIsOnLift && !bIsLiftMoving && bIsLiftAtOrNearEnd) || UTIL_PointIsDirectlyReachable(BotNavPosition, EndPoint))
+	if (UTIL_PointIsDirectlyReachable(pBot->CollisionHullBottomLocation, EndPoint))
 	{
 		MoveToWithoutNav(pBot, EndPoint);
 		return;
 	}
 
-	// We must be either waiting to embark, or we've stopped elsewhere on our journey and need to get the lift moving again
-
-	// Lift is leaving without us! Get on it quick
-	if (bIsLiftMoving && !bIsLiftMovingToStart && bIsLiftAtOrNearStart && !bIsOnLift)
+	// Lift is at the embark point
+	if (bIsLiftAtOrNearStart)
 	{
-		pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - pBot->CollisionHullBottomLocation);
-		BotJump(pBot);
-		return;
-	}
-
-	if (bIsLiftMoving)
-	{
-		if (vDist2DSq(pBot->Edict->v.origin, StartPoint) > sqrf(50.0f))
+		// Lift has been triggered or started moving, get on board before it leaves
+		if (HasDoorBeenTriggered(NearestLift) || bIsLiftMovingToEnd)
 		{
-			NAV_SetMoveMovementTask(pBot, StartPoint, nullptr);
-		}
-		return;
-	}
-
-	if (bIsLiftAtOrNearStart && vEquals(DesiredStartStop, DesiredEndStop))
-	{
-		if (!bIsOnLift)
-		{
-			if (vDist2DSq(pBot->Edict->v.origin, StartPoint) > sqrf(50.0f))
-			{
-				NAV_SetMoveMovementTask(pBot, StartPoint, nullptr);
-				return;
-			}
-
-			pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - pBot->CollisionHullBottomLocation);			
-		}
-		return;
-	}
-
-	// Lift is stopped somewhere else, summon it
-	if (!bIsLiftMoving)
-	{
-		DoorTrigger* NearestLiftTrigger = nullptr;
-
-		if (bIsLiftAtOrNearStart)
-		{
-			float NearestDist = 0.0f;
-
-			for (auto it = NearestLift->TriggerEnts.begin(); it != NearestLift->TriggerEnts.end(); it++)
-			{
-				if (it->bIsActivated)
-				{
-					Vector CheckLocation = UTIL_GetCentreOfEntity(NearestLift->DoorEdict);
-					CheckLocation.z = pBot->Edict->v.origin.z;
-
-					Vector ButtonLocation = UTIL_GetClosestPointOnEntityToLocation(CheckLocation, it->Edict);
-					Vector NearestPointOnLift = UTIL_GetClosestPointOnEntityToLocation(ButtonLocation, NearestLift->DoorEdict);
-
-					NearestPointOnLift.z = pBot->Edict->v.origin.z;
-
-					float thisDist = vDist3DSq(ButtonLocation, NearestPointOnLift);
-
-					if (thisDist < sqrf(64.0f))
-					{
-						if (!NearestLiftTrigger || thisDist < NearestDist)
-						{
-							NearestLiftTrigger = &(*it);
-							NearestDist = thisDist;
-						}
-
-					}
-				}
-			}
-		}
-
-		if (!NearestLiftTrigger)
-		{
-			NearestLiftTrigger = UTIL_GetNearestDoorTrigger(pBot->Edict->v.origin, NearestLift, nullptr, false);
-		}
-
-		if (NearestLiftTrigger)
-		{
-			// If the trigger is on cooldown, or the door/train is designed to automatically return without being summoned, then just wait for it to come back
-			if (gpGlobals->time < NearestLiftTrigger->NextActivationTime || (NearestLift->DoorType == DOORTYPE_TRAIN && !(NearestLift->DoorEdict->v.spawnflags & SF_TRAIN_WAIT_RETRIGGER)) || (NearestLift->DoorType == DOORTYPE_DOOR && NearestLift->DoorEntity && NearestLift->DoorEntity->GetToggleState() == TS_AT_TOP && NearestLift->DoorEntity->m_flWait > 0.0f && !FBitSet(NearestLift->DoorEdict->v.spawnflags, SF_DOOR_NO_AUTO_RETURN)))
-			{
-				if (!bIsOnLift && !bIsLiftAtOrNearStart)
-				{
-					// Make sure we won't be squashed by the lift coming down on us
-					if (vBBOverlaps2D(pBot->Edict->v.absmin, pBot->Edict->v.absmax, NearestLift->DoorEdict->v.absmin, NearestLift->DoorEdict->v.absmax))
-					{
-						pBot->desiredMovementDir = UTIL_GetVectorNormal2D(StartPoint - DesiredStartStop);
-					}
-					else
-					{
-						if (vDist2DSq(pBot->Edict->v.origin, StartPoint) > sqrf(32.0f))
-						{
-							NAV_SetMoveMovementTask(pBot, StartPoint, nullptr);
-						}
-					}
-					
-				}
-				else
-				{
-					bool bFullyOnLift = false;
-
-					if (bIsOnLift)
-					{
-						Vector LiftEdge = UTIL_GetClosestPointOnEntityToLocation(StartPoint, NearestLift->DoorEdict);
-
-						bFullyOnLift = vDist2DSq(pBot->Edict->v.origin, LiftEdge) > (sqrf(GetPlayerRadius(pBot->Player) * 1.1f) );
-					}
-
-					if (bIsLiftAtOrNearStart && (!bIsOnLift || !bFullyOnLift) )
-					{
-						pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - StartPoint);
-					}
-				}
-				return;
-			}
-
-			if (bIsLiftAtOrNearStart)
-			{
-				Vector ButtonFloorLocation = UTIL_GetClosestPointOnEntityToLocation(pBot->Edict->v.origin, NearestLiftTrigger->Edict);
-
-				Vector NearestPointOnLiftToButton = UTIL_GetClosestPointOnEntityToLocation(ButtonFloorLocation, NearestLift->DoorEdict);
-
-				bool ButtonReachableFromLift = (NearestLiftTrigger->TriggerType == DOOR_TRIGGER) ? vBBOverlaps2D(NearestLiftTrigger->Edict->v.absmin, NearestLiftTrigger->Edict->v.absmax, NearestLift->DoorEdict->v.absmin, NearestLift->DoorEdict->v.absmax) : (!vIsZero(ButtonFloorLocation) && (vDist2DSq(ButtonFloorLocation, NearestPointOnLiftToButton) <= sqrf(64.0f)));
-
-				if (ButtonReachableFromLift)
-				{
-					if (NearestLiftTrigger->TriggerType == DOOR_BUTTON)
-					{
-						if (IsPlayerInUseRange(pBot->Edict, NearestLiftTrigger->Edict))
-						{
-							BotUseObject(pBot, NearestLiftTrigger->Edict, false);
-							return;
-						}
-					}
-					else
-					{
-						pBot->desiredMovementDir = UTIL_GetVectorNormal2D(NearestLiftTrigger->Edict->v.origin - pBot->Edict->v.origin);
-					}
-
-					if (!bIsOnLift)
-					{
-						pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - pBot->Edict->v.origin);
-						return;
-					}
-					else
-					{
-						pBot->desiredMovementDir = UTIL_GetVectorNormal2D(ButtonFloorLocation - pBot->Edict->v.origin);
-						return;
-					}
-				}
-			}
-
-			if (NearestLiftTrigger->TriggerType == DOOR_BUTTON)
-			{
-				Vector UseLocation = UTIL_GetButtonFloorLocation(pBot->Edict->v.origin, NearestLiftTrigger->Edict);
-
-				NAV_SetUseMovementTask(pBot, NearestLiftTrigger->Edict, NearestLiftTrigger);
-			}
-			else if (NearestLiftTrigger->TriggerType == DOOR_TRIGGER)
-			{
-				NAV_SetTouchMovementTask(pBot, NearestLiftTrigger->Edict, NearestLiftTrigger);
-			}
-			else if (NearestLiftTrigger->TriggerType == DOOR_WELD)
-			{
-				NAV_SetWeldMovementTask(pBot, NearestLiftTrigger->Edict, NearestLiftTrigger);
-			}
-			else if (NearestLiftTrigger->TriggerType == DOOR_BREAK)
-			{
-				NAV_SetBreakMovementTask(pBot, NearestLiftTrigger->Edict, NearestLiftTrigger);
-			}
-
-			return;
-		}
-		else
-		{
-			if (!bIsOnLift && vDist2DSq(pBot->Edict->v.origin, StartPoint) > sqrf(50.0f) && !bIsLiftAtOrNearStart)
+			if (vDistanceFromLine2D(StartPoint, LiftPosition, pBot->Edict->v.origin) > sqrf(50.0f))
 			{
 				NAV_SetMoveMovementTask(pBot, StartPoint, nullptr);
 			}
 			else
 			{
-				if (!bIsOnLift && bIsLiftAtOrNearStart)
+				MoveToWithoutNav(pBot, LiftPosition);
+			}
+
+			
+			return;
+		}
+
+		if (bIsLiftMovingToStart)
+		{
+			if (vDist2DSq(pBot->Edict->v.origin, StartPoint) > sqrf(100.0f))
+			{
+				NAV_SetMoveMovementTask(pBot, StartPoint, nullptr);
+			}
+			else
+			{
+				if (vBBOverlaps2D(pBot->Edict->v.absmin, pBot->Edict->v.absmax, NearestLift->DoorEdict->v.absmin, NearestLift->DoorEdict->v.absmax))
 				{
-					pBot->desiredMovementDir = UTIL_GetVectorNormal2D(LiftPosition - StartPoint);
+					Vector NearestPointOnLift = UTIL_GetClosestPointOnEntityToLocation(pBot->Edict->v.origin, NearestLift->DoorEdict);
+					pBot->desiredMovementDir = UTIL_GetVectorNormal2D(pBot->Edict->v.origin - LiftPosition);
+				}
+			}
+			return;
+		}
+
+		DoorTrigger* TriggerToActivate = NAV_GetTriggerReachableFromLift(pBot->Edict->v.origin.z, NearestLift);
+
+		if (TriggerToActivate)
+		{
+			if (vDistanceFromLine2D(StartPoint, LiftPosition, pBot->Edict->v.origin) > sqrf(50.0f))
+			{
+				NAV_SetMoveMovementTask(pBot, StartPoint, nullptr);
+			}
+			else
+			{
+				MoveToWithoutNav(pBot, LiftPosition);
+			}
+
+			return;
+		}
+		
+		TriggerToActivate = UTIL_GetNearestDoorTrigger(pBot->Edict->v.origin, NearestLift, nullptr, false);
+
+		if (!TriggerToActivate)
+		{
+			for (auto it = NearestLift->TriggerEnts.begin(); it != NearestLift->TriggerEnts.end(); it++)
+			{
+				if (it->bIsActivated)
+				{
+					NAV_ForceActivateTrigger(pBot, &(*it));
+					return;
 				}
 			}
 		}
+		else
+		{
+			if (TriggerToActivate->TriggerType == DOOR_BUTTON)
+			{
+				Vector UseLocation = UTIL_GetButtonFloorLocation(pBot->Edict->v.origin, TriggerToActivate->Edict);
 
-
+				NAV_SetUseMovementTask(pBot, TriggerToActivate->Edict, TriggerToActivate);
+			}
+			else if (TriggerToActivate->TriggerType == DOOR_TRIGGER)
+			{
+				NAV_SetTouchMovementTask(pBot, TriggerToActivate->Edict, TriggerToActivate);
+			}
+			else if (TriggerToActivate->TriggerType == DOOR_WELD)
+			{
+				NAV_SetWeldMovementTask(pBot, TriggerToActivate->Edict, TriggerToActivate);
+			}
+			else if (TriggerToActivate->TriggerType == DOOR_BREAK)
+			{
+				NAV_SetBreakMovementTask(pBot, TriggerToActivate->Edict, TriggerToActivate);
+			}
+		}
+		
 		return;
+	}
+
+	// Lift is at the end point, summon it
+
+	// Lift is on its way
+	if (HasDoorBeenTriggered(NearestLift) || bIsLiftMoving)
+	{
+		if (vDist2DSq(pBot->Edict->v.origin, StartPoint) > sqrf(100.0f))
+		{
+			NAV_SetMoveMovementTask(pBot, StartPoint, nullptr);
+		}
+		else
+		{
+			if (vBBOverlaps2D(pBot->Edict->v.absmin, pBot->Edict->v.absmax, NearestLift->DoorEdict->v.absmin, NearestLift->DoorEdict->v.absmax))
+			{
+				Vector NearestPointOnLift = UTIL_GetClosestPointOnEntityToLocation(pBot->Edict->v.origin, NearestLift->DoorEdict);
+				pBot->desiredMovementDir = UTIL_GetVectorNormal2D(pBot->Edict->v.origin - LiftPosition);
+			}
+		}
+		return;
+	}
+
+	DoorTrigger* TriggerToActivate = UTIL_GetNearestDoorTrigger(pBot->Edict->v.origin, NearestLift, nullptr, false);
+
+	if (!TriggerToActivate)
+	{
+		for (auto it = NearestLift->TriggerEnts.begin(); it != NearestLift->TriggerEnts.end(); it++)
+		{
+			if (it->bIsActivated)
+			{
+				NAV_ForceActivateTrigger(pBot, &(*it));
+				return;
+			}
+		}
+	}
+	else
+	{
+		if (TriggerToActivate->TriggerType == DOOR_BUTTON)
+		{
+			Vector UseLocation = UTIL_GetButtonFloorLocation(pBot->Edict->v.origin, TriggerToActivate->Edict);
+
+			NAV_SetUseMovementTask(pBot, TriggerToActivate->Edict, TriggerToActivate);
+		}
+		else if (TriggerToActivate->TriggerType == DOOR_TRIGGER)
+		{
+			NAV_SetTouchMovementTask(pBot, TriggerToActivate->Edict, TriggerToActivate);
+		}
+		else if (TriggerToActivate->TriggerType == DOOR_WELD)
+		{
+			NAV_SetWeldMovementTask(pBot, TriggerToActivate->Edict, TriggerToActivate);
+		}
+		else if (TriggerToActivate->TriggerType == DOOR_BREAK)
+		{
+			NAV_SetBreakMovementTask(pBot, TriggerToActivate->Edict, TriggerToActivate);
+		}
 	}
 
 }
@@ -4471,12 +4610,12 @@ bool IsBotOffWalkNode(const AvHAIPlayer* pBot, Vector MoveStart, Vector MoveEnd,
 
 	if (vDist2DSq(pBot->Edict->v.origin, NearestPointOnLine) > sqrf(GetPlayerRadius(pBot->Edict) * 3.0f)) { return true; }
 
-	if (!FNullEnt(pBot->Edict->v.groundentity))
-	{
-		nav_door* Door = UTIL_GetNavDoorByEdict(pBot->Edict->v.groundentity);
+	//if (!FNullEnt(pBot->Edict->v.groundentity))
+	//{
+	//	nav_door* Door = UTIL_GetNavDoorByEdict(pBot->Edict->v.groundentity);
 
-		if (Door) { return false; }
-	}
+	//	if (Door) { return false; }
+	//}
 
 	if (vEquals2D(NearestPointOnLine, MoveStart) && !UTIL_PointIsDirectlyReachable(pBot->CurrentFloorPosition, MoveStart)) { return true; }
 	if (vEquals2D(NearestPointOnLine, MoveEnd) && !UTIL_PointIsDirectlyReachable(pBot->CurrentFloorPosition, MoveEnd)) { return true; }
@@ -6067,7 +6206,7 @@ void OnosUpdateBotMoveProfile(AvHAIPlayer* pBot, BotMoveStyle MoveStyle)
 
 bool NAV_MergeAndUpdatePath(AvHAIPlayer* pBot, std::vector<bot_path_node>& NewPath)
 {
-	if (pBot->BotNavInfo.CurrentPath.size() == 0 || pBot->BotNavInfo.CurrentPathPoint >= pBot->BotNavInfo.CurrentPath.size())
+	if (pBot->BotNavInfo.NavProfile.bFlyingProfile || pBot->BotNavInfo.CurrentPath.size() == 0 || pBot->BotNavInfo.CurrentPathPoint >= pBot->BotNavInfo.CurrentPath.size())
 	{
 		pBot->BotNavInfo.CurrentPath.clear();
 		pBot->BotNavInfo.CurrentPath.insert(pBot->BotNavInfo.CurrentPath.end(), NewPath.begin(), NewPath.end());
@@ -6122,15 +6261,106 @@ bool NAV_MergeAndUpdatePath(AvHAIPlayer* pBot, std::vector<bot_path_node>& NewPa
 	return true;
 }
 
+bool NAV_GenerateNewBasePath(AvHAIPlayer* pBot, const Vector NewDestination, const BotMoveStyle MoveStyle, const float MaxAcceptableDist)
+{
+	nav_status* BotNavInfo = &pBot->BotNavInfo;
+
+	dtStatus PathFindingStatus = DT_FAILURE;
+
+	vector<bot_path_node> PendingPath;
+	bool bIsFlyingProfile = BotNavInfo->NavProfile.bFlyingProfile;
+	
+
+	if (bIsFlyingProfile)
+	{
+		PathFindingStatus = FindFlightPathToPoint(BotNavInfo->NavProfile, pBot->Edict->v.origin, NewDestination, PendingPath, MaxAcceptableDist);
+	}
+	else
+	{
+		Vector NavAdjustedDestination = AdjustPointForPathfinding(NewDestination);
+		if (vIsZero(NavAdjustedDestination)) { return false; }
+
+		PathFindingStatus = FindPathClosestToPoint(pBot, BotNavInfo->MoveStyle, NavAdjustedDestination, PendingPath, MaxAcceptableDist);
+	}
+
+	BotNavInfo->NextForceRecalc = 0.0f;
+	BotNavInfo->bNavProfileChanged = false;
+
+	if (dtStatusSucceed(PathFindingStatus))
+	{
+		if (!NAV_MergeAndUpdatePath(pBot, PendingPath))
+		{
+			if (!AbortCurrentMove(pBot, NewDestination))
+			{
+				return true;
+			}
+			else
+			{
+				ClearBotPath(pBot);
+				NAV_ClearMovementTask(pBot);
+				pBot->BotNavInfo.CurrentPath.insert(pBot->BotNavInfo.CurrentPath.begin(), PendingPath.begin(), PendingPath.end());
+				BotNavInfo->CurrentPathPoint = 0;
+			}
+		}
+
+		BotNavInfo->ActualMoveDestination = BotNavInfo->CurrentPath.back().Location;
+		BotNavInfo->TargetDestination = NewDestination;
+
+		pBot->BotNavInfo.StuckInfo.bPathFollowFailed = false;
+		ClearBotStuckMovement(pBot);
+		pBot->BotNavInfo.TotalStuckTime = 0.0f;
+		BotNavInfo->PathDestination = NewDestination;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool NAV_GenerateNewMoveTaskPath(AvHAIPlayer* pBot, const Vector NewDestination, const BotMoveStyle MoveStyle)
+{
+	nav_status* BotNavInfo = &pBot->BotNavInfo;
+
+	dtStatus PathFindingStatus = DT_FAILURE;
+
+	vector<bot_path_node> PendingPath;
+	bool bIsFlyingProfile = BotNavInfo->NavProfile.bFlyingProfile;
+
+	if (bIsFlyingProfile)
+	{
+		PathFindingStatus = FindFlightPathToPoint(BotNavInfo->NavProfile, pBot->Edict->v.origin, NewDestination, PendingPath, max_player_use_reach);
+	}
+	else
+	{
+		Vector NavAdjustedDestination = AdjustPointForPathfinding(NewDestination);
+		if (vIsZero(NavAdjustedDestination)) { return false; }
+
+		PathFindingStatus = FindPathClosestToPoint(pBot, BotNavInfo->MoveStyle, NavAdjustedDestination, PendingPath, max_player_use_reach);
+	}
+
+	if (dtStatusSucceed(PathFindingStatus))
+	{
+		pBot->BotNavInfo.CurrentPath.clear();
+		pBot->BotNavInfo.CurrentPathPoint = 0;
+		pBot->BotNavInfo.SpecialMovementFlags = 0;
+
+		pBot->BotNavInfo.CurrentPath.insert(pBot->BotNavInfo.CurrentPath.begin(), PendingPath.begin(), PendingPath.end());
+		BotNavInfo->CurrentPathPoint = 0;
+
+		pBot->BotNavInfo.StuckInfo.bPathFollowFailed = false;
+		ClearBotStuckMovement(pBot);
+		pBot->BotNavInfo.TotalStuckTime = 0.0f;
+		BotNavInfo->PathDestination = NewDestination;
+
+		return true;
+	}
+
+	return false;
+}
+
 bool MoveTo(AvHAIPlayer* pBot, const Vector Destination, const BotMoveStyle MoveStyle, const float MaxAcceptableDist)
 {
-#ifdef DEBUG
-	if (pBot == AIMGR_GetDebugAIPlayer())
-	{
-		bool bBreak = true; // Add a break point here if you want to debug a specific bot
-	}
-#endif
-
+	// Trying to move nowhere, or our current location. Do nothing
 	if (vIsZero(Destination) || (vDist2D(pBot->Edict->v.origin, Destination) <= 6.0f && (fabs(pBot->CollisionHullBottomLocation.z - Destination.z) < 50.0f)))
 	{
 		pBot->BotNavInfo.StuckInfo.bPathFollowFailed = false;
@@ -6150,110 +6380,110 @@ bool MoveTo(AvHAIPlayer* pBot, const Vector Destination, const BotMoveStyle Move
 	bool bForceRecalculation = (pBot->BotNavInfo.NextForceRecalc > 0.0f && gpGlobals->time >= pBot->BotNavInfo.NextForceRecalc);
 	bool bIsPerformingMoveTask = (BotNavInfo->MovementTask.TaskType != MOVE_TASK_NONE && vEquals(Destination, BotNavInfo->MovementTask.TaskLocation, GetPlayerRadius(pBot->Player)));
 	bool bEndGoalChanged = (!vEquals(Destination, BotNavInfo->TargetDestination, GetPlayerRadius(pBot->Player)) && !bIsPerformingMoveTask);
-	bool bMoveTaskGenerated = (BotNavInfo->MovementTask.TaskType == MOVE_TASK_NONE || (vEquals(BotNavInfo->PathDestination, BotNavInfo->MovementTask.TaskLocation, GetPlayerRadius(pBot->Player))));
+	
+	bool bShouldGenerateMainPath = (bEndGoalChanged || bNavProfileChanged || bForceRecalculation);
+	bool bShouldGenerateMoveTaskPath = (bIsPerformingMoveTask && !vEquals(BotNavInfo->PathDestination, BotNavInfo->MovementTask.TaskLocation, GetPlayerRadius(pBot->Player)));
 
-
-	// Only recalculate the path if there isn't a path, or something has changed and enough time has elapsed since the last path calculation
-	bool bShouldCalculatePath = (bNavProfileChanged || bForceRecalculation || BotNavInfo->CurrentPath.size() == 0 || bEndGoalChanged || !bMoveTaskGenerated);
-
-	if (bShouldCalculatePath)
+	if (bShouldGenerateMainPath || bShouldGenerateMoveTaskPath)
 	{
 		if (!bIsFlyingProfile && !pBot->BotNavInfo.IsOnGround && !IsPlayerClimbingWall(pBot->Edict))
-		{ 
+		{
 			if (pBot->BotNavInfo.CurrentPath.size() > 0)
 			{
 				BotFollowPath(pBot);
 			}
-			return true; 
+			return true;
 		}
 
-		dtStatus PathFindingStatus = DT_FAILURE;
-
-		vector<bot_path_node> PendingPath;
-
-		if (bIsFlyingProfile)
+		if (bShouldGenerateMainPath)
 		{
-			PathFindingStatus = FindFlightPathToPoint(pBot->BotNavInfo.NavProfile, pBot->Edict->v.origin, Destination, PendingPath, MaxAcceptableDist);
-		}
-		else
-		{
-			Vector NavAdjustedDestination = AdjustPointForPathfinding(Destination);
-			if (vIsZero(NavAdjustedDestination)) { return false; }
+			bool bSucceeded = NAV_GenerateNewBasePath(pBot, Destination, MoveStyle, MaxAcceptableDist);
 
-			PathFindingStatus = FindPathClosestToPoint(pBot, pBot->BotNavInfo.MoveStyle, pBot->CurrentFloorPosition, NavAdjustedDestination, PendingPath, MaxAcceptableDist);
-		}
-
-		pBot->BotNavInfo.NextForceRecalc = 0.0f;
-		pBot->BotNavInfo.bNavProfileChanged = false;
-		
-		if (dtStatusSucceed(PathFindingStatus))
-		{		
-			if (!NAV_MergeAndUpdatePath(pBot, PendingPath))
+			if (!bSucceeded)
 			{
-				if (!AbortCurrentMove(pBot, Destination))
+				if (pBot->BotNavInfo.CurrentPath.size() == 0)
 				{
-					return true; 
-				}
-				else
-				{
-					ClearBotPath(pBot);
-					NAV_ClearMovementTask(pBot);
-					pBot->BotNavInfo.CurrentPath.insert(pBot->BotNavInfo.CurrentPath.begin(), PendingPath.begin(), PendingPath.end());
-					BotNavInfo->CurrentPathPoint = 0;
-				}
-			}
+					pBot->BotNavInfo.StuckInfo.bPathFollowFailed = true;
 
-			pBot->BotNavInfo.StuckInfo.bPathFollowFailed = false;
-			ClearBotStuckMovement(pBot);
-			pBot->BotNavInfo.TotalStuckTime = 0.0f;
-			BotNavInfo->PathDestination = Destination;
-
-			if (!bIsPerformingMoveTask)
-			{
-				BotNavInfo->ActualMoveDestination = BotNavInfo->CurrentPath.back().Location;
-				BotNavInfo->TargetDestination = Destination;
-			}
-
-			
-		}
-		else
-		{
-			if (pBot->BotNavInfo.CurrentPath.size() == 0)
-			{
-				pBot->BotNavInfo.StuckInfo.bPathFollowFailed = true;
-
-				if (!UTIL_PointIsOnNavmesh(pBot->CollisionHullBottomLocation, pBot->BotNavInfo.NavProfile) && !vIsZero(BotNavInfo->LastNavMeshPosition))
-				{
-					MoveDirectlyTo(pBot, BotNavInfo->LastNavMeshPosition);
-
-					if (vDist2DSq(pBot->CurrentFloorPosition, BotNavInfo->LastNavMeshPosition) < sqrf(8.0f))
+					if (!UTIL_PointIsOnNavmesh(pBot->CollisionHullBottomLocation, pBot->BotNavInfo.NavProfile) && !vIsZero(BotNavInfo->LastNavMeshPosition))
 					{
-						BotNavInfo->LastNavMeshPosition = g_vecZero;
-					}
+						MoveDirectlyTo(pBot, BotNavInfo->LastNavMeshPosition);
 
-					return true;
-				}
-				else
-				{
-					if (!vIsZero(BotNavInfo->UnstuckMoveLocation) && vDist2DSq(pBot->CurrentFloorPosition, BotNavInfo->UnstuckMoveLocation) < sqrf(8.0f))
-					{
-						BotNavInfo->UnstuckMoveLocation = ZERO_VECTOR;
-					}
+						if (vDist2DSq(pBot->CurrentFloorPosition, BotNavInfo->LastNavMeshPosition) < sqrf(8.0f))
+						{
+							BotNavInfo->LastNavMeshPosition = g_vecZero;
+						}
 
-					if (vIsZero(BotNavInfo->UnstuckMoveLocation))
-					{
-						BotNavInfo->UnstuckMoveLocation = FindClosestPointBackOnPath(pBot);
-					}
-
-					if (!vIsZero(BotNavInfo->UnstuckMoveLocation))
-					{
-						MoveDirectlyTo(pBot, BotNavInfo->UnstuckMoveLocation);
 						return true;
 					}
+					else
+					{
+						if (!vIsZero(BotNavInfo->UnstuckMoveLocation) && vDist2DSq(pBot->CurrentFloorPosition, BotNavInfo->UnstuckMoveLocation) < sqrf(8.0f))
+						{
+							BotNavInfo->UnstuckMoveLocation = ZERO_VECTOR;
+						}
+
+						if (vIsZero(BotNavInfo->UnstuckMoveLocation))
+						{
+							BotNavInfo->UnstuckMoveLocation = FindClosestPointBackOnPath(pBot);
+						}
+
+						if (!vIsZero(BotNavInfo->UnstuckMoveLocation))
+						{
+							MoveDirectlyTo(pBot, BotNavInfo->UnstuckMoveLocation);
+							return true;
+						}
+					}
 				}
+				else
+				{
+					BotFollowPath(pBot);
+				}
+
 				return false;
 			}
 		}
+		else
+		{
+			bool bSucceeded = NAV_GenerateNewMoveTaskPath(pBot, BotNavInfo->MovementTask.TaskLocation, MoveStyle);
+
+			if (!bSucceeded)
+			{
+				if (!FNullEnt(pBot->Edict->v.groundentity))
+				{
+					nav_door* Door = UTIL_GetNavDoorByEdict(pBot->Edict->v.groundentity);
+
+					if (Door)
+					{
+
+					}
+				}
+
+
+				if (!FNullEnt(BotNavInfo->MovementTask.TaskTarget))
+				{
+					CBaseEntity* TargetEntity = CBaseEntity::Instance(BotNavInfo->MovementTask.TaskTarget);
+
+					if (!TargetEntity) { return false; }
+
+					switch (BotNavInfo->MovementTask.TaskType)
+					{
+						case MOVE_TASK_TOUCH:
+							TargetEntity->Touch(pBot->Player);
+							return true;
+							break;
+						case MOVE_TASK_USE:
+							TargetEntity->Use(pBot->Player, pBot->Player, USE_TOGGLE, 0.0f);
+							return true;
+							break;
+						default:
+							break;
+
+					}
+				}
+			}
+		}
+		
 	}
 
 	if (!bIsPerformingMoveTask && BotNavInfo->MovementTask.TaskType != MOVE_TASK_NONE)
@@ -6408,11 +6638,14 @@ void SkipAheadInFlightPath(AvHAIPlayer* pBot)
 	if (UTIL_QuickHullTrace(pBot->Edict, pBot->Edict->v.origin, prev(BotNavInfo->CurrentPath.end())->Location, head_hull, false))
 	{
 		pBot->BotNavInfo.CurrentPathPoint = (BotNavInfo->CurrentPath.size() - 1);
+		BotNavInfo->CurrentPath[pBot->BotNavInfo.CurrentPathPoint].FromLocation = pBot->Edict->v.origin;
 		return;
 	}
 
-	// If we are currently in a low area or approaching one, don't try to skip ahead in case it screws us up
-	if (CurrentPathPoint->area == SAMPLE_POLYAREA_CROUCH || (next(CurrentPathPoint) != BotNavInfo->CurrentPath.end() && next(CurrentPathPoint)->area == SAMPLE_POLYAREA_CROUCH)) { return; }
+	// If we are approaching a low area or lift, don't try to skip ahead in case it screws us up
+	if (CurrentPathPoint->area == SAMPLE_POLYAREA_CROUCH
+		|| CurrentPathPoint->area == SAMPLE_POLYAREA_LIFT
+		|| (next(CurrentPathPoint) != BotNavInfo->CurrentPath.end() && (next(CurrentPathPoint)->area == SAMPLE_POLYAREA_CROUCH || next(CurrentPathPoint)->area == SAMPLE_POLYAREA_LIFT))) { return; }
 
 	for (auto it = prev(BotNavInfo->CurrentPath.end()); it != next(CurrentPathPoint); it--)
 	{
@@ -6471,13 +6704,24 @@ void BotFollowFlightPath(AvHAIPlayer* pBot, bool bAllowSkip)
 		}
 	}
 
+
+
 	if (CurrentPathPoint->flag == SAMPLE_POLYFLAGS_LIFT)
 	{
 		LiftMove(pBot, CurrentPathPoint->FromLocation, CurrentMoveDest);
 		return;
 	}
 
-	if (bAllowSkip && CurrentPathPoint->area != SAMPLE_POLYAREA_CROUCH && next(CurrentPathPoint) != BotNavInfo->CurrentPath.end() && next(CurrentPathPoint)->area != SAMPLE_POLYAREA_CROUCH)
+	SamplePolyAreas NextArea = SAMPLE_POLYAREA_GROUND;
+	SamplePolyFlags NextFlags = SAMPLE_POLYFLAGS_DISABLED;
+
+	if (next(CurrentPathPoint) != BotNavInfo->CurrentPath.end())
+	{
+		NextArea = (SamplePolyAreas)next(CurrentPathPoint)->area;
+		NextFlags = (SamplePolyFlags)next(CurrentPathPoint)->flag;
+	}
+
+	if (bAllowSkip && CurrentPathPoint->area != SAMPLE_POLYAREA_CROUCH && CurrentPathPoint->flag != SAMPLE_POLYFLAGS_LIFT && NextArea != SAMPLE_POLYAREA_CROUCH && NextFlags != SAMPLE_POLYFLAGS_LIFT)
 	{
 		SkipAheadInFlightPath(pBot);
 		CurrentPathPoint = (BotNavInfo->CurrentPath.begin() + BotNavInfo->CurrentPathPoint);
@@ -6691,7 +6935,7 @@ void BotFollowPath(AvHAIPlayer* pBot)
 			pBot->desiredMovementDir = UTIL_GetVectorNormal2D(-pBot->Edict->v.groundentity->v.velocity);
 			return;
 		}
-		MoveToWithoutNav(pBot, CurrentNode.Location);
+		pBot->desiredMovementDir = -UTIL_GetForwardVector2D(pBot->Edict->v.angles);
 		return;
 	}
 
@@ -6701,20 +6945,8 @@ void BotFollowPath(AvHAIPlayer* pBot)
 	{
 		if ((*it)->pev->groundentity == pBot->Edict)
 		{
-			if (vDist2DSq(pBot->Edict->v.origin, CurrentNode.FromLocation) > sqrf(GetPlayerRadius(pBot->Edict)))
-			{
-				MoveToWithoutNav(pBot, CurrentNode.FromLocation);
-				return;
-			}
-			else
-			{
-				if (pBot->BotNavInfo.CurrentPathPoint > 0)
-				{
-					bot_path_node PrevNode = pBot->BotNavInfo.CurrentPath[pBot->BotNavInfo.CurrentPathPoint - 1];
-					MoveToWithoutNav(pBot, PrevNode.FromLocation);
-					return;
-				}
-			}
+			pBot->desiredMovementDir = UTIL_GetForwardVector2D(pBot->Edict->v.angles);
+			return;
 		}
 	}
 
@@ -7186,7 +7418,7 @@ bool BotRecalcPath(AvHAIPlayer* pBot, const Vector Destination)
 		return false;
 	}
 
-	dtStatus FoundPath = FindPathClosestToPoint(pBot, pBot->BotNavInfo.MoveStyle, pBot->CurrentFloorPosition, ValidNavmeshPoint, pBot->BotNavInfo.CurrentPath, max_ai_use_reach);
+	dtStatus FoundPath = FindPathClosestToPoint(pBot, pBot->BotNavInfo.MoveStyle, ValidNavmeshPoint, pBot->BotNavInfo.CurrentPath, max_ai_use_reach);
 
 	if (dtStatusSucceed(FoundPath) && pBot->BotNavInfo.CurrentPath.size() > 0)
 	{
@@ -8069,25 +8301,36 @@ void UTIL_UpdateDoors(bool bInitial)
 
 					Vector DoorCentre = UTIL_GetCentreOfEntity(NavDoor->DoorEdict);
 
-					bool bThisConnectionAffected = false;
+					bool bThisConnectionAffected = (vlineIntersectsAABB(ConnStart, MidPoint, NavDoor->DoorEdict->v.absmin, NavDoor->DoorEdict->v.absmax) || vlineIntersectsAABB(MidPoint, ConnEnd, NavDoor->DoorEdict->v.absmin, NavDoor->DoorEdict->v.absmax));
 
-					Vector NearestPointOnLine = vClosestPointOnLine(ConnStart, MidPoint, DoorCentre);
-					if (vPointOverlaps3D(NearestPointOnLine, DoorCentre - HalfExtents, DoorCentre + HalfExtents))
+					if (bThisConnectionAffected)
 					{
-						UTIL_ModifyOffMeshConnectionFlag(ThisConnection, SAMPLE_POLYFLAGS_WELD);
-						bThisConnectionAffected = true;
-					}
-					else
-					{
-						NearestPointOnLine = vClosestPointOnLine(MidPoint, ConnEnd, DoorCentre);
-						if (vPointOverlaps3D(NearestPointOnLine, DoorCentre - HalfExtents, DoorCentre + HalfExtents))
+						if (ThisConnection->bBiDirectional)
 						{
 							UTIL_ModifyOffMeshConnectionFlag(ThisConnection, SAMPLE_POLYFLAGS_WELD);
-							bThisConnectionAffected = true;
+						}
+						else
+						{
+							DoorTrigger* NearestTrigger = UTIL_GetNearestDoorTrigger(ConnStart, NavDoor, nullptr, true);
+
+							if (!NearestTrigger)
+							{
+								UTIL_ModifyOffMeshConnectionFlag(ThisConnection, SAMPLE_POLYFLAGS_DISABLED);
+							}
+							else
+							{
+								if (NearestTrigger->TriggerType == DOOR_WELD)
+								{
+									UTIL_ModifyOffMeshConnectionFlag(ThisConnection, SAMPLE_POLYFLAGS_WELD);
+								}
+								else
+								{
+									UTIL_ModifyOffMeshConnectionFlag(ThisConnection, ThisConnection->DefaultConnectionFlags);
+								}
+							}
 						}
 					}
-
-					if (!bThisConnectionAffected)
+					else
 					{
 						if (ThisConnection->ConnectionFlags != ThisConnection->DefaultConnectionFlags)
 						{
@@ -8252,6 +8495,8 @@ void UTIL_UpdateDoorTriggers(nav_door* Door)
 
 	DoorActivationType NewActivationType = DOOR_NONE;
 
+	bool bButtonHasBeenPressed = false;
+
 	for (auto it = Door->TriggerEnts.begin(); it != Door->TriggerEnts.end();)
 	{
 		if (FNullEnt(it->Edict) || it->Edict->free)
@@ -8335,12 +8580,21 @@ void UTIL_UpdateDoorTriggers(nav_door* Door)
 			if (it->LastToggleState == TS_AT_BOTTOM || (bButtonIsToggle && it->LastToggleState == TS_AT_TOP))
 			{
 				it->NextActivationTime = gpGlobals->time + fmaxf(it->ActivationDelay, 1.0f);
+				bButtonHasBeenPressed = true;
 			}
 
 			it->LastToggleState = NewState;
 		}
 
 		it++;
+	}
+
+	if (bButtonHasBeenPressed)
+	{
+		for (auto it = Door->TriggerEnts.begin(); it != Door->TriggerEnts.end(); it++)
+		{
+			it->NextActivationTime = gpGlobals->time + fmaxf(it->ActivationDelay, 1.0f);
+		}
 	}
 
 	Door->ActivationType = NewActivationType;
@@ -8534,6 +8788,31 @@ nav_door* UTIL_GetNavDoorByEdict(const edict_t* DoorEdict)
 	}
 
 	return nullptr;
+}
+
+AvHAIOffMeshConnection* UTIL_GetOffMeshConnectionForLift(nav_door* LiftRef)
+{
+	if (!LiftRef) { return nullptr; }
+
+	AvHAIOffMeshConnection* NearestConnection = nullptr;
+	float MinDist = 0.0f;
+
+	for (auto it = BaseMapConnections.begin(); it != BaseMapConnections.end(); it++)
+	{
+		if (!(it->ConnectionFlags & SAMPLE_POLYFLAGS_LIFT)) { continue; }
+
+		Vector LiftLocation = UTIL_GetCentreOfEntity(LiftRef->DoorEdict);
+
+		float ThisDist = fminf(vDist3DSq(it->FromLocation, LiftLocation), vDist3DSq(it->ToLocation, LiftLocation));
+
+		if (!NearestConnection || ThisDist < MinDist)
+		{
+			NearestConnection = &(*it);
+			MinDist = ThisDist;
+		}
+	}
+
+	return NearestConnection;
 }
 
 // TODO: Find the topmost point when open, and topmost point when closed, and see how closely they align to the top and bottom point parameters
@@ -8944,6 +9223,7 @@ bool NAV_IsMovementTaskStillValid(AvHAIPlayer* pBot)
 
 	if (MoveTask->TaskType == MOVE_TASK_USE)
 	{
+		if (MoveTask->TriggerToActivate)
 		return MoveTask->TriggerToActivate && MoveTask->TriggerToActivate->bIsActivated && MoveTask->TriggerToActivate->NextActivationTime < gpGlobals->time;
 	}
 

@@ -195,7 +195,7 @@ bool BotUseObject(AvHAIPlayer* pBot, edict_t* Target, bool bContinuous)
 
 	if (AimDot >= 0.95f)
 	{
-		pBot->Button |= IN_USE;
+		//pBot->Button |= IN_USE;
 		pBot->LastUseTime = gpGlobals->time;
 
 		CBaseEntity* UsedObject = CBaseEntity::Instance(Target);
@@ -333,8 +333,13 @@ void BotLeap(AvHAIPlayer* pBot, const Vector TargetLocation)
 
 		float Dot = UTIL_GetDotProduct2D(FaceAngle, MoveDir);
 
-		if (Dot >= 0.98f)
+		if (Dot >= 0.95f)
 		{
+			// Just give the bot a nudge and make sure they don't miss and end up somewhere they don't want to be
+			float MoveSpeed = vSize2D(pBot->Edict->v.velocity);
+			Vector NewVelocity = MoveDir * MoveSpeed;
+			NewVelocity.z = pBot->Edict->v.velocity.z;
+
 			pBot->Button |= IN_ATTACK2;
 			pBot->BotNavInfo.bIsJumping = true;
 			pBot->BotNavInfo.LeapAttemptedTime = gpGlobals->time;
@@ -1725,6 +1730,8 @@ void StartNewBotFrame(AvHAIPlayer* pBot)
 {
 	edict_t* pEdict = pBot->Edict;
 
+	if (!pBot->CurrentTask)	{ pBot->CurrentTask = &pBot->PrimaryBotTask; }
+
 	ClearBotInputs(pBot);
 	pBot->CurrentEyePosition = GetPlayerEyePosition(pEdict);
 
@@ -2197,6 +2204,8 @@ void UpdateAIMarinePlayerNSRole(AvHAIPlayer* pBot)
 
 void AIPlayerNSThink(AvHAIPlayer* pBot)
 {
+	return;
+
 	AvHTeam* BotTeam = GetGameRules()->GetTeam(pBot->Player->GetTeam());
 
 	if (!BotTeam) { return; }
@@ -2676,8 +2685,10 @@ AvHAICombatStrategy GetMarineCombatStrategyForTarget(AvHAIPlayer* pBot, enemy_st
 
 	float DistToEnemy = vDist2DSq(pBot->Edict->v.origin, CurrentEnemy->LastSeenLocation);
 
+	bool bCanRetreat = AITAC_IsCompletedStructureOfTypeNearLocation(BotTeam, (STRUCTURE_MARINE_COMMCHAIR | STRUCTURE_MARINE_ARMOURY | STRUCTURE_MARINE_ADVARMOURY), ZERO_VECTOR, 0.0f);
+
 	// If we are doing something important, don't get distracted by enemies that aren't an immediate threat
-	if (pBot->CurrentTask && pBot->CurrentTask->TaskType == TASK_DEFEND || pBot->CommanderTask.TaskType != TASK_NONE)
+	if (pBot->CurrentTask && (pBot->CurrentTask->TaskType == TASK_DEFEND || pBot->CommanderTask.TaskType != TASK_NONE))
 	{
 		if ((!CurrentEnemy->bHasLOS || DistToEnemy > sqrf(UTIL_MetresToGoldSrcUnits(10.0f))) && (!vIsZero(pBot->CurrentTask->TaskLocation) && !UTIL_PlayerHasLOSToLocation(CurrentEnemy->EnemyEdict, pBot->CurrentTask->TaskLocation, UTIL_MetresToGoldSrcUnits(30.0f))))
 		{
@@ -2685,7 +2696,7 @@ AvHAICombatStrategy GetMarineCombatStrategyForTarget(AvHAIPlayer* pBot, enemy_st
 		}
 	}
 
-	if (pBot->CurrentCombatStrategy == COMBAT_STRATEGY_RETREAT)
+	if (bCanRetreat && pBot->CurrentCombatStrategy == COMBAT_STRATEGY_RETREAT)
 	{
 		int MinDesiredAmmo = imini(UTIL_GetPlayerPrimaryMaxAmmoReserve(pBot->Player), UTIL_GetPlayerPrimaryWeaponMaxClipSize(pBot->Player) * 2);
 
@@ -2698,7 +2709,7 @@ AvHAICombatStrategy GetMarineCombatStrategyForTarget(AvHAIPlayer* pBot, enemy_st
 	int NumEnemyAllies = AITAC_GetNumPlayersOnTeamWithLOS(EnemyTeam, EnemyEdict->v.origin, UTIL_MetresToGoldSrcUnits(10.0f), EnemyEdict);
 	int NumFriendlies = AITAC_GetNumPlayersOnTeamWithLOS(BotTeam, pBot->Edict->v.origin, UTIL_MetresToGoldSrcUnits(10.0f), pBot->Edict);
 
-	if (CurrentHealthPercent < 0.3f || (CurrentHealthPercent < 0.5f && NumEnemyAllies > 0) || UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) < UTIL_GetPlayerPrimaryWeaponMaxClipSize(pBot->Player))
+	if (bCanRetreat && (CurrentHealthPercent < 0.3f || (CurrentHealthPercent < 0.5f && NumEnemyAllies > 0) || UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) < UTIL_GetPlayerPrimaryWeaponMaxClipSize(pBot->Player)))
 	{
 		return COMBAT_STRATEGY_RETREAT;
 	}
@@ -2796,8 +2807,6 @@ void AIPlayerNSMarineThink(AvHAIPlayer* pBot)
 	{
 		if (MarineCombatThink(pBot)) { return; }
 	}
-
-	if (!pBot->CurrentTask) { pBot->CurrentTask = &pBot->PrimaryBotTask; }
 
 	if (gpGlobals->time >= pBot->BotNextTaskEvaluationTime)
 	{
@@ -4199,7 +4208,6 @@ bool AIPlayerMustFinishCurrentTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 
 void AIPlayerNSAlienThink(AvHAIPlayer* pBot)
 {
-	if (!pBot->CurrentTask) { pBot->CurrentTask = &pBot->PrimaryBotTask; }
 
 	if (pBot->CurrentEnemy > -1)
 	{
@@ -4686,8 +4694,6 @@ void AIPlayerCOMarineThink(AvHAIPlayer* pBot)
 
 void AIPlayerCOAlienThink(AvHAIPlayer* pBot)
 {
-	if (!pBot->CurrentTask) { pBot->CurrentTask = &pBot->PrimaryBotTask; }
-
 	AvHMessageID NextCombatUpgrade = GetNextAIPlayerCOAlienUpgrade(pBot);
 
 	if (NextCombatUpgrade != MESSAGE_NULL)
@@ -4762,7 +4768,7 @@ void AIPlayerSetPrimaryCOMarineTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 	}
 
 	// Nothing to attack, just hunt down remaining enemy players. Shouldn't happen in vanilla combat mode, but a plugin might change behaviour
-	if (FNullEnt(StructureToAttack))
+	if (!StructureToAttack || FNullEnt(StructureToAttack))
 	{
 
 		vector<AvHPlayer*> AllEnemyPlayers = AIMGR_GetAllPlayersOnTeam(EnemyTeam);
@@ -5108,7 +5114,7 @@ void AIPlayerSetPrimaryCOAlienTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 	}
 
 	// Nothing to attack, just hunt down remaining enemy players. Shouldn't happen in vanilla combat mode, but a plugin might change behaviour
-	if (FNullEnt(StructureToAttack))
+	if (!StructureToAttack || FNullEnt(StructureToAttack))
 	{
 		vector<AvHPlayer*> AllEnemyPlayers = AIMGR_GetAllPlayersOnTeam(EnemyTeam);
 		edict_t* TargetPlayer = nullptr;
@@ -5248,6 +5254,58 @@ void AIPlayerSetSecondaryCOAlienTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 	AITASK_ClearBotTask(pBot, Task);
 }
 
+void AIPlayerEndMatchThink(AvHAIPlayer* pBot)
+{
+	
+	pBot->CurrentEnemy = BotGetNextEnemyTarget(pBot);
+
+	if (pBot->CurrentEnemy > -1)
+	{
+		if (IsPlayerMarine(pBot->Player))
+		{
+			MarineCombatThink(pBot);
+		}
+		else
+		{
+			AlienCombatThink(pBot);
+		}
+
+		return;
+	}
+
+	AvHTeamNumber BotTeam = pBot->Player->GetTeam();
+	AvHTeamNumber EnemyTeam = AIMGR_GetEnemyTeam(BotTeam);
+
+	vector<AvHPlayer*> EnemyPlayers = AIMGR_GetAllPlayersOnTeam(EnemyTeam);
+
+	AvHPlayer* EnemyToAttack = nullptr;
+	float MinDist = 0.0f;
+
+	for (auto it = EnemyPlayers.begin(); it != EnemyPlayers.end(); it++)
+	{
+		edict_t* PlayerEdict = (*it)->edict();
+		if (IsPlayerActiveInGame(PlayerEdict))
+		{
+			float ThisDist = vDist2DSq(pBot->Player->pev->origin, PlayerEdict->v.origin);
+
+			if (!EnemyToAttack || ThisDist < MinDist)
+			{
+				EnemyToAttack = (*it);
+				MinDist = ThisDist;
+			}
+		}
+	}
+
+	if (EnemyToAttack)
+	{
+		MoveTo(pBot, EnemyToAttack->pev->origin, MOVESTYLE_NORMAL, UTIL_MetresToGoldSrcUnits(10.0f));
+	}
+	else
+	{
+		AIPlayerDMThink(pBot);
+	}
+	
+}
 
 void AIPlayerDMThink(AvHAIPlayer* pBot)
 {
@@ -5266,8 +5324,6 @@ void AIPlayerDMThink(AvHAIPlayer* pBot)
 
 		return;
 	}
-
-	pBot->CurrentTask = &pBot->PrimaryBotTask;
 
 	AITASK_BotUpdateAndClearTasks(pBot);
 
@@ -5355,8 +5411,17 @@ void AIPlayerThink(AvHAIPlayer* pBot)
 		switch (GetGameRules()->GetMapMode())
 		{
 		case MAP_MODE_NS:
-			AIPlayerNSThink(pBot);
-			break;
+		{
+			if (AIMGR_IsMatchPracticallyOver())
+			{
+				AIPlayerEndMatchThink(pBot);
+			}
+			else
+			{
+				AIPlayerNSThink(pBot);
+			}
+		}			
+		break;
 		case MAP_MODE_CO:
 			AIPlayerCOThink(pBot);
 			break;

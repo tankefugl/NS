@@ -228,6 +228,7 @@ typedef struct _OFF_MESH_CONN
 	Vector FromLocation = g_vecZero;
 	Vector ToLocation = g_vecZero;
 	edict_t* TargetObject = nullptr;
+	bool bBiDirectional = false;
 } AvHAIOffMeshConnection;
 
 typedef struct _STRUCTURE_OBSTACLE
@@ -749,11 +750,11 @@ typedef struct AVH_AI_PLAYER
 
 	vector<AvHAIBuildableStructure> DangerTurrets;
 
-	AvHAIPlayerTask* CurrentTask = nullptr; // Bot's current task they're performing
 	AvHAIPlayerTask PrimaryBotTask;
 	AvHAIPlayerTask SecondaryBotTask;
 	AvHAIPlayerTask WantsAndNeedsTask;
 	AvHAIPlayerTask CommanderTask; // Task assigned by the commander
+	AvHAIPlayerTask* CurrentTask = &PrimaryBotTask; // Bot's current task they're performing
 
 	float BotNextTaskEvaluationTime = 0.0f;
 
