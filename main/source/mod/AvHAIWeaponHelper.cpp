@@ -570,125 +570,20 @@ AvHAIWeapon BotMarineChooseBestWeapon(AvHAIPlayer* pBot, edict_t* target)
 
 	if (IsEdictPlayer(target))
 	{
-		float DistFromEnemy = vDist2DSq(pBot->Edict->v.origin, target->v.origin);
-
-		if (UTIL_GetPlayerPrimaryWeapon(pBot->Player) == WEAPON_MARINE_GL)
-		{
-			if (UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) > 0 && DistFromEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)))
-			{
-				return WEAPON_MARINE_GL;
-			}
-
-			if (BotGetSecondaryWeaponClipAmmo(pBot) > 0)
-			{
-				return GetBotMarineSecondaryWeapon(pBot);
-			}
-
-			return WEAPON_MARINE_KNIFE;
-		}
-
-		if (DistFromEnemy <= sqrf(UTIL_MetresToGoldSrcUnits(2.0f)))
-		{
-			if (UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) == 0)
-			{
-				if (BotGetSecondaryWeaponClipAmmo(pBot) > 0)
-				{
-					return GetBotMarineSecondaryWeapon(pBot);
-				}
-				else
-				{
-					return WEAPON_MARINE_KNIFE;
-				}
-			}
-			else
-			{
-				return UTIL_GetPlayerPrimaryWeapon(pBot->Player);
-			}
-		}
-		else
-		{
-			AvHAIWeapon PrimaryWeapon = UTIL_GetPlayerPrimaryWeapon(pBot->Player);
-
-			if (PrimaryWeapon == WEAPON_MARINE_SHOTGUN)
-			{
-				if (DistFromEnemy > sqrf(UTIL_MetresToGoldSrcUnits(10.0f)))
-				{
-					if (BotGetSecondaryWeaponClipAmmo(pBot) > 0 || BotGetSecondaryWeaponAmmoReserve(pBot) > 0)
-					{
-						return GetBotMarineSecondaryWeapon(pBot);
-					}
-					else
-					{
-						if (UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) > 0 || UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) > 0)
-						{
-							return PrimaryWeapon;
-						}
-						else
-						{
-							return WEAPON_MARINE_KNIFE;
-						}
-					}
-				}
-				else
-				{
-					if (UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) > 0 || UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) > 0)
-					{
-						return PrimaryWeapon;
-					}
-					else
-					{
-						if (BotGetSecondaryWeaponClipAmmo(pBot) > 0)
-						{
-							return GetBotMarineSecondaryWeapon(pBot);
-						}
-						else
-						{
-							return WEAPON_MARINE_KNIFE;
-						}
-					}
-				}
-			}
-			else
-			{
-				if (DistFromEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)))
-				{
-					if (UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) > 0 || UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) > 0)
-					{
-						return PrimaryWeapon;
-					}
-
-					if (BotGetSecondaryWeaponClipAmmo(pBot) > 0 || BotGetSecondaryWeaponAmmoReserve(pBot) > 0)
-					{
-						return GetBotMarineSecondaryWeapon(pBot);
-					}
-
-					return WEAPON_MARINE_KNIFE;
-				}
-				else
-				{
-					if (UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) > 0 || (DistFromEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)) && UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) > 0))
-					{
-						return PrimaryWeapon;
-					}
-					else
-					{
-						if (BotGetSecondaryWeaponClipAmmo(pBot) > 0)
-						{
-							return GetBotMarineSecondaryWeapon(pBot);
-						}
-						else
-						{
-							return WEAPON_MARINE_KNIFE;
-						}
-					}
-				}
-			}
-		}
+		return BotMarineChooseBestWeaponForStructure(pBot, target);
 	}
 	else
 	{
 		return BotMarineChooseBestWeaponForStructure(pBot, target);
 	}
+}
+
+bool BotAnyWeaponNeedsReloading(AvHAIPlayer* pBot)
+{
+	if (UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) < UTIL_GetPlayerPrimaryWeaponMaxClipSize(pBot->Player) && UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) > 0) { return true; }
+	if (UTIL_GetPlayerSecondaryWeaponClipAmmo(pBot->Player) < UTIL_GetPlayerSecondaryWeaponMaxClipSize(pBot->Player) && UTIL_GetPlayerSecondaryAmmoReserve(pBot->Player) > 0) { return true; }
+
+	return false;
 }
 
 AvHAIWeapon BotAlienChooseBestWeaponForStructure(AvHAIPlayer* pBot, edict_t* target)
@@ -770,6 +665,107 @@ AvHAIWeapon BotMarineChooseBestWeaponForStructure(AvHAIPlayer* pBot, edict_t* ta
 	}
 
 	return WEAPON_MARINE_KNIFE;
+}
+
+AvHAIWeapon MarineGetBestWeaponForPlayerTarget(AvHAIPlayer* pBot, AvHPlayer* Target)
+{
+	AvHAIWeapon PrimaryWeapon = UTIL_GetPlayerPrimaryWeapon(pBot->Player);
+	AvHAIWeapon SecondaryWeapon = UTIL_GetPlayerSecondaryWeapon(pBot->Player);
+
+	float DistToEnemy = vDist2DSq(pBot->Edict->v.origin, Target->pev->origin);
+
+	bool bHasAmmoForPrimary = (PrimaryWeapon != WEAPON_INVALID && UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) > 0 || UTIL_GetPlayerPrimaryAmmoReserve(pBot->Player) > 0);
+	bool bHasAmmoForSecondary = (SecondaryWeapon != WEAPON_INVALID && UTIL_GetPlayerSecondaryWeaponClipAmmo(pBot->Player) > 0 || UTIL_GetPlayerSecondaryAmmoReserve(pBot->Player) > 0);
+
+	if (PrimaryWeapon != WEAPON_INVALID && UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) > 0)
+	{
+		if (PrimaryWeapon == WEAPON_MARINE_GL)
+		{
+			if (DistToEnemy > sqrf(BALANCE_VAR(kGrenadeRadius)) || !bHasAmmoForSecondary)
+			{
+				return PrimaryWeapon;
+			}
+			else
+			{
+				if (bHasAmmoForSecondary)
+				{
+					return SecondaryWeapon;
+				}
+				else
+				{
+					return WEAPON_MARINE_KNIFE;
+				}
+			}
+		}
+		else if (PrimaryWeapon == WEAPON_MARINE_SHOTGUN)
+		{
+			float MaxDist = (IsPlayerMarine(Target) || Target->GetUser3() > AVH_USER3_ALIEN_PLAYER3) ? UTIL_MetresToGoldSrcUnits(15.0f) : UTIL_MetresToGoldSrcUnits(8.0f);
+
+			if (DistToEnemy < sqrf(MaxDist) || !bHasAmmoForSecondary)
+			{
+				return PrimaryWeapon;
+			}
+			else
+			{
+				if (bHasAmmoForSecondary)
+				{
+					return SecondaryWeapon;
+				}
+				else
+				{
+					return WEAPON_MARINE_KNIFE;
+				}
+			}
+		}
+		else
+		{
+			return PrimaryWeapon;
+		}
+	}
+
+	bool bEnemyIsRanged = IsPlayerMarine(Target) || ((GetPlayerCurrentWeapon(Target) == WEAPON_FADE_ACIDROCKET || GetPlayerCurrentWeapon(Target) == WEAPON_LERK_SPORES) && DistToEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)));
+
+	if (bEnemyIsRanged)
+	{
+		if (bHasAmmoForSecondary)
+		{
+			return SecondaryWeapon;
+		}
+		else
+		{
+			return WEAPON_MARINE_KNIFE;
+		}
+	}
+
+	if (DistToEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)))
+	{
+		if (bHasAmmoForPrimary)
+		{
+			return PrimaryWeapon;
+		}
+		else if (bHasAmmoForSecondary)
+		{
+			return SecondaryWeapon;
+		}
+		else
+		{
+			return WEAPON_MARINE_KNIFE;
+		}
+	}
+
+	if (UTIL_GetPlayerPrimaryWeaponClipAmmo(pBot->Player) > 0)
+	{
+		return PrimaryWeapon;
+	}
+	else if (UTIL_GetPlayerSecondaryWeaponClipAmmo(pBot->Player) > 0)
+	{
+		return SecondaryWeapon;
+	}
+	else
+	{
+		return WEAPON_MARINE_KNIFE;
+	}
+
 }
 
 AvHAIWeapon GorgeGetBestWeaponForCombatTarget(AvHAIPlayer* pBot, edict_t* Target)

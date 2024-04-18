@@ -3691,11 +3691,16 @@ void StructureBlockedMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vect
 
 void BlockedMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoint)
 {
-	Vector vForward = UTIL_GetVectorNormal2D(EndPoint - StartPoint);
+	Vector vForward = UTIL_GetVectorNormal2D(EndPoint - pBot->Edict->v.origin);
 
 	if (vIsZero(vForward))
 	{
-		vForward = UTIL_GetForwardVector2D(pBot->Edict->v.angles);
+		vForward = UTIL_GetVectorNormal2D(EndPoint - StartPoint);
+
+		if (vIsZero(vForward))
+		{
+			vForward = UTIL_GetForwardVector2D(pBot->Edict->v.angles);
+		}
 	}
 
 	pBot->desiredMovementDir = vForward;
@@ -3729,6 +3734,11 @@ void JumpMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoint)
 	if (vIsZero(vForward))
 	{
 		vForward = UTIL_GetVectorNormal2D(EndPoint - StartPoint);
+
+		if (vIsZero(vForward))
+		{
+			vForward = UTIL_GetForwardVector2D(pBot->Edict->v.angles);
+		}
 	}
 
 	pBot->desiredMovementDir = vForward;

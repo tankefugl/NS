@@ -52,6 +52,8 @@ float CountdownStartedTime = 0.0f;
 
 bool bBotsEnabled = false;
 
+float CurrentFrameDelta = 0.01f;
+
 AvHAICommanderMode AIMGR_GetCommanderMode()
 {
 	if (avh_botcommandermode.value == 1)
@@ -561,6 +563,8 @@ void AIMGR_UpdateAIPlayers()
 
 	float FrameDelta = CurrTime - PrevTime;
 
+	AIMGR_SetFrameDelta(FrameDelta);
+
 	int cvarBotSkill = clampi((int)avh_botskill.value, 0, 3);
 
 	bool bSkillChanged = (cvarBotSkill != CurrentBotSkill);
@@ -594,7 +598,7 @@ void AIMGR_UpdateAIPlayers()
 			}
 		}
 
-		AIMGR_ProcessPendingSounds(FrameDelta);
+		AIMGR_ProcessPendingSounds();
 	}
 	
 	int NumCommanders = AIMGR_GetNumAICommanders();
@@ -1455,8 +1459,10 @@ bool AIMGR_IsMatchPracticallyOver()
 	return false;
 }
 
-void AIMGR_ProcessPendingSounds(float FrameDelta)
+void AIMGR_ProcessPendingSounds()
 {
+	float FrameDelta = AIMGR_GetFrameDelta();
+
 	for (auto it = ActiveAIPlayers.begin(); it != ActiveAIPlayers.end(); it++)
 	{
 		it->HearingThreshold -= FrameDelta;
@@ -1529,10 +1535,7 @@ void AIMGR_ProcessPendingSounds(float FrameDelta)
 
 					if (EmitterTeam != ThisTeam)
 					{
-						//char msg[64];
-						//sprintf(msg, "%s Sound: %f\n", SoundType.c_str(), Volume);
-						//UTIL_SayText(msg, CBaseEntity::Instance(INDEXENT(1)));
-						AIPlayerHearEnemy(&(*it), EmittingEntity);
+						AIPlayerHearEnemy(&(*it), EmittingEntity, Volume);
 					}
 				}
 			}
@@ -1542,3 +1545,12 @@ void AIMGR_ProcessPendingSounds(float FrameDelta)
 	}
 }
 
+void AIMGR_SetFrameDelta(float NewValue)
+{
+	CurrentFrameDelta = NewValue;
+}
+
+float AIMGR_GetFrameDelta()
+{
+	return CurrentFrameDelta;
+}

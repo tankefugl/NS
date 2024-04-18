@@ -43,7 +43,10 @@ bool IsMeleeWeapon(const AvHAIWeapon Weapon);
 Vector UTIL_GetGrenadeThrowTarget(edict_t* Player, const Vector TargetLocation, const float ExplosionRadius, bool bPrecise);
 
 AvHAIWeapon BotMarineChooseBestWeaponForStructure(AvHAIPlayer* pBot, edict_t* target);
+AvHAIWeapon MarineGetBestWeaponForPlayerTarget(AvHAIPlayer* pBot, AvHPlayer* Target);
 AvHAIWeapon BotAlienChooseBestWeaponForStructure(AvHAIPlayer* pBot, edict_t* target);
+
+bool BotAnyWeaponNeedsReloading(AvHAIPlayer* pBot);
 
 // Helper function to pick the best weapon for any given situation and target type.
 AvHAIWeapon BotMarineChooseBestWeapon(AvHAIPlayer* pBot, edict_t* target);

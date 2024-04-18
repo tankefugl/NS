@@ -8803,6 +8803,10 @@ bool AvHPlayer::Heal(float inAmount, bool inPlaySound, bool dcHealing)
 			{
 				// Play regeneration event
 				PLAYBACK_EVENT_FULL(0, this->edict(), gRegenerationEventID, 0, this->pev->origin, (float *)&g_vecZero, this->GetAlienAdjustedEventVolume(), 0.0, /*theWeaponIndex*/ 0, 0, 0, 0 );
+#ifdef AVH_SERVER
+                // Heartbeat sound is a little loud, so reduce it for the AI so bots don't instantly spot your location with a single regen tic
+                AISND_RegisterNewSound(this->entindex(), this->pev->origin, AI_SOUND_OTHER, this->GetAlienAdjustedEventVolume() * 0.25f);
+#endif
 			}
 		}
 	}    

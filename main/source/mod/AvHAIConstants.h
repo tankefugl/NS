@@ -497,6 +497,7 @@ typedef struct _ENEMY_STATUS
 	float NextUpdateTime = 0.0f; // When the bot can next react to a change in target's state
 	float NextVelocityUpdateTime = 0.0f; // When the bot can next react to a change in target's state
 	float EndTrackingTime = 0.0f; // When to stop "sensing" enemy movement after losing LOS
+	float CertaintyOfLocation = 0.0f; // How sure the bot is where the enemy is if they're cloaked
 
 } enemy_status;
 
