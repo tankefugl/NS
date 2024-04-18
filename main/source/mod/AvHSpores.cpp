@@ -247,14 +247,18 @@ int	AvHSpore::GetShootAnimation() const
 int	AvHSpore::GetDeployAnimation() const
 {
 	// Look at most recently used weapon and see if we can transition from it
-	int theDeployAnimation = -1;
+	int theDeployAnimation = 2;
 
 	AvHWeaponID thePreviousID = this->GetPreviousWeaponID();
 
 	switch(thePreviousID)
 	{
 	case AVH_WEAPON_BITE2:
+	case AVH_WEAPON_PRIMALSCREAM:
 		theDeployAnimation = 9;
+		break;
+	case AVH_WEAPON_UMBRA:
+		theDeployAnimation = -1;
 		break;
 	case AVH_WEAPON_SPIKE:
 		theDeployAnimation = 8;

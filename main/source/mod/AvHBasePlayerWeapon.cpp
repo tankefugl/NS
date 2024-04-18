@@ -170,7 +170,8 @@ AvHBasePlayerWeapon::AvHBasePlayerWeapon()
     this->mEndEvent = 0;
 	this->mRange = 8012;
 	this->mDamage = 10;
-	this->mAttackButtonDownLastFrame = false;
+	//this->mAttackButtonDownLastFrame = false;
+	this->m_fInAttack = FALSE;
 	this->mTimeOfLastResupply = -1;
     this->mTimeOfLastPrime = -1;
     this->mWeaponPrimeStarted = false;
@@ -180,8 +181,6 @@ AvHBasePlayerWeapon::AvHBasePlayerWeapon()
 	this->mIsPersistent = false;
 	this->mLifetime = -1;
 #endif
-
-	this->mFireOnAttackUp = false;
 }
 void AvHBasePlayerWeapon::PrintWeaponToClient(CBaseEntity *theAvHPlayer) {
 	char msg[1024];
@@ -284,7 +283,12 @@ BOOL AvHBasePlayerWeapon::DefaultDeploy( char *szViewModel, char *szWeaponModel,
 	//this->m_pPlayer->SetAnimation(PLAYER_ANIM(iAnim));
 	
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + this->GetDeployTime();
-	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + this->GetDeployTime() + kDeployIdleInterval;
+
+	// 2024 - Fix some +movement animation issues on aliens and also make alien idle trigger faster so they look more organic. 
+	if (m_pPlayer->pev->iuser3 > 2 && m_pPlayer->pev->iuser3 < 9)
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + this->GetDeployTime() + 2.0f;
+	else
+		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + this->GetDeployTime() + kDeployIdleInterval;
 	
 	return TRUE;
 }
@@ -328,6 +332,7 @@ BOOL AvHBasePlayerWeapon::DefaultReload( int iClipSize, int iAnim, float fDelay,
 	this->m_pPlayer->SetAnimation(PLAYER_RELOAD);
 	
 	m_fInReload = TRUE;
+	m_bAttackQueued = false;
 	
 	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + kDeployIdleInterval;
 	
@@ -494,7 +499,8 @@ bool AvHBasePlayerWeapon::GetFiresUnderwater() const
 
 bool AvHBasePlayerWeapon::GetIsFiring() const
 {
-	return this->mAttackButtonDownLastFrame;
+	//return this->mAttackButtonDownLastFrame;
+	return this->m_fInAttack;
 }
 
 bool AvHBasePlayerWeapon::GetHasMuzzleFlash() const
@@ -679,6 +685,7 @@ void AvHBasePlayerWeapon::Holster( int skiplocal)
 	#endif
 
 	this->m_bAttackQueued = false;
+	this->m_fInAttack = FALSE;
 }
 
 float AvHBasePlayerWeapon::GetTimePassedThisTick() const
@@ -781,7 +788,7 @@ bool AvHBasePlayerWeapon::ProcessValidAttack(void)
 			{
 				if((this->m_flNextPrimaryAttack <= 0) && !this->m_fInSpecialReload)
 				{
-					if(!this->GetMustPressTriggerForEachShot() || !this->mAttackButtonDownLastFrame || this->mFireOnAttackUp)
+					if(!this->GetMustPressTriggerForEachShot() || !this->m_fInAttack)
 					{
 							//ALERT(at_console, "trueattack1 primammo:%d primatype:%d secammo:%d secatype:%d\n", this->m_pPlayer->m_rgAmmo[this->m_iPrimaryAmmoType], this->m_iPrimaryAmmoType, this->m_pPlayer->m_rgAmmo[this->m_iSecondaryAmmoType], this->m_iSecondaryAmmoType);
 							theAttackIsValid = true;
@@ -886,14 +893,14 @@ void AvHBasePlayerWeapon::PlaybackEvent(unsigned short inEvent, int inIparam2, i
 		int theWeaponIndex = 0;
 		AvHUser3 theUser3 = AVH_USER3_NONE;
 		int theUpgrades = 0;
-		
+
 		// When predicting weapons, play the event locally, then tell everyone else but us to play it back later
 		int flags = inFlags;
 		edict_t* theEdict;
 
 		// Pass player random seed to event, so it chooses the right direction for spread
 		int theRandomNumber = this->m_pPlayer->random_seed;
-		
+
 #if defined( AVH_CLIENT )
 		theUser3 = gHUD.GetHUDUser3();
 		theUpgrades = gHUD.GetHUDUpgrades();
@@ -906,7 +913,7 @@ void AvHBasePlayerWeapon::PlaybackEvent(unsigned short inEvent, int inIparam2, i
 
 		// For bullet spread
 		//theRandomNumber = UTIL_SharedRandomLong(this->m_pPlayer->random_seed, 1, kBulletSpreadGranularity*kBulletSpreadGranularity);
-		
+
 		// When in overwatch, the weapon is fired on the server, so the client firing the weapon won't be firing it locally first
 #if defined(AVH_SERVER)
 		if(this->mInOverwatch)
@@ -923,7 +930,7 @@ void AvHBasePlayerWeapon::PlaybackEvent(unsigned short inEvent, int inIparam2, i
 		this->GetEventAngles(theEventAngles);
 
 		float theVolume = AvHPlayerUpgrade::GetSilenceVolumeLevel(theUser3, theUpgrades);
-		
+
 		//( int flags, const edict_t *pInvoker, unsigned short eventindex, float delay, float *origin, float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 );
 		PLAYBACK_EVENT_FULL(flags, this->m_pPlayer->edict(), theEvent, 0, (float *)&theEventOrigin, (float *)&theEventAngles, theVolume, 0.0, theRandomNumber, inIparam2, 0, 0 );
 	}
@@ -1027,17 +1034,18 @@ void AvHBasePlayerWeapon::SetNextAttack(void)
 }
 
 
-void AvHBasePlayerWeapon::PrimaryAttack(bool fireOnAttackUp)
+void AvHBasePlayerWeapon::PrimaryAttack(void)
 {
     if (this->ProcessValidAttack())
     {
-
-        if (!this->mAttackButtonDownLastFrame)
+        //if (!this->mAttackButtonDownLastFrame)
+		if (!this->m_fInAttack)
         {
-            this->PlaybackEvent(this->mStartEvent);
-            this->mAttackButtonDownLastFrame = true;
+			this->PlaybackEvent(this->mStartEvent);
+            //this->mAttackButtonDownLastFrame = true;
+			this->m_fInAttack = TRUE;
         }
-    		
+    	
         this->PlaybackEvent(this->mEvent, this->GetShootAnimation());
         this->SetAnimationAndSound();
 
@@ -1080,7 +1088,6 @@ void AvHBasePlayerWeapon::PrimaryAttack(bool fireOnAttackUp)
 
         this->DeductCostForShot();
         this->SetNextAttack();
-        
     }
 }
 
@@ -1400,10 +1407,12 @@ void AvHBasePlayerWeapon::WeaponIdle(void)
 //	//gEngfuncs.Con_Printf("during idle, clip is %d\n", sz);
 //#endif
 
-	if(this->mAttackButtonDownLastFrame)
+	//if(this->mAttackButtonDownLastFrame)
+	if (this->m_fInAttack)
 	{
 		this->PlaybackEvent(this->mEndEvent);
-		this->mAttackButtonDownLastFrame = false;
+		//this->mAttackButtonDownLastFrame = false;
+		this->m_fInAttack = FALSE;
 	}
 	
 	ResetEmptySound();
@@ -1412,8 +1421,12 @@ void AvHBasePlayerWeapon::WeaponIdle(void)
 
 	if(this->m_flTimeWeaponIdle <= UTIL_WeaponTimeBase())
 	{
+		// +movement transitional animation fix
+#ifdef AVH_CLIENT
+		if (gpGlobals->time - this->PrevAttack2Time > 1.0f)
+#endif
 		this->SendWeaponAnim(this->GetIdleAnimation());
-			
+
 		this->m_pPlayer->SetAnimation(PLAYER_IDLE);
 			
 		this->SetNextIdle();

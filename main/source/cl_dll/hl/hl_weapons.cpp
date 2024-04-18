@@ -151,6 +151,8 @@ int gSiegeViewHitEventID;
 int gCommanderPointsAwardedEventID;
 int gBlinkEffectSuccessEventID;
 
+static float prevUseTime = 0;
+
 //bool gPlayingJetpack = false;
 //CGlock g_Glock;
 //CCrowbar g_Crowbar;
@@ -502,6 +504,21 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		m_fInReload = FALSE;
 	}
 
+	if (m_pPlayer->pev->button & IN_USE)
+	{
+		prevUseTime = gpGlobals->time;
+	}
+	else if (gHUD.GetHUDUser3() == AVH_USER3_ALIEN_PLAYER2 && m_pPlayer->m_afButtonReleased & IN_USE && m_pPlayer->pev->weaponanim == 4)
+	{
+		switch (gHUD.GetCurrentWeaponID())
+		{
+		case AVH_WEAPON_SPIT:
+		case AVH_WEAPON_BILEBOMB:
+			this->SendWeaponAnim(7);
+			break;
+		}
+	}
+
 	// Properly propagate the end animation
 	if (this->PrevAttack2Status == true && !(m_pPlayer->pev->button & IN_ATTACK2))
 	{
@@ -511,23 +528,21 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 			this->SendWeaponAnim(12);
 			break;
 		case AVH_WEAPON_ACIDROCKET:
-			this->SendWeaponAnim(8);
+			this->SendWeaponAnim(13);
 			break;
 		case AVH_WEAPON_CLAWS:
 			this->SendWeaponAnim(9);
 			break;
 		case AVH_WEAPON_STOMP:
-			this->SendWeaponAnim(8);
+			this->SendWeaponAnim(11);
 			break;
 		case AVH_WEAPON_DEVOUR:
-			this->SendWeaponAnim(11);
+			this->SendWeaponAnim(12);
 			break;
 		}
 	}
 
-	bool pistolAttackUp = ((CVAR_GET_FLOAT("cl_pistoltrigger") != 0) && m_pPlayer->m_afButtonLast & IN_ATTACK && m_pPlayer->m_afButtonReleased & IN_ATTACK && ii.iId == AVH_WEAPON_PISTOL);
-
-	if ((m_pPlayer->pev->button & IN_ATTACK || this->m_bAttackQueued || pistolAttackUp) && (!(m_pPlayer->pev->button & IN_ATTACK2) || gHUD.GetHUDUser3() == AVH_USER3_ALIEN_PLAYER3))
+	if ((m_pPlayer->pev->button & IN_ATTACK || (this->m_bAttackQueued && m_flNextPrimaryAttack <= 0.0)) && (!(m_pPlayer->pev->button & IN_ATTACK2) || gHUD.GetHUDUser3() == AVH_USER3_ALIEN_PLAYER3))
 	{
         if (GetCanUseWeapon())
         {
@@ -573,15 +588,16 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 						this->m_flLastAnimationPlayed = gpGlobals->time;
 					}
 				}
-				//#ifdef AVH_CLIENT
-				//if((m_iClip == 0) && ?
-				//#endif
-				PrimaryAttack(pistolAttackUp);
+
+				PrimaryAttack();
 				//return;
 			}
 			else
 			{
-				QueueAttack(pistolAttackUp);
+				if (m_pPlayer->m_afButtonPressed & IN_ATTACK)
+				{
+					QueueAttack();
+				}				
 			}
 		}
 	}
@@ -653,10 +669,10 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 					this->SendWeaponAnim(5);
 					break;
 				case AVH_WEAPON_DEVOUR:
-					this->SendWeaponAnim(18);
+					this->SendWeaponAnim(19);
 					break;
 				case AVH_WEAPON_STOMP:
-					this->SendWeaponAnim(15);
+					this->SendWeaponAnim(16);
 					break;
 				}
 				break;
@@ -667,6 +683,8 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 			this->PrevAttack2Status = false;
 		else
 			this->PrevAttack2Status = true;
+
+		this->PrevAttack2Time = gpGlobals->time;
 
 		return;
 //		if (GetCanUseWeapon())
@@ -692,7 +710,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		    // no fire buttons down
 
 		    m_fFireOnEmpty = FALSE;
-			
+
 		    // weapon is useable. Reload if empty and weapon has waited as long as it has to after firing
 			if (m_iClip == 0 && !(ii.iFlags & ITEM_FLAG_NOAUTORELOAD) && m_flNextPrimaryAttack < 0.0)
 		    {
@@ -1228,7 +1246,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 		}
 
 		pfrom = &from->weapondata[ i ];
-		
+
 		pCurrent->m_fInReload			= pfrom->m_fInReload;
 		pCurrent->m_fInSpecialReload	= pfrom->m_fInSpecialReload;
 //		pCurrent->m_flPumpTime			= pfrom->m_flPumpTime;
@@ -1236,6 +1254,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 		pCurrent->m_flNextPrimaryAttack	= pfrom->m_flNextPrimaryAttack;
 		pCurrent->m_flNextSecondaryAttack = pfrom->m_flNextSecondaryAttack;
 		pCurrent->m_flTimeWeaponIdle	= pfrom->m_flTimeWeaponIdle;
+
 		if(pWeapon && (pWeapon->m_iId == pfrom->m_iId))
 		{
 			// Predict clip
@@ -1260,8 +1279,9 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 		pCurrent->m_flStartThrow		= pfrom->fuser2;
 		pCurrent->m_flReleaseThrow		= pfrom->fuser3;
 //		pCurrent->m_chargeReady			= pfrom->iuser1;
-//		pCurrent->m_fInAttack			= pfrom->iuser2;
+		pCurrent->m_fInAttack			= pfrom->iuser2;
 		pCurrent->pev->iuser3			= pfrom->iuser3;
+		pCurrent->m_bAttackQueued		= pfrom->iuser4;
 	
 //		pCurrent->m_iSecondaryAmmoType		= (int)from->client.vuser3[2];
 //		pCurrent->m_iPrimaryAmmoType		= (int)from->client.vuser4[0];
@@ -1408,18 +1428,50 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	// Make sure that weapon animation matches what the game .dll is telling us
 	//  over the wire ( fixes some animation glitches )
-	// Ensure that the fade and onos won't get these, to play the blink and charge animations correctly
-	bool noRun = (to->client.iuser3 == AVH_USER3_ALIEN_PLAYER4) || (to->client.iuser3 == AVH_USER3_ALIEN_PLAYER5);
-	if (g_runfuncs && ( HUD_GetWeaponAnim() != to->client.weaponanim ) && !(CheckInAttack2()) && !noRun)
+	if (g_runfuncs && HUD_GetWeaponAnim() != to->client.weaponanim)
 	{
 		int body = 2;
+		bool processTheAnim = true;
 
-		//Pop the model to body 0.
-		//if ( pWeapon == &g_Tripmine )
-		//	body = 0;
-		
+		//gEngfuncs.Con_Printf("trying to force animation on client currentanim:%d serveranim:%d nextattack:%f time:%f\n", HUD_GetWeaponAnim(), to->client.weaponanim, to->client.m_flNextAttack, gpGlobals->time);
+		//// 2024 - Don't correct with +movement transitional animations since +movement animations are hacked in on the client and it bugs out. Remove most of this if alien weapons get refactored to shared code.
+		if (to->client.iuser3 == AVH_USER3_ALIEN_PLAYER5)
+		{ 
+			if ((gpGlobals->time - pWeapon->PrevAttack2Time < 1.0f) || (to->client.weaponanim > 4 && to->client.weaponanim < 21))
+				//(to->client.weaponanim == 27 && gpGlobals->time - pWeapon->PrevAttack2Time < 10.0f) ||
+			{
+				processTheAnim = false;
+			}
+		}
+		else if (to->client.iuser3 == AVH_USER3_ALIEN_PLAYER4)
+		{
+			if ((gpGlobals->time - pWeapon->PrevAttack2Time < 1.0f) || (to->client.weaponanim > 7 && to->client.weaponanim < 14))
+				//(to->client.weaponanim == 5 && gpGlobals->time - pWeapon->PrevAttack2Time < 10.0f) ||
+			{
+				processTheAnim = false;
+			}	
+		}
+		//else if (to->client.iuser3 == AVH_USER3_ALIEN_PLAYER3 && to->client.weaponanim > 6 && to->client.weaponanim < 13)
+		else if (to->client.iuser3 == AVH_USER3_ALIEN_PLAYER1)
+		{
+			if (gpGlobals->time - pWeapon->PrevAttack2Time < 1.0f)
+				processTheAnim = false;
+		}
+		// Gorge building animation fixes since it's server side and the new transition out of it is client side.
+		else if (to->client.iuser3 == AVH_USER3_ALIEN_PLAYER2)
+		{
+			if (player.pev->button & IN_USE ||
+				(to->client.weaponanim == 4 && gpGlobals->time - prevUseTime < 10.0f) ||
+				(to->client.weaponanim < 2 && gpGlobals->time - prevUseTime < 1.0f) ||
+				(HUD_GetWeaponAnim() == 4 && to->client.weaponanim == 5))
+			{
+				processTheAnim = false;
+			}
+		}
+
 		// Force a fixed anim down to viewmodel
-		HUD_SendWeaponAnim( to->client.weaponanim, body, 1 );
+		if (processTheAnim)
+			HUD_SendWeaponAnim(to->client.weaponanim, body, 1);
 	}
 
 	for ( i = 0; i < 32; i++ )
@@ -1445,8 +1497,9 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 //		pto->fuser2						= pCurrent->m_flStartThrow;
 //		pto->fuser3						= pCurrent->m_flReleaseThrow;
 //		pto->iuser1						= pCurrent->m_chargeReady;
-//		pto->iuser2						= pCurrent->m_fInAttack;
+		pto->iuser2						= pCurrent->m_fInAttack;
 		pto->iuser3						= pCurrent->pev->iuser3;
+		pto->iuser4						= pCurrent->m_bAttackQueued;
 
 		// Decrement weapon counters, server does this at same time ( during post think, after doing everything else )
 		pto->m_flNextReload				-= cmd->msec / 1000.0;

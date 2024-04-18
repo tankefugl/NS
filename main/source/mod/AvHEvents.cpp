@@ -119,6 +119,7 @@
 #include "AvHHulls.h"
 #include "AvHServerVariables.h"
 
+#include "cl_dll/com_weapons.h"
 
 //extern AvHKnife				gKnife;
 //extern AvHMachineGun		gMachineGun;
@@ -1393,7 +1394,7 @@ void EV_SpitGun(struct event_args_s* inArgs)
 		{
 			V_PunchAxis( 0, gEngfuncs.pfnRandomFloat( -theHalfSpread, theHalfSpread ) );
 		}
-		
+
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(inArgs->iparam2, 2);
 	}
 }
@@ -3607,10 +3608,13 @@ void EV_DistressBeacon(struct event_args_s* inArgs)
 
 void EV_WeaponAnimation(struct event_args_s* inArgs)
 {
+	//gEngfuncs.Con_Printf("ev_weapanim attempt islocal:%d anim:%d g_currentanim:%d clienttime:%f\n", EV_IsLocal(inArgs->entindex), inArgs->iparam2, HUD_GetWeaponAnim(), gEngfuncs.GetClientTime());
 	// General x-punch axis
 	if(EV_IsLocal(inArgs->entindex))
 	{
 		int theAnimation = max(inArgs->iparam2, 0);
+		// 2024 - Set this here to be checked in weapons think later to force animations if needed since event playback doesn't always work.
+		HUD_SetWeaponAnim(theAnimation);
 		gEngfuncs.pEventAPI->EV_WeaponAnimation(theAnimation, 2);
 	}
 }

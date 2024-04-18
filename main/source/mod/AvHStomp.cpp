@@ -224,6 +224,11 @@ bool AvHStomp::GetFiresUnderwater() const
 	return false;
 }
 
+int AvHStomp::GetIdleAnimation() const
+{
+	return 3;
+}
+
 bool AvHStomp::GetIsDroppable() const
 {
 	return false;

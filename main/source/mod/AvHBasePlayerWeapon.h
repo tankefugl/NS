@@ -177,7 +177,7 @@ public:
 
 	virtual void    Precache();
 
-	virtual void    PrimaryAttack(bool fireOnAttackUp = false);
+	virtual void    PrimaryAttack();
 
     virtual void    Reload();
 
@@ -247,7 +247,7 @@ protected:
 
 	float					mRange;
 	float					mDamage;
-	bool					mAttackButtonDownLastFrame;
+	//bool					mAttackButtonDownLastFrame;
 	float					mTimeOfLastResupply;
     
     float                   mTimeOfLastPrime;
@@ -261,8 +261,6 @@ protected:
 	
     // sounds               
     CStringList				mFireSounds;
-
-	bool					mFireOnAttackUp;
 };
 
 #endif

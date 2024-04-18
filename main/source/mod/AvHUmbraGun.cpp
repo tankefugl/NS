@@ -163,14 +163,18 @@ float AvHUmbraGun::GetRateOfFire() const
 
 int	AvHUmbraGun::GetDeployAnimation() const
 {
-	int theDeployAnimation = -1;
+	int theDeployAnimation = 2;
 	
 	AvHWeaponID thePreviousID = this->GetPreviousWeaponID();
 	
 	switch(thePreviousID)
 	{
 	case AVH_WEAPON_BITE2:
+	case AVH_WEAPON_PRIMALSCREAM:
 		theDeployAnimation = 9;
+		break;
+	case AVH_WEAPON_SPORES:
+		theDeployAnimation = -1;
 		break;
 	case AVH_WEAPON_SPIKE:
 		theDeployAnimation = 8;

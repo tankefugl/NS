@@ -212,10 +212,10 @@ int	AvHAcidRocketGun::GetDeployAnimation() const
 		break;
 
 	case AVH_WEAPON_SWIPE:
-	case AVH_WEAPON_BLINK:
 		theDeployAnimation = 8;
 		break;
 
+	case AVH_WEAPON_BLINK:
 	case AVH_WEAPON_METABOLIZE:
 		theDeployAnimation = 13;
 		break;
