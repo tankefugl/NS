@@ -246,7 +246,8 @@ void AvHWelder::Holster( int skiplocal )
 void AvHWelder::WeaponIdle(void)
 {
 #ifdef AVH_SERVER
-	if(this->GetIsWelding() && this->mAttackButtonDownLastFrame) 
+	//if(this->GetIsWelding() && this->mAttackButtonDownLastFrame) 
+	if (this->GetIsWelding() && this->m_fInAttack)
 	{
 		PLAYBACK_EVENT_FULL(0, this->m_pPlayer->edict(), gWelderConstEventID, 0, this->m_pPlayer->pev->origin, (float *)&g_vecZero, 0.0, 0.0, 1, 0, 0, 0 );
 		this->SetIsWelding(false);

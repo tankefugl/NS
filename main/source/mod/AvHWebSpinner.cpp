@@ -297,6 +297,7 @@ int AvHWebSpinner::GetDeployAnimation() const
 	switch(thePreviousID)
 	{
 	case AVH_WEAPON_WEBSPINNER:
+	case AVH_WEAPON_HEALINGSPRAY:
 		theDeployAnimation = -1;
 		break;
 

@@ -86,7 +86,21 @@ int	AvHLeap::GetBarrelLength() const
 
 int	AvHLeap::GetDeployAnimation() const
 {
-	return 6;
+	int theDeployAnimation = 5;
+
+	AvHWeaponID thePreviousID = this->GetPreviousWeaponID();
+
+	switch (thePreviousID)
+	{
+	case AVH_WEAPON_BITE:
+	case AVH_WEAPON_PARASITE:
+	case AVH_ABILITY_LEAP:
+	case AVH_WEAPON_DIVINEWIND:
+		theDeployAnimation = -1;
+		break;
+	}
+
+	return theDeployAnimation;
 }
 
 float AvHLeap::GetDeployTime() const
@@ -224,11 +238,11 @@ int	AvHCharge::GetDeployAnimation() const
 		break;
 
 	case AVH_WEAPON_DEVOUR:
-		theDeployAnimation = 18;
+		theDeployAnimation = 19;
 		break;
 
 	case AVH_WEAPON_STOMP:
-		theDeployAnimation = 15;
+		theDeployAnimation = 16;
 		break;
 	}
 	

@@ -951,8 +951,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 {
 	// Block attacks during +movement except for lerk.
 	bool theAttackPressed = (m_pPlayer->pev->button & IN_ATTACK) && (!(m_pPlayer->pev->button & IN_ATTACK2) || m_pPlayer->pev->iuser3 == AVH_USER3_ALIEN_PLAYER3);
-	bool pistolAttackUp = (m_pPlayer->m_iPistolTrigger && m_pPlayer->m_afButtonLast & IN_ATTACK && m_pPlayer->m_afButtonReleased & IN_ATTACK && m_iId == AVH_WEAPON_PISTOL);
-
+	bool attackQueuedAndCanAttack = m_bAttackQueued && CanAttack(m_flNextPrimaryAttack, gpGlobals->time, UseDecrement());
     bool theWeaponPrimes = (this->GetWeaponPrimeTime() > 0.0f);
     bool theWeaponIsPriming = this->GetIsWeaponPriming();
     bool theWeaponIsPrimed = this->GetIsWeaponPrimed();
@@ -990,7 +989,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
     else 
 */
 
-	if ( (theAttackPressed || m_bAttackQueued || pistolAttackUp) && m_pPlayer->GetCanUseWeapon())
+	if ( (theAttackPressed || attackQueuedAndCanAttack) && m_pPlayer->GetCanUseWeapon())
 	{
 		if ((m_fInSpecialReload == 1 || m_fInSpecialReload == 2) && m_iClip != 0)
 		{
@@ -1005,11 +1004,14 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		    }
 
 			m_pPlayer->TabulateAmmo();
-			PrimaryAttack(pistolAttackUp);
+			PrimaryAttack();
         }
 		else
 		{
-			QueueAttack(pistolAttackUp);
+			if (m_pPlayer->m_afButtonPressed & IN_ATTACK)
+			{
+				QueueAttack();
+			}
 		}
 	}
 	else if (m_pPlayer->pev->button & IN_ATTACK2)

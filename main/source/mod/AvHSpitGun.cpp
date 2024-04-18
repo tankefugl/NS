@@ -177,13 +177,14 @@ int	AvHSpitGun::GetDamageType() const
 int	AvHSpitGun::GetDeployAnimation() const
 {
 	// Look at most recently used weapon and see if we can transition from it
-	int theDeployAnimation = 7;
+	int theDeployAnimation = 11;
 
 	AvHWeaponID thePreviousID = this->GetPreviousWeaponID();
 
 	switch(thePreviousID)
 	{
 	case AVH_WEAPON_SPIT:
+	case AVH_WEAPON_BILEBOMB:
 		theDeployAnimation = -1;
 		break;
 

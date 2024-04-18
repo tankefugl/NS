@@ -141,6 +141,7 @@
 #include "AvHAlienAbilityConstants.h"
 #include <list>
 #include "../common/entity_types.h"
+#include "cl_dll/com_weapons.h"
 
 void IN_GetMousePos( int *mx, int *my );
 
@@ -3819,6 +3820,9 @@ void AvHHud::RenderAlienUI()
 
     if (GetHUDUser3() == AVH_USER3_ALIEN_EMBRYO)
     {
+		// 2024 - Set this so deploy animations play properly once out of the egg. This is here because weapons think doesn't happen durring gestation.
+		HUD_SetWeaponAnim(-1);
+
 		if (mMembraneSprite)
 		{
             AvHSpriteSetRenderMode(kRenderTransAdd);

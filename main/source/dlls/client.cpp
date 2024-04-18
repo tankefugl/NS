@@ -2081,10 +2081,11 @@ int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
 						item->fuser2					= gun->m_flStartThrow;
 						item->fuser3					= gun->m_flReleaseThrow;
 						//item->iuser1					= gun->m_chargeReady;
-						//item->iuser2					= gun->m_fInAttack;
+						item->iuser2					= gun->m_fInAttack;
 
 						// Pass along enabled state in iuser3 (for when hives and ensnare enable and disable weapons)
 						item->iuser3					= gun->pev->iuser3;
+						item->iuser4					= gun->m_bAttackQueued;
 						
 						//item->m_flPumpTime				= max( gun->m_flPumpTime, -0.001 );
 					}

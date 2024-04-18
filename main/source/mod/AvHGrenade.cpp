@@ -238,16 +238,18 @@ BOOL AvHGrenade::IsUseable(void)
 }
 
 
-void AvHGrenade::PrimaryAttack(bool fireOnAttackUp)
+void AvHGrenade::PrimaryAttack(void)
 {
  
     if (this->ProcessValidAttack())
     {
 
-        if (!this->mAttackButtonDownLastFrame)
+        //if (!this->mAttackButtonDownLastFrame)
+        if (!this->m_fInAttack)
         {
             this->PlaybackEvent(this->mStartEvent);
-            this->mAttackButtonDownLastFrame = true;
+            //this->mAttackButtonDownLastFrame = true;
+            this->m_fInAttack = TRUE;
         }
     		
 	    if (m_flStartThrow == 0)

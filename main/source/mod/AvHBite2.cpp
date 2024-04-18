@@ -73,9 +73,11 @@ int	AvHBite2::GetDeployAnimation() const
 
 	switch(thePreviousID)
 	{
+	case AVH_WEAPON_PRIMALSCREAM:
+		theDeployAnimation = -1;
+		break;
 	case AVH_WEAPON_UMBRA:
 	case AVH_WEAPON_SPORES:
-	//case AVH_WEAPON_PRIMALSCREAM:
 		theDeployAnimation = 12;
 		break;
 	}

@@ -87,11 +87,12 @@ void HUD_SendWeaponAnim( int iAnim, int body, int force )
 		// Don't actually change it.
 		if ( !g_runfuncs && !force )
 			return;
-	
+
 		g_currentanim = iAnim;
-	
+
 		// Tell animation system new info
 		gEngfuncs.pfnWeaponAnim( iAnim, body );
+		//gEngfuncs.Con_Printf("forcing animation g_currentanim:%d new anim:%d\n", g_currentanim, iAnim);
 	}
 }
 
@@ -105,6 +106,11 @@ Retrieve current predicted weapon animation
 int HUD_GetWeaponAnim( void )
 {
 	return g_currentanim;
+}
+
+void HUD_SetWeaponAnim(int anim)
+{
+	g_currentanim = anim;
 }
 
 /*
