@@ -70,6 +70,7 @@
 #ifdef AVH_SERVER
 #include "AvHGamerules.h"
 #include "AvHServerUtil.h"
+#include "AvHAISoundQueue.h"
 #endif
 
 #include "AvHSharedUtil.h"
@@ -235,6 +236,8 @@ void AvHClaws::FireProjectiles(void)
 			float theForceScalar = theDamage*.2f;
 			CBaseEntity* theAttacker = this->m_pPlayer;
 			AvHSUExplosiveForce(pHurt->pev->origin, 100, theForceScalar, theAttacker, theAttacker);
+
+			AISND_RegisterNewSound(pHurt->entindex(), this->m_pPlayer->pev->origin, AI_SOUND_LANDING, 1.0f);
 			
 			// Played in event now
 			//EMIT_SOUND_DYN(ENT(pev), CHAN_WEAPON, theSoundToPlay, 1.0, ATTN_NORM, 0, 100 + theAdrenalineFactor*30 + RANDOM_LONG(-3,3) );

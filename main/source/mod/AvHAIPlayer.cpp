@@ -1895,23 +1895,19 @@ void EndBotFrame(AvHAIPlayer* pBot)
 
 void CustomThink(AvHAIPlayer* pBot)
 {
-	if (IsPlayerMarine(pBot->Edict)) { return; }
-
-	if (!PlayerHasAlienUpgradeOfType(pBot->Edict, HIVE_TECH_SENSORY))
-	{
-		BotEvolveUpgrade(pBot, pBot->CurrentFloorPosition, ALIEN_EVOLUTION_TEN);
-		return;
-	}
 
 	pBot->CurrentEnemy = BotGetNextEnemyTarget(pBot);
 
-	if (pBot->CurrentEnemy < 0)
+	if (pBot->CurrentEnemy >= 0)
 	{
-		MoveTo(pBot, AITAC_GetTeamStartingLocation(AIMGR_GetEnemyTeam(pBot->Player->GetTeam())), MOVESTYLE_NORMAL);
-	}
-	else
-	{
-		AlienCombatThink(pBot);
+		if (IsPlayerMarine(pBot->Edict))
+		{
+			MarineCombatThink(pBot);
+		}
+		else
+		{
+			AlienCombatThink(pBot);
+		}
 	}
 }
 
@@ -2005,11 +2001,35 @@ void UpdateAIPlayerDMRole(AvHAIPlayer* pBot)
 
 }
 
+void AIPlayerHearEnemy(AvHAIPlayer* pBot, edict_t* HeardEnemy)
+{
+	int heardIndex = ENTINDEX(HeardEnemy) - 1;
+
+	if (heardIndex < 0 || heardIndex >= 32 || HeardEnemy->v.team == pBot->Edict->v.team) { return; }
+	
+	pBot->TrackedEnemies[heardIndex].LastSeenTime = gpGlobals->time;
+
+	// If the bot can't see the enemy (bCurrentlyVisible is false) then set the last seen location to a random point in the vicinity so the bot doesn't immediately know where they are
+	if (pBot->TrackedEnemies[heardIndex].bIsVisible || vDist2DSq(pBot->TrackedEnemies[heardIndex].EnemyEdict->v.origin, pBot->Edict->v.origin) < sqrf(UTIL_MetresToGoldSrcUnits(3.0f)))
+	{
+		pBot->TrackedEnemies[heardIndex].LastSeenLocation = HeardEnemy->v.origin;
+	}
+	else
+	{
+		// The further the enemy is, the more inaccurate the bot's guess will be where they are
+		pBot->TrackedEnemies[heardIndex].LastSeenLocation = UTIL_GetRandomPointOnNavmeshInRadius(GetBaseNavProfile(SKULK_BASE_NAV_PROFILE), HeardEnemy->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
+	}
+
+	pBot->TrackedEnemies[heardIndex].bIsAwareOfPlayer = true;
+}
+
 void AIPlayerTakeDamage(AvHAIPlayer* pBot, int damageTaken, edict_t* aggressor)
 {
 	int aggressorIndex = ENTINDEX(aggressor) - 1;
 
-	if (aggressorIndex > -1 && aggressor->v.team != pBot->Edict->v.team && IsPlayerActiveInGame(aggressor))
+	if (aggressorIndex < 0 || aggressorIndex >= 32) { return; }
+
+	if (aggressor->v.team != pBot->Edict->v.team && IsPlayerActiveInGame(aggressor))
 	{
 		pBot->TrackedEnemies[aggressorIndex].LastSeenTime = gpGlobals->time;
 

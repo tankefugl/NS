@@ -25,6 +25,10 @@
 #include "gamerules.h"
 #include "../mod/AvHSpecials.h"
 
+#ifdef AVH_SERVER
+#include "../mod/AvHAIPlayerManager.h"
+#endif
+
 static char *memfgets( byte *pMemFile, int fileSize, int &filePos, char *pBuffer, int bufferSize );
 
 
@@ -1429,7 +1433,9 @@ void EMIT_SOUND_DYN(edict_t *entity, int channel, const char *sample, float volu
 			ALERT( at_aiconsole, "Unable to find %s in sentences.txt\n", sample );
 	}
 	else
+	{
 		EMIT_SOUND_DYN2(entity, channel, sample, volume, attenuation, flags, pitch);
+	}
 }
 
 // play a specific sentence over the HEV suit speaker - just pass player entity, and !sentencename

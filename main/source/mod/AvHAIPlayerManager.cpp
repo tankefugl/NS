@@ -8,6 +8,7 @@
 #include "AvHAIHelper.h"
 #include "AvHAICommander.h"
 #include "AvHAIPlayerUtil.h"
+#include "AvHAISoundQueue.h"
 #include "AvHGamerules.h"
 #include "../dlls/client.h"
 #include <time.h>
@@ -592,6 +593,8 @@ void AIMGR_UpdateAIPlayers()
 				AIMGR_SetCommanderAllowedTime(TeamBNumber, gpGlobals->time + 15.0f);
 			}
 		}
+
+		AIMGR_ProcessPendingSounds(FrameDelta);
 	}
 	
 	int NumCommanders = AIMGR_GetNumAICommanders();
@@ -709,7 +712,7 @@ AvHTeamNumber AIMGR_GetTeamANumber()
 
 AvHTeamNumber AIMGR_GetTeamBNumber()
 {
-	return GetGameRules()->GetTeamANumber();
+	return GetGameRules()->GetTeamBNumber();
 }
 
 AvHTeam* AIMGR_GetTeamRef(const AvHTeamNumber Team)
@@ -1451,3 +1454,91 @@ bool AIMGR_IsMatchPracticallyOver()
 
 	return false;
 }
+
+void AIMGR_ProcessPendingSounds(float FrameDelta)
+{
+	for (auto it = ActiveAIPlayers.begin(); it != ActiveAIPlayers.end(); it++)
+	{
+		it->HearingThreshold -= FrameDelta;
+		it->HearingThreshold = clampf(it->HearingThreshold, 0.0f, 1.0f);
+	}
+
+	AvHAISound Sound = AISND_PopSound();
+
+	AvHTeamNumber TeamANumber = AIMGR_GetTeamANumber();
+	AvHTeamNumber TeamBNumber = AIMGR_GetTeamBNumber();
+
+	while (Sound.SoundType != AI_SOUND_NONE)
+	{
+		edict_t* EmittingEntity = INDEXENT(Sound.EntIndex);
+		//string SoundType = "Unknown";
+
+		float MaxDist = 0.0f;
+
+		switch (Sound.SoundType)
+		{
+			case AI_SOUND_FOOTSTEP:
+				MaxDist = UTIL_MetresToGoldSrcUnits(20.0f);
+				//SoundType = "Footstep";
+				break;
+			case AI_SOUND_SHOOT:
+				MaxDist = UTIL_MetresToGoldSrcUnits(30.0f);
+				//SoundType = "Shoot";
+				break;
+			case AI_SOUND_VOICELINE:
+				MaxDist = UTIL_MetresToGoldSrcUnits(20.0f);
+				//SoundType = "Voiceline";
+				break;
+			case AI_SOUND_LANDING:
+				MaxDist = UTIL_MetresToGoldSrcUnits(20.0f);
+				//SoundType = "Landing";
+				break;
+			case AI_SOUND_OTHER:
+			default:
+				MaxDist = UTIL_MetresToGoldSrcUnits(20.0f);
+				//SoundType = "Other";
+				break;			
+		}
+
+		MaxDist = sqrf(MaxDist);
+
+		if (!FNullEnt(EmittingEntity) && EmittingEntity->v.team != 0 && IsEdictPlayer(EmittingEntity) && IsPlayerActiveInGame(EmittingEntity))
+		{
+			AvHTeamNumber EmitterTeam = (AvHTeamNumber)EmittingEntity->v.team;
+
+			for (auto it = ActiveAIPlayers.begin(); it != ActiveAIPlayers.end(); it++)
+			{
+				AvHTeamNumber ThisTeam = it->Player->GetTeam();
+				float Volume = Sound.Volume;
+				float HearingThresholdScalar = (ThisTeam != EmitterTeam || EmittingEntity == it->Edict) ? 1.0f : 0.5f;
+
+				if (EmitterTeam != ThisTeam)
+				{
+					float DistFromSound = vDist3DSq(Sound.SoundLocation, it->Edict->v.origin);
+
+					if (DistFromSound > MaxDist) { continue; }
+
+					Volume = Sound.Volume - (Sound.Volume * clampf((DistFromSound / MaxDist), 0.0f, 1.0f));
+				}
+
+				Volume = Volume * HearingThresholdScalar;
+
+				if (Volume > it->HearingThreshold)
+				{
+					it->HearingThreshold = Volume;
+
+					if (EmitterTeam != ThisTeam)
+					{
+						//char msg[64];
+						//sprintf(msg, "%s Sound: %f\n", SoundType.c_str(), Volume);
+						//UTIL_SayText(msg, CBaseEntity::Instance(INDEXENT(1)));
+						AIPlayerHearEnemy(&(*it), EmittingEntity);
+					}
+				}
+			}
+		}
+
+		Sound = AISND_PopSound();
+	}
+}
+

@@ -123,6 +123,8 @@
 #include "AvHHulls.h"
 #include "AnimationUtil.h"
 
+#include "AvHAISoundQueue.h"
+
 int   NS_PointContents(const hull_t *hull, int num, float p[3]);
 float NS_TraceLineAgainstEntity(int inEntityIndex, float inTime, const float inRayOrigin[3], const float inRayDirection[3]);
 
@@ -572,6 +574,8 @@ void AvHSUPlayRandomConstructionEffect(AvHPlayer* inPlayer, CBaseEntity* inConst
 	else
 	{
 		gSoundListManager.PlaySoundInList(kMarineConstructionSoundList, inConstructee, CHAN_BODY, theVolume);
+
+		AISND_RegisterNewSound(inPlayer->entindex(), inPlayer->pev->origin, AI_SOUND_OTHER, theVolume);
 
 		// Play sparks every other time
 		if(RANDOM_LONG(0, 1) == 1)

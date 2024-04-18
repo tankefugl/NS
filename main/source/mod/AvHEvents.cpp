@@ -119,6 +119,7 @@
 #include "AvHHulls.h"
 #include "AvHServerVariables.h"
 
+
 //extern AvHKnife				gKnife;
 //extern AvHMachineGun		gMachineGun;
 //extern AvHPistol			gPistol;

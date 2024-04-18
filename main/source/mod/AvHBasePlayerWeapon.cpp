@@ -86,7 +86,7 @@ extern int g_runfuncs;
 #ifdef AVH_SERVER
 #include "AvHServerUtil.h"
 #include "AvHGamerules.h"
-
+#include "AvHAISoundQueue.h"
 extern int				gWelderConstEventID;
 #endif
 
@@ -1040,11 +1040,32 @@ void AvHBasePlayerWeapon::PrimaryAttack(bool fireOnAttackUp)
     		
         this->PlaybackEvent(this->mEvent, this->GetShootAnimation());
         this->SetAnimationAndSound();
+
+		
 	
         // If player is too close to a wall, don't actually fire the projectile
         if(this->GetIsGunPositionValid())
         {
             this->FireProjectiles();
+#ifdef AVH_SERVER
+
+			float SoundVolume = 1.0f;
+
+			int theSilenceLevel = AvHGetAlienUpgradeLevel(this->m_pPlayer->pev->iuser4, MASK_UPGRADE_6);
+			switch (theSilenceLevel)
+			{
+			case 1:
+				SoundVolume = (float)BALANCE_VAR(kSilenceLevel1Volume);
+				break;
+			case 2:
+				SoundVolume = (float)BALANCE_VAR(kSilenceLevel2Volume);
+				break;
+			case 3:
+				SoundVolume = (float)BALANCE_VAR(kSilenceLevel3Volume);
+				break;
+			}
+			AISND_RegisterNewSound(this->m_pPlayer->entindex(), this->m_pPlayer->pev->origin, AI_SOUND_SHOOT, SoundVolume);
+#endif
         }
         else
         {

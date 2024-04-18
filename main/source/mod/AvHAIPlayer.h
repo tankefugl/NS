@@ -153,6 +153,7 @@ void UpdateAIPlayerDMRole(AvHAIPlayer* pBot);
 bool ShouldAIPlayerTakeCommand(AvHAIPlayer* pBot);
 
 void AIPlayerTakeDamage(AvHAIPlayer* pBot, int damageTaken, edict_t* aggressor);
+void AIPlayerHearEnemy(AvHAIPlayer* pBot, edict_t* HeardEnemy);
 
 int BotGetNextEnemyTarget(AvHAIPlayer* pBot);
 

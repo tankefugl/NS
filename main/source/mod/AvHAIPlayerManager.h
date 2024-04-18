@@ -126,4 +126,6 @@ bool AIMGR_HasMatchEnded();
 
 bool AIMGR_IsMatchPracticallyOver();
 
+void AIMGR_ProcessPendingSounds(float FrameDelta);
+
 #endif

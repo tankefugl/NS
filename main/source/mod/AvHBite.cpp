@@ -64,6 +64,7 @@
 #ifdef AVH_SERVER
 #include "AvHGamerules.h"
 #include "AvHServerUtil.h"
+#include "AvHAISoundQueue.h"
 #endif
 
 #include "AvHSharedUtil.h"
@@ -221,6 +222,8 @@ void AvHBite::FireProjectiles(void)
 			{
 				theSoundToPlay = kBiteKillSound;
 			}
+
+			AISND_RegisterNewSound(this->m_pPlayer->entindex(), this->m_pPlayer->pev->origin, AI_SOUND_LANDING, 1.0f);
 			
 			EMIT_SOUND(ENT(pev), CHAN_WEAPON, theSoundToPlay, 1.0, ATTN_NORM);
 		}

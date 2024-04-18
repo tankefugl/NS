@@ -146,7 +146,10 @@
 #include "AvHSiegeTurret.h"
 #include "AvHHulls.h"
 
+#ifdef AVH_SERVER
 #include "AvHAIPlayerManager.h"
+#include "AvHAISoundQueue.h"
+#endif
 
 //LINK_ENTITY_TO_CLASS(kwMine, AvHMine);
 //LINK_ENTITY_TO_CLASS(kwDeployedTurret, AvHDeployedTurret);
@@ -1286,6 +1289,10 @@ void AvHPhaseGate::TeleportUse(CBaseEntity *pActivator, CBaseEntity *pCaller, US
 					this->SetTimeOfLastDeparture(gpGlobals->time);
 					AvHSUPlayPhaseInEffect(theFlags, this, thePlayer);
 
+#ifdef AVH_SERVER
+					AISND_RegisterNewSound(thePlayer->entindex(), theOrigin, AI_SOUND_OTHER, 1.0f);
+#endif
+
 					// AvHSUKillPlayersTouchingPlayer(thePlayer, this->pev);
 					AvHSUPushbackPlayersTouchingPlayer(thePlayer, this->pev);
                     KillBuildablesTouchingPlayer(thePlayer, this->pev);
@@ -1978,11 +1985,13 @@ void AvHCommandStation::CommandUse( CBaseEntity* pActivator, CBaseEntity* pCalle
 
 							GetGameRules()->MarkDramaticEvent(kCCNewCommanderPriority, thePlayer, this);
 
+#ifdef AVH_SERVER
 							// A human used the comm chair, let the AI know to keep away
 							if (!(thePlayer->pev->flags & FL_FAKECLIENT))
 							{
 								AIMGR_SetCommanderAllowedTime(theStationTeamNumber, gpGlobals->time + 20.0f);
 							}
+#endif
 						}
 						else
 						{
