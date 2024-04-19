@@ -256,6 +256,7 @@
     <ClCompile Include="..\mod\AvHAIPlayer.cpp" />
     <ClCompile Include="..\mod\AvHAIPlayerManager.cpp" />
     <ClCompile Include="..\mod\AvHAIPlayerUtil.cpp" />
+    <ClCompile Include="..\mod\AvHAISoundQueue.cpp" />
     <ClCompile Include="..\mod\AvHAITactical.cpp" />
     <ClCompile Include="..\mod\AvHAITask.cpp" />
     <ClCompile Include="..\mod\AvHAIWeaponHelper.cpp" />
@@ -1390,6 +1391,7 @@
     <ClInclude Include="..\mod\AvHAIPlayer.h" />
     <ClInclude Include="..\mod\AvHAIPlayerManager.h" />
     <ClInclude Include="..\mod\AvHAIPlayerUtil.h" />
+    <ClInclude Include="..\mod\AvHAISoundQueue.h" />
     <ClInclude Include="..\mod\AvHAITactical.h" />
     <ClInclude Include="..\mod\AvHAITask.h" />
     <ClInclude Include="..\mod\AvHAIWeaponHelper.h" />
