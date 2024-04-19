@@ -482,6 +482,7 @@ void UTIL_PopulateWeldableObstacles();
 
 void UTIL_ApplyTempObstaclesToDoor(nav_door* DoorRef, const int Area);
 
+nav_door* UTIL_GetLiftReferenceByEdict(const edict_t* DoorEdict);
 nav_door* UTIL_GetNavDoorByEdict(const edict_t* DoorEdict);
 nav_door* UTIL_GetClosestLiftToPoints(const Vector StartPoint, const Vector EndPoint);
 AvHAIOffMeshConnection* UTIL_GetOffMeshConnectionForLift(nav_door* LiftRef);

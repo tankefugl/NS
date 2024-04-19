@@ -562,15 +562,12 @@ AvHAIWeapon BotMarineChooseBestWeapon(AvHAIPlayer* pBot, edict_t* target)
 		{
 			return GetBotMarineSecondaryWeapon(pBot);
 		}
-		else
-		{
-			return UTIL_GetPlayerPrimaryWeapon(pBot->Player);
-		}
+		return UTIL_GetPlayerPrimaryWeapon(pBot->Player);
 	}
 
 	if (IsEdictPlayer(target))
 	{
-		return BotMarineChooseBestWeaponForStructure(pBot, target);
+		return MarineGetBestWeaponForPlayerTarget(pBot, dynamic_cast<AvHPlayer*>(CBaseEntity::Instance(target)));
 	}
 	else
 	{
@@ -671,6 +668,7 @@ AvHAIWeapon MarineGetBestWeaponForPlayerTarget(AvHAIPlayer* pBot, AvHPlayer* Tar
 {
 	AvHAIWeapon PrimaryWeapon = UTIL_GetPlayerPrimaryWeapon(pBot->Player);
 	AvHAIWeapon SecondaryWeapon = UTIL_GetPlayerSecondaryWeapon(pBot->Player);
+	AvHAIWeapon CurrentWeapon = GetPlayerCurrentWeapon(pBot->Player);
 
 	float DistToEnemy = vDist2DSq(pBot->Edict->v.origin, Target->pev->origin);
 
@@ -700,6 +698,12 @@ AvHAIWeapon MarineGetBestWeaponForPlayerTarget(AvHAIPlayer* pBot, AvHPlayer* Tar
 		else if (PrimaryWeapon == WEAPON_MARINE_SHOTGUN)
 		{
 			float MaxDist = (IsPlayerMarine(Target) || Target->GetUser3() > AVH_USER3_ALIEN_PLAYER3) ? UTIL_MetresToGoldSrcUnits(15.0f) : UTIL_MetresToGoldSrcUnits(8.0f);
+			
+			// Give a little extra leeway if the bot is currently holding a shotgun. Helps prevent rapid switching if the enemy is right on the edge of the max distance
+			if (CurrentWeapon == PrimaryWeapon)
+			{
+				MaxDist *= 1.25f;
+			}
 
 			if (DistToEnemy < sqrf(MaxDist) || !bHasAmmoForSecondary)
 			{

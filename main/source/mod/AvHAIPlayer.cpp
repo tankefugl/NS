@@ -1385,10 +1385,6 @@ void BotUpdateView(AvHAIPlayer* pBot)
 		TrackingInfo->CertaintyOfLocation -= (ViewUpdateDelta * 0.15f);
 		TrackingInfo->CertaintyOfLocation = clampf(TrackingInfo->CertaintyOfLocation, 0.0f, 1.0f);
 
-		char msg[32];
-		sprintf(msg, "%.2f\n", TrackingInfo->CertaintyOfLocation);
-		UTIL_SayText(msg, CBaseEntity::Instance(INDEXENT(1)));
-
 		if (gpGlobals->time < TrackingInfo->NextUpdateTime)
 		{
 			continue;
@@ -1915,6 +1911,12 @@ void CustomThink(AvHAIPlayer* pBot)
 
 	if (pBot->CurrentEnemy >= 0)
 	{
+		enemy_status* TrackingInfo = &pBot->TrackedEnemies[pBot->CurrentEnemy];
+
+		char msg[32];
+		sprintf(msg, "%.2f\n", TrackingInfo->CertaintyOfLocation);
+		UTIL_SayText(msg, CBaseEntity::Instance(INDEXENT(1)));
+
 		if (IsPlayerMarine(pBot->Edict))
 		{
 			MarineCombatThink(pBot);
@@ -2616,7 +2618,7 @@ AvHAICombatStrategy GetFadeCombatStrategyForTarget(AvHAIPlayer* pBot, enemy_stat
 	{
 		if (DistToEnemy > sqrf(UTIL_MetresToGoldSrcUnits(5.0f)))
 		{
-			if ((bEnemyHasDeadlyWeapon && (FacingDot > 0.5f || NumAllies > 0)) || NumAllies > 2)
+			if ((bEnemyHasDeadlyWeapon && (FacingDot > 0.5f || NumAllies > 0)) || NumAllies > 1)
 			{
 				return COMBAT_STRATEGY_SKIRMISH;
 			}
@@ -2624,7 +2626,7 @@ AvHAICombatStrategy GetFadeCombatStrategyForTarget(AvHAIPlayer* pBot, enemy_stat
 	}
 	else
 	{
-		if ((bEnemyHasDeadlyWeapon && (FacingDot > 0.5f || NumAllies > 0)) || NumAllies > 2)
+		if ((bEnemyHasDeadlyWeapon && (FacingDot > 0.5f || NumAllies > 0)) || NumAllies > 1)
 		{
 			Vector EnemyVelocity = UTIL_GetVectorNormal2D(CurrentEnemy->LastSeenVelocity);
 
