@@ -718,7 +718,7 @@ void CONFIG_RegenerateIniFile()
     fprintf(NewConfigFile, "# ChamberSequence:movement/?/?\n");
     fprintf(NewConfigFile, "# Or if you want sensory always last, but movement and defence random, use\n");
     fprintf(NewConfigFile, "# ChamberSequence=?/?/sensory\n");
-    fprintf(NewConfigFile, "ChamberSequence=defense/movement/sensory\n");
+    fprintf(NewConfigFile, "ChamberSequence=?/?/?\n");
 
     fflush(NewConfigFile);
     fclose(NewConfigFile);
