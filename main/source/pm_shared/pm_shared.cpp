@@ -107,6 +107,9 @@
 #include "../mod/CollisionUtil.h"
 #include "../engine/studio.h"
 
+#ifdef AVH_SERVER
+#include "../mod/AvHAISoundQueue.h"
+#endif
 
 //#ifdef AVH_SERVER
 #include "../engine/edict.h"
@@ -2008,6 +2011,9 @@ void NS_PlayStepSound(int inMaterialType, int inSoundNumber, float inVolume)
         
         // Play it at the specified volume
         PM_NSPlaySound(CHAN_BODY, theFinalName, inVolume, theNorm, 0, PITCH_NORM);
+#ifdef AVH_SERVER
+        AISND_RegisterNewSound(pmove->player_index + 1, pmove->origin, AI_SOUND_FOOTSTEP, inVolume);
+#endif
     }
     else
     {
@@ -4613,6 +4619,10 @@ bool PM_FlapMove()
             theVolumeScalar = min(max(theVolumeScalar, 0.0f), 1.0f);
             
             PM_NSPlaySound(CHAN_BODY, theSoundToPlay, theVolumeScalar, ATTN_NORM, 0, PITCH_NORM);
+
+#ifdef AVH_SERVER
+            AISND_RegisterNewSound(pmove->player_index + 1, pmove->origin, AI_SOUND_FOOTSTEP, theVolumeScalar);
+#endif
         }
 
         pmove->oldbuttons |= IN_JUMP; // don't jump again until released
@@ -5700,6 +5710,9 @@ void PM_CheckFalling( void )
                     //break;
                     //case 1:
                     PM_NSPlaySound( CHAN_VOICE, theFallPainSound, theFallPainVolume, ATTN_NORM, 0, PITCH_NORM );
+#ifdef AVH_SERVER
+                    AISND_RegisterNewSound(pmove->player_index + 1, pmove->origin, AI_SOUND_LANDING, theFallPainVolume);
+#endif
                     //  break;
                     //}
                     fvol = 1.0;

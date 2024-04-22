@@ -255,7 +255,10 @@
 #include "AvHNetworkMessages.h"
 #include "AvHNexusServer.h"
 
+#ifdef AVH_SERVER
 #include "AvHAIPlayerManager.h"
+#include "AvHAISoundQueue.h"
+#endif
 
 std::string GetLogStringForPlayer( edict_t *pEntity );
 
@@ -2309,6 +2312,26 @@ void AvHPlayer::StartLeap()
     // Make sure player has leap
     if(this->pev->iuser3 == AVH_USER3_ALIEN_PLAYER1)
     {
+#ifdef AVH_SERVER
+
+        float SoundVolume = 1.0f;
+
+        int theSilenceLevel = AvHGetAlienUpgradeLevel(this->pev->iuser4, MASK_UPGRADE_6);
+        switch (theSilenceLevel)
+        {
+        case 1:
+            SoundVolume = (float)BALANCE_VAR(kSilenceLevel1Volume);
+            break;
+        case 2:
+            SoundVolume = (float)BALANCE_VAR(kSilenceLevel2Volume);
+            break;
+        case 3:
+            SoundVolume = (float)BALANCE_VAR(kSilenceLevel3Volume);
+            break;
+        }
+
+        AISND_RegisterNewSound(this->entindex(), this->pev->origin, AI_SOUND_SHOOT, SoundVolume);
+#endif
         this->mTimeLeapEnd = gpGlobals->time + kLeapDuration;
     }
 }
@@ -4973,6 +4996,11 @@ bool AvHPlayer::PlaySaying(AvHMessageID inMessageID)
         //int pitch = 95;// + RANDOM_LONG(0,29);
         //EMIT_SOUND_DYN(ENT(pev), CHAN_VOICE, theSaying, 1, ATTN_NORM, 0, pitch);
         gSoundListManager.PlaySoundInList(theSoundList, this, CHAN_VOICE, 1.0f);
+
+#ifdef AVH_SERVER
+        AISND_RegisterNewSound(this->entindex(), this->pev->origin, AI_SOUND_VOICELINE, 1.0f);
+#endif
+        
         
         thePlayedSaying = true;
     }
@@ -7034,6 +7062,28 @@ void AvHPlayer::InternalMovementThink()
 			}
 		}
 		else {
+
+#ifdef AVH_SERVER
+
+            float SoundVolume = 1.0f;
+
+            int theSilenceLevel = AvHGetAlienUpgradeLevel(this->pev->iuser4, MASK_UPGRADE_6);
+            switch (theSilenceLevel)
+            {
+            case 1:
+                SoundVolume = (float)BALANCE_VAR(kSilenceLevel1Volume);
+                break;
+            case 2:
+                SoundVolume = (float)BALANCE_VAR(kSilenceLevel2Volume);
+                break;
+            case 3:
+                SoundVolume = (float)BALANCE_VAR(kSilenceLevel3Volume);
+                break;
+            }
+
+            AISND_RegisterNewSound(this->entindex(), this->pev->origin, AI_SOUND_SHOOT, SoundVolume);
+#endif
+
 			EMIT_SOUND_DYN(ENT(this->pev), CHAN_WEAPON, theSoundToPlay, theVolumeScalar, ATTN_NORM, 0, 100);
 			this->mTimeOfLastMovementSound = gpGlobals->time;
 		}
@@ -8753,6 +8803,10 @@ bool AvHPlayer::Heal(float inAmount, bool inPlaySound, bool dcHealing)
 			{
 				// Play regeneration event
 				PLAYBACK_EVENT_FULL(0, this->edict(), gRegenerationEventID, 0, this->pev->origin, (float *)&g_vecZero, this->GetAlienAdjustedEventVolume(), 0.0, /*theWeaponIndex*/ 0, 0, 0, 0 );
+#ifdef AVH_SERVER
+                // Heartbeat sound is a little loud, so reduce it for the AI so bots don't instantly spot your location with a single regen tic
+                AISND_RegisterNewSound(this->entindex(), this->pev->origin, AI_SOUND_OTHER, this->GetAlienAdjustedEventVolume() * 0.25f);
+#endif
 			}
 		}
 	}    
@@ -9177,7 +9231,8 @@ int AvHPlayer::TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, floa
                 {
                     CBasePlayer* inAttackingPlayer = dynamic_cast<CBasePlayer*>(CBaseEntity::Instance(ENT(pevAttacker)));
 
-                    if (inAttackingPlayer)
+#ifdef AVH_SERVER
+                    if (inAttackingPlayer && AIMGR_IsBotEnabled())
                     {
                         AvHAIPlayer* VictimBot = AIMGR_GetBotRefFromPlayer(this);
 
@@ -9186,7 +9241,7 @@ int AvHPlayer::TakeDamage( entvars_t* pevInflictor, entvars_t* pevAttacker, floa
                             AIPlayerTakeDamage(VictimBot, flDamage, inAttackingPlayer->edict());
                         }
                     }
-
+#endif
                     const char* inWeaponName = STRING(pevInflictor->classname);
                     if(inAttackingPlayer && inWeaponName)
                     {

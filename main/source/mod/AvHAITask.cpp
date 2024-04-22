@@ -1931,7 +1931,7 @@ void BotProgressEvolveTask(AvHAIPlayer* pBot, AvHAIPlayerTask* Task)
 	{
 		if ((gpGlobals->time - Task->TaskStartedTime) > 1.0f)
 		{
-			Task->TaskLocation = UTIL_GetRandomPointOnNavmeshInRadiusIgnoreReachability(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), pBot->Edict->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
+			Task->TaskLocation = UTIL_GetRandomPointOnNavmeshInRadius(GetBaseNavProfile(STRUCTURE_BASE_NAV_PROFILE), pBot->Edict->v.origin, UTIL_MetresToGoldSrcUnits(5.0f));
 
 			if (vIsZero(Task->TaskLocation))
 			{

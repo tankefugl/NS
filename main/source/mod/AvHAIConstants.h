@@ -497,6 +497,7 @@ typedef struct _ENEMY_STATUS
 	float NextUpdateTime = 0.0f; // When the bot can next react to a change in target's state
 	float NextVelocityUpdateTime = 0.0f; // When the bot can next react to a change in target's state
 	float EndTrackingTime = 0.0f; // When to stop "sensing" enemy movement after losing LOS
+	float CertaintyOfLocation = 0.0f; // How sure the bot is where the enemy is if they're cloaked
 
 } enemy_status;
 
@@ -803,6 +804,8 @@ typedef struct AVH_AI_PLAYER
 
 	float ServerUpdateDelta = 0.0f; // How long since we last called RunPlayerMove
 	float LastServerUpdateTime = 0.0f; // When we last called RunPlayerMove
+
+	float HearingThreshold = 0.0f; // How loud does a sound need to be before the bot detects it? This is set when hearing a sound so that louder sounds drown out quieter ones, and decrements quickly
 
 } AvHAIPlayer;
 

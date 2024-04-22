@@ -2059,7 +2059,7 @@ dtStatus FindPathClosestToPoint(AvHAIPlayer* pBot, const BotMoveStyle MoveStyle,
 
 	Vector FromFloorLocation = AdjustPointForPathfinding(FromLocation);
 
-	nav_door* LiftReference =  UTIL_GetNavDoorByEdict(pBot->Edict->v.groundentity);
+	nav_door* LiftReference = UTIL_GetLiftReferenceByEdict(pBot->Edict->v.groundentity);
 	bool bMustDisembarkLiftFirst = false;
 	Vector LiftStart = ZERO_VECTOR;
 	Vector LiftEnd = ZERO_VECTOR;
@@ -3691,11 +3691,16 @@ void StructureBlockedMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vect
 
 void BlockedMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoint)
 {
-	Vector vForward = UTIL_GetVectorNormal2D(EndPoint - StartPoint);
+	Vector vForward = UTIL_GetVectorNormal2D(EndPoint - pBot->Edict->v.origin);
 
 	if (vIsZero(vForward))
 	{
-		vForward = UTIL_GetForwardVector2D(pBot->Edict->v.angles);
+		vForward = UTIL_GetVectorNormal2D(EndPoint - StartPoint);
+
+		if (vIsZero(vForward))
+		{
+			vForward = UTIL_GetForwardVector2D(pBot->Edict->v.angles);
+		}
 	}
 
 	pBot->desiredMovementDir = vForward;
@@ -3713,6 +3718,10 @@ void BlockedMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoi
 	if (FaceDot < 0.95f)
 	{
 		float MoveSpeed = vSize2D(pBot->Edict->v.velocity);
+		if (MoveSpeed < 20.0f)
+		{
+			MoveSpeed = 100.0f;
+		}
 		Vector NewVelocity = vForward * MoveSpeed;
 		NewVelocity.z = pBot->Edict->v.velocity.z;
 
@@ -3729,6 +3738,11 @@ void JumpMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoint)
 	if (vIsZero(vForward))
 	{
 		vForward = UTIL_GetVectorNormal2D(EndPoint - StartPoint);
+
+		if (vIsZero(vForward))
+		{
+			vForward = UTIL_GetForwardVector2D(pBot->Edict->v.angles);
+		}
 	}
 
 	pBot->desiredMovementDir = vForward;
@@ -3746,6 +3760,10 @@ void JumpMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector EndPoint)
 	if (FaceDot < 0.95f)
 	{
 		float MoveSpeed = vSize2D(pBot->Edict->v.velocity);
+		if (MoveSpeed < 20.0f)
+		{
+			MoveSpeed = 100.0f;
+		}
 		Vector NewVelocity = vForward * MoveSpeed;
 		NewVelocity.z = pBot->Edict->v.velocity.z;
 
@@ -4729,7 +4747,7 @@ void BlinkClimbMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector End
 	if (GetPlayerCurrentWeapon(pBot->Player) != WEAPON_FADE_BLINK) { return; }
 
 	// Only blink if we're below the target climb height
-	if (pEdict->v.origin.z < RequiredClimbHeight + 32.0f)
+	if (pEdict->v.origin.z < RequiredClimbHeight + 4.0f)
 	{
 		float HeightToClimb = (fabsf(pEdict->v.origin.z - RequiredClimbHeight));
 
@@ -4746,6 +4764,12 @@ void BlinkClimbMove(AvHAIPlayer* pBot, const Vector StartPoint, const Vector End
 		if (FaceDot < 0.95f)
 		{
 			float MoveSpeed = vSize2D(pBot->Edict->v.velocity);
+
+			if (MoveSpeed < 20.0f)
+			{
+				MoveSpeed = 100.0f;
+			}
+
 			Vector NewVelocity = MoveDir * MoveSpeed;
 			NewVelocity.z = pBot->Edict->v.velocity.z;
 
@@ -6365,6 +6389,7 @@ bool MoveTo(AvHAIPlayer* pBot, const Vector Destination, const BotMoveStyle Move
 	{
 		pBot->BotNavInfo.StuckInfo.bPathFollowFailed = false;
 		ClearBotMovement(pBot);
+
 		return true; 
 	}
 
@@ -6811,6 +6836,7 @@ void BotFollowSwimPath(AvHAIPlayer* pBot)
 	if (pBot->BotNavInfo.CurrentPath.size() == 0 || pBot->BotNavInfo.CurrentPathPoint >= pBot->BotNavInfo.CurrentPath.size())
 	{
 		ClearBotPath(pBot);
+		NAV_ClearMovementTask(pBot);
 		return;
 	}
 
@@ -6964,6 +6990,7 @@ void BotFollowPath(AvHAIPlayer* pBot)
 		MoveToWithoutNav(pBot, CurrentNode.Location);
 		pBot->BotNavInfo.StuckInfo.bPathFollowFailed = true;
 		ClearBotPath(pBot);
+		NAV_ClearMovementTask(pBot);
 		return;
 	}
 
@@ -7408,6 +7435,7 @@ void ClearBotStuck(AvHAIPlayer* pBot)
 bool BotRecalcPath(AvHAIPlayer* pBot, const Vector Destination)
 {
 	ClearBotPath(pBot);
+	NAV_ClearMovementTask(pBot);
 
 	Vector ValidNavmeshPoint = UTIL_ProjectPointToNavmesh(Destination, Vector(max_ai_use_reach, max_ai_use_reach, max_ai_use_reach), pBot->BotNavInfo.NavProfile);
 
@@ -8772,6 +8800,18 @@ void UTIL_PopulateDoors()
 		NavDoors.push_back(NewDoor);
 	}
 
+	for (auto it = BaseMapConnections.begin(); it != BaseMapConnections.end(); it++)
+	{
+		if (!(it->ConnectionFlags & SAMPLE_POLYFLAGS_LIFT)) { continue; }
+
+		nav_door* CorrespondingLift = UTIL_GetClosestLiftToPoints(it->FromLocation, it->ToLocation);
+
+		if (CorrespondingLift)
+		{
+			it->TargetObject = CorrespondingLift->DoorEdict;
+		}
+	}
+
 	UTIL_UpdateDoors(true);
 }
 
@@ -8790,6 +8830,28 @@ nav_door* UTIL_GetNavDoorByEdict(const edict_t* DoorEdict)
 	return nullptr;
 }
 
+nav_door* UTIL_GetLiftReferenceByEdict(const edict_t* DoorEdict)
+{
+	if (FNullEnt(DoorEdict)) { return nullptr; }
+
+	for (auto it = NavDoors.begin(); it != NavDoors.end(); it++)
+	{
+		if (it->DoorEdict == DoorEdict)
+		{
+			if (UTIL_GetOffMeshConnectionForLift(&(*it)) != nullptr)
+			{
+				return &(*it);
+			}
+			else
+			{
+				return nullptr;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 AvHAIOffMeshConnection* UTIL_GetOffMeshConnectionForLift(nav_door* LiftRef)
 {
 	if (!LiftRef) { return nullptr; }
@@ -8801,15 +8863,20 @@ AvHAIOffMeshConnection* UTIL_GetOffMeshConnectionForLift(nav_door* LiftRef)
 	{
 		if (!(it->ConnectionFlags & SAMPLE_POLYFLAGS_LIFT)) { continue; }
 
-		Vector LiftLocation = UTIL_GetCentreOfEntity(LiftRef->DoorEdict);
-
-		float ThisDist = fminf(vDist3DSq(it->FromLocation, LiftLocation), vDist3DSq(it->ToLocation, LiftLocation));
-
-		if (!NearestConnection || ThisDist < MinDist)
+		if (it->TargetObject == LiftRef->DoorEdict)
 		{
-			NearestConnection = &(*it);
-			MinDist = ThisDist;
+			return &(*it);
 		}
+
+		//Vector LiftLocation = UTIL_GetCentreOfEntity(LiftRef->DoorEdict);
+
+		//float ThisDist = fminf(vDist3DSq(it->FromLocation, LiftLocation), vDist3DSq(it->ToLocation, LiftLocation));
+
+		//if (!NearestConnection || ThisDist < MinDist)
+		//{
+		//	NearestConnection = &(*it);
+		//	MinDist = ThisDist;
+		//}
 	}
 
 	return NearestConnection;
